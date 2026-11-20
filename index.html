@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cipher Forge: build, check and break ciphers with discrete maths</title>
+<meta name="description" content="Cipher Forge is an interactive lab for CS1812 Discrete Mathematics and Set Theory: build ciphers from blocks and watch sets, functions, bijections, the pigeonhole principle and counting at work.">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a class="skip" href="#alphabet">Skip to the lab</a>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#top" aria-label="Cipher Forge, back to top">
+    <span class="brand-mark" aria-hidden="true"></span>Cipher Forge
+  </a>
+  <nav aria-label="Sections">
+    <ol class="nav-steps">
+      <li><a href="#alphabet">Symbols</a></li>
+      <li><a href="#forge">Build</a></li>
+      <li><a href="#inspect">Check</a></li>
+      <li><a href="#encrypt">Encrypt</a></li>
+      <li><a href="#attack">Attack</a></li>
+      <li><a href="#syllabus">Syllabus</a></li>
+    </ol>
+  </nav>
+  <div class="nav-progress" aria-hidden="true"><span id="progress"></span></div>
+</header>
+
+<main>
+
+<!-- ============ HERO: the rotor drum ============ -->
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="hero-sticky">
+    <div class="hero-copy">
+      <h1 id="hero-title" class="display">Cipher Forge</h1>
+      <p class="hero-lead">Build ciphers from small blocks. Watch discrete maths decide which ones can be undone, which ones break, and how long an attacker would need.</p>
+      <p class="hero-readout" aria-live="polite">
+        <span class="mono" id="hero-plain">HELLO</span>
+        <span class="hero-arrow" aria-hidden="true"></span>
+        <span class="mono brass" id="hero-cipher">HELLO</span>
+        <span class="hero-shift">shift k = <span id="hero-k">0</span></span>
+      </p>
+      <p class="hero-hint">Scroll to turn the rotors</p>
+    </div>
+    <div class="rotor-stage" aria-hidden="true">
+      <div class="rotor-rig" id="rig">
+        <div class="rotor-axle"></div>
+        <div class="rotor-window" id="rotor-window"></div>
+      </div>
+      <div class="rotor-fade"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 1. SETS ============ -->
+<section class="chapter" id="alphabet" aria-labelledby="alphabet-title">
+  <div class="plate">
+    <header class="chapter-head">
+      <p class="step">Step 1 of 5 <span class="module">Module 1: sets</span></p>
+      <h2 id="alphabet-title">Choose the symbols</h2>
+      <p class="chapter-lead">Every cipher works on a set S of symbols. Its size, the cardinality |S|, decides everything that follows: how arrows are drawn, which blocks are safe, and how many keys exist.</p>
+    </header>
+
+    <div class="split">
+      <div class="panel">
+        <div class="segmented" role="radiogroup" aria-label="Symbol set" id="set-picker"></div>
+        <dl class="notation">
+          <div><dt>Roster form</dt><dd class="mono" id="set-roster"></dd></div>
+          <div><dt>Set-builder form</dt><dd class="mono" id="set-builder"></dd></div>
+          <div><dt>Cardinality</dt><dd class="mono"><span id="set-card"></span></dd></div>
+        </dl>
+        <div class="tiles" id="set-tiles" aria-label="Members of S"></div>
+      </div>
+
+      <div class="panel">
+        <h3>Set operations</h3>
+        <p class="muted">A = letters, V = vowels, D = digits. Pick two sets and an operation.</p>
+        <div class="op-row">
+          <label class="select"><span class="sr">First set</span>
+            <select id="op-a"><option value="A">A</option><option value="V">V</option><option value="D">D</option></select>
+          </label>
+          <label class="select"><span class="sr">Operation</span>
+            <select id="op-op">
+              <option value="union">∪ union</option>
+              <option value="intersection">∩ intersection</option>
+              <option value="difference">− difference</option>
+              <option value="symmetric">Δ symmetric difference</option>
+            </select>
+          </label>
+          <label class="select"><span class="sr">Second set</span>
+            <select id="op-b"><option value="A">A</option><option value="V" selected>V</option><option value="D">D</option></select>
+          </label>
+        </div>
+        <p class="mono op-result" id="op-result"></p>
+        <div class="facts">
+          <div class="fact">
+            <p class="fact-num mono" id="fact-pairs"></p>
+            <p class="fact-text">Ordered pairs in S × S. A block that encrypts two symbols at a time works on this Cartesian product.</p>
+          </div>
+          <div class="fact">
+            <p class="fact-num mono" id="fact-subsets"></p>
+            <p class="fact-text">Subsets of S. By the binomial theorem, C(n,0) + C(n,1) + … + C(n,n) = (1 + 1)ⁿ = 2ⁿ.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. BUILD ============ -->
+<section class="chapter" id="forge" aria-labelledby="forge-title">
+  <div class="plate">
+    <header class="chapter-head">
+      <p class="step">Step 2 of 5 <span class="module">Module 3: functions and composition</span></p>
+      <h2 id="forge-title">Build a cipher from blocks</h2>
+      <p class="chapter-lead">Each block is a function f : S → S. Blocks run left to right, so a chain f₁ then f₂ is the composition f₂ ∘ f₁.</p>
+    </header>
+
+    <div class="toolbar">
+      <div class="toolbar-group">
+        <p class="toolbar-label">Add a block</p>
+        <div class="btn-row" id="palette"></div>
+      </div>
+      <div class="toolbar-group">
+        <p class="toolbar-label">Start from an example</p>
+        <div class="btn-row" id="presets"></div>
+      </div>
+    </div>
+
+    <ol class="chain" id="chain" aria-label="Cipher chain"></ol>
+
+    <div class="formula-bar">
+      <p class="formula-label">The whole cipher</p>
+      <p class="mono formula" id="chain-formula"></p>
+      <p class="verdict" id="chain-verdict"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. CHECK ============ -->
+<section class="chapter" id="inspect" aria-labelledby="inspect-title">
+  <div class="plate">
+    <header class="chapter-head">
+      <p class="step">Step 3 of 5 <span class="module">Modules 2 and 3: logic, bijections, pigeonhole</span></p>
+      <h2 id="inspect-title">Check that it can be undone</h2>
+      <p class="chapter-lead">A cipher can be decrypted only if its function is a bijection: one-to-one and onto. The arrow diagram shows the function; hover a symbol to trace its arrow.</p>
+    </header>
+
+    <div class="tabs" role="tablist" aria-label="Function to inspect" id="inspect-tabs"></div>
+
+    <figure class="diagram-wrap">
+      <svg id="diagram" role="img" aria-labelledby="diagram-cap"></svg>
+      <figcaption id="diagram-cap" class="diagram-cap"></figcaption>
+    </figure>
+
+    <div class="checks">
+      <div class="check" id="chk-inj">
+        <p class="check-state"></p>
+        <h3>One-to-one</h3>
+        <p class="mono check-logic">∀x₁, x₂ ∈ S : f(x₁) = f(x₂) → x₁ = x₂</p>
+        <p class="check-detail"></p>
+      </div>
+      <div class="check" id="chk-sur">
+        <p class="check-state"></p>
+        <h3>Onto</h3>
+        <p class="mono check-logic">∀y ∈ S ∃x ∈ S : f(x) = y</p>
+        <p class="check-detail"></p>
+      </div>
+      <div class="check" id="chk-pig">
+        <p class="check-state"></p>
+        <h3>Pigeonhole</h3>
+        <p class="mono check-logic" id="pig-logic"></p>
+        <p class="check-detail"></p>
+      </div>
+    </div>
+
+    <div class="truth">
+      <div>
+        <h3>The validity rule as a proposition</h3>
+        <p class="muted">Let I = “f is one-to-one”, O = “f is onto”, V = “f can be decrypted”. Then V ⇔ I ∧ O. The highlighted row is the function above.</p>
+        <p class="muted">Because S is finite and mapped to itself, I and O are logically equivalent here (I ⇔ O), so only the first and last rows can ever occur.</p>
+      </div>
+      <table class="truth-table" id="truth">
+        <thead><tr><th scope="col">I</th><th scope="col">O</th><th scope="col">I ∧ O</th><th scope="col">Decryptable</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. ENCRYPT ============ -->
+<section class="chapter" id="encrypt" aria-labelledby="encrypt-title">
+  <div class="plate">
+    <header class="chapter-head">
+      <p class="step">Step 4 of 5 <span class="module">Module 3: inverse of a composition</span></p>
+      <h2 id="encrypt-title">Encrypt, then undo it</h2>
+      <p class="chapter-lead">Encryption applies every block in order. Decryption applies each inverse in reverse order, because (g ∘ f)⁻¹ = f⁻¹ ∘ g⁻¹. Symbols outside S pass through unchanged.</p>
+    </header>
+
+    <div class="io">
+      <div class="io-col">
+        <label for="msg-in" class="io-label">Message</label>
+        <textarea id="msg-in" rows="3" spellcheck="false">Meet me at the library at noon</textarea>
+        <p class="io-label">Ciphertext</p>
+        <output class="mono io-out" id="msg-out" for="msg-in"></output>
+      </div>
+      <div class="io-col">
+        <label for="dec-in" class="io-label">Ciphertext to decrypt</label>
+        <textarea id="dec-in" rows="3" spellcheck="false"></textarea>
+        <p class="io-label">Recovered message</p>
+        <output class="mono io-out" id="dec-out" for="dec-in"></output>
+        <p class="mono io-formula" id="dec-formula"></p>
+      </div>
+    </div>
+
+    <div class="trace">
+      <div class="trace-head">
+        <h3>Step-by-step trace</h3>
+        <div class="segmented small" role="radiogroup" aria-label="Trace direction" id="trace-dir">
+          <button type="button" role="radio" aria-checked="true" data-dir="enc">Encryption</button>
+          <button type="button" role="radio" aria-checked="false" data-dir="dec">Decryption</button>
+        </div>
+      </div>
+      <div class="trace-scroll"><table class="trace-table mono" id="trace"></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. ATTACK ============ -->
+<section class="chapter" id="attack" aria-labelledby="attack-title">
+  <div class="plate">
+    <header class="chapter-head">
+      <p class="step">Step 5 of 5 <span class="module">Modules 4 and 5: counting</span></p>
+      <h2 id="attack-title">Count the keys an attacker must try</h2>
+      <p class="chapter-lead">A brute-force attacker tries every key. The sum rule, product rule, permutations and combinations tell us how many there are. Counts are exact, computed with BigInt.</p>
+    </header>
+
+    <div class="attack-controls">
+      <fieldset class="groups">
+        <legend>Password symbols (sum rule)</legend>
+        <label><input type="checkbox" data-size="26" checked> A–Z <span class="mono muted">26</span></label>
+        <label><input type="checkbox" data-size="26"> a–z <span class="mono muted">26</span></label>
+        <label><input type="checkbox" data-size="10" checked> 0–9 <span class="mono muted">10</span></label>
+        <label><input type="checkbox" data-size="10"> !@#$%^&amp;*?- <span class="mono muted">10</span></label>
+      </fieldset>
+      <label class="range">
+        <span>Length r = <span class="mono" id="len-val">8</span></span>
+        <input type="range" id="len" min="1" max="16" value="8">
+      </label>
+      <label class="select wide">
+        <span>Attacker speed</span>
+        <select id="speed">
+          <option value="1e3">1 thousand guesses / second</option>
+          <option value="1e6">1 million guesses / second</option>
+          <option value="1e9" selected>1 billion guesses / second</option>
+          <option value="1e12">1 trillion guesses / second</option>
+        </select>
+      </label>
+    </div>
+    <p class="sum-line mono" id="sum-line"></p>
+
+    <div class="keys-scroll">
+      <table class="keys" id="keys">
+        <thead><tr><th scope="col">Key type</th><th scope="col">Rule</th><th scope="col">Number of keys</th><th scope="col">Time to try them all</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="note">A huge key count is necessary but not enough. Substitution ciphers have n! keys, yet letter-frequency counting still breaks them: any message longer than |S| must repeat a symbol, by the pigeonhole principle.</p>
+  </div>
+</section>
+
+<!-- ============ SYLLABUS MAP ============ -->
+<section class="chapter" id="syllabus" aria-labelledby="syllabus-title">
+  <div class="plate">
+    <header class="chapter-head">
+      <p class="step">Summary <span class="module">CS1812 Discrete Mathematics and Set Theory</span></p>
+      <h2 id="syllabus-title">Where each topic lives</h2>
+    </header>
+    <div class="map-scroll">
+      <table class="map">
+        <thead><tr><th scope="col">Module</th><th scope="col">Topic</th><th scope="col">Used in Cipher Forge</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Sets, set-builder notation, cardinality</td><td><a href="#alphabet">Symbol set S and |S|</a></td></tr>
+          <tr><td>1</td><td>Union, intersection, difference, symmetric difference</td><td><a href="#alphabet">Building S, set operations lab</a></td></tr>
+          <tr><td>1</td><td>Cartesian product</td><td><a href="#alphabet">S × S for two-symbol blocks</a></td></tr>
+          <tr><td>2</td><td>Propositions, truth tables, equivalence</td><td><a href="#inspect">Validity rule V ⇔ I ∧ O</a></td></tr>
+          <tr><td>2</td><td>Predicate logic, quantifiers</td><td><a href="#inspect">∀ and ∃ definitions of one-to-one and onto</a></td></tr>
+          <tr><td>3</td><td>Functions: one-to-one, onto, bijective</td><td><a href="#inspect">Checks and arrow diagram</a></td></tr>
+          <tr><td>3</td><td>Composition of functions</td><td><a href="#forge">Chaining blocks</a></td></tr>
+          <tr><td>3</td><td>Invertibility and inverse</td><td><a href="#encrypt">Decryption</a></td></tr>
+          <tr><td>3</td><td>Pigeonhole principle</td><td><a href="#inspect">Collision finder for Compress</a></td></tr>
+          <tr><td>4</td><td>Rules of sum and product</td><td><a href="#attack">Password symbol count and length</a></td></tr>
+          <tr><td>4</td><td>Permutations, with repetition</td><td><a href="#attack">n!, P(n, r), nʳ key counts</a></td></tr>
+          <tr><td>5</td><td>Combinations, with repetition</td><td><a href="#attack">Swap keys C(n, 2), frequency profiles</a></td></tr>
+          <tr><td>5</td><td>Binomial theorem</td><td><a href="#alphabet">Counting subsets of S as 2ⁿ</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <p class="footer-title">Cipher Forge</p>
+  <p>A CS1812 Discrete Mathematics and Set Theory project (CIE-3B) by Bhajanth V, B.Tech CSE, RV University, Mysuru.</p>
+  <p class="muted">Plain HTML, CSS and JavaScript. No libraries.</p>
+</footer>
+
+<script src="js/sets.js"></script>
+<script src="js/functions.js"></script>
+<script src="js/blocks.js"></script>
+<script src="js/counting.js"></script>
+<script src="js/scroll3d.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
