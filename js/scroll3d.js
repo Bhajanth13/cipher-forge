@@ -144,6 +144,18 @@
     if (!ticking) { ticking = true; window.requestAnimationFrame(frame); }
   }
 
+  // A link like …/#break should land on that section, not on an old scroll position
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  function jumpToHash() {
+    if (!location.hash) return;
+    const target = document.getElementById(location.hash.slice(1));
+    if (target) target.scrollIntoView({ behavior: 'instant', block: 'start' });
+  }
+  window.addEventListener('load', function () {
+    jumpToHash();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(jumpToHash);
+  });
+
   window.addEventListener('scroll', request, { passive: true });
   window.addEventListener('resize', function () { measure(); request(); });
   measure();
