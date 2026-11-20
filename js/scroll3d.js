@@ -81,24 +81,32 @@
 
   /* ---------- Chapters roll in like a drum ---------- */
   function setPlates(vh) {
-    plates.forEach(function (plate) {
+    plates.forEach(function (plate, idx) {
       const r = plate.parentElement.getBoundingClientRect();
-      const enter = clamp((vh - r.top) / (vh * 0.6), 0, 1);
+      const enter = clamp((vh - r.top) / (vh * 0.65), 0, 1);
       const leave = clamp((vh * 0.3 - r.bottom) / (vh * 0.3), 0, 1);
+      const side = idx % 2 === 0 ? 1 : -1;               // alternate the swing direction
       if (enter >= 1 && leave <= 0) {
-        plate.style.transform = 'none';
-        plate.style.opacity = '1';
+        if (plate.dataset.flat !== '1') {
+          plate.style.transform = 'none';
+          plate.style.opacity = '1';
+          plate.style.setProperty('--e', '0');
+          plate.dataset.flat = '1';
+        }
         return;
       }
+      plate.dataset.flat = '0';
       const e = 1 - ease(enter);
       if (leave > 0) {
         plate.style.transformOrigin = '50% 100%';
-        plate.style.transform = 'rotateX(' + (leave * 12).toFixed(2) + 'deg) scale(' + (1 - leave * 0.05).toFixed(3) + ')';
-        plate.style.opacity = (1 - leave * 0.7).toFixed(3);
+        plate.style.transform = 'rotateX(' + (leave * 16).toFixed(2) + 'deg) rotateY(' + (side * leave * 4).toFixed(2) + 'deg) scale(' + (1 - leave * 0.06).toFixed(3) + ')';
+        plate.style.opacity = (1 - leave * 0.75).toFixed(3);
+        plate.style.setProperty('--e', '0');
       } else {
-        plate.style.transformOrigin = '50% 0%';
-        plate.style.transform = 'translateY(' + (e * 90).toFixed(1) + 'px) translateZ(' + (-e * 160).toFixed(1) + 'px) rotateX(' + (e * 18).toFixed(2) + 'deg)';
-        plate.style.opacity = (0.15 + 0.85 * (1 - e)).toFixed(3);
+        plate.style.transformOrigin = (side > 0 ? '30%' : '70%') + ' 0%';
+        plate.style.transform = 'translateY(' + (e * 110).toFixed(1) + 'px) translateZ(' + (-e * 260).toFixed(1) + 'px) rotateX(' + (e * 24).toFixed(2) + 'deg) rotateY(' + (side * e * 10).toFixed(2) + 'deg)';
+        plate.style.opacity = (0.1 + 0.9 * (1 - e)).toFixed(3);
+        plate.style.setProperty('--e', e.toFixed(3));
       }
     });
   }

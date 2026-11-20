@@ -5,12 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cipher Forge: build, check and break ciphers with discrete maths</title>
 <meta name="description" content="Cipher Forge is an interactive lab for CS1812 Discrete Mathematics and Set Theory: build ciphers from blocks and watch sets, functions, bijections, the pigeonhole principle and counting at work.">
+<script>try{var t=localStorage.getItem('cf-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <link rel="stylesheet" href="css/fonts.css">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <a class="skip" href="#alphabet">Skip to the lab</a>
+<div class="glyph-field" id="glyph-field" aria-hidden="true"></div>
 
 <header class="nav" id="nav">
   <a class="brand" href="#top" aria-label="Cipher Forge, back to top">
@@ -21,11 +23,23 @@
       <li><a href="#alphabet">Symbols</a></li>
       <li><a href="#forge">Build</a></li>
       <li><a href="#inspect">Check</a></li>
+      <li><a href="#relations">Relate</a></li>
       <li><a href="#encrypt">Encrypt</a></li>
-      <li><a href="#attack">Attack</a></li>
+      <li><a href="#break">Break</a></li>
+      <li><a href="#attack">Count</a></li>
       <li><a href="#syllabus">Syllabus</a></li>
     </ol>
   </nav>
+  <div class="nav-actions">
+    <button type="button" class="nav-btn" id="tour-start" title="Guided walkthrough for presenting (P)">
+      <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>
+      <span>Present</span>
+    </button>
+    <button type="button" class="nav-btn icon" id="theme-toggle" aria-label="Switch to light mode">
+      <svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7 7 17M17 7l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
   <div class="nav-progress" aria-hidden="true"><span id="progress"></span></div>
 </header>
 
@@ -59,7 +73,7 @@
 <section class="chapter" id="alphabet" aria-labelledby="alphabet-title">
   <div class="plate">
     <header class="chapter-head">
-      <p class="step">Step 1 of 5 <span class="module">Module 1: sets</span></p>
+      <p class="step">Step 1 of 7 <span class="module">Module 1: sets</span></p>
       <h2 id="alphabet-title">Choose the symbols</h2>
       <p class="chapter-lead">Every cipher works on a set S of symbols. Its size, the cardinality |S|, decides everything that follows: how arrows are drawn, which blocks are safe, and how many keys exist.</p>
     </header>
@@ -114,7 +128,7 @@
 <section class="chapter" id="forge" aria-labelledby="forge-title">
   <div class="plate">
     <header class="chapter-head">
-      <p class="step">Step 2 of 5 <span class="module">Module 3: functions and composition</span></p>
+      <p class="step">Step 2 of 7 <span class="module">Module 3: functions and composition</span></p>
       <h2 id="forge-title">Build a cipher from blocks</h2>
       <p class="chapter-lead">Each block is a function f : S → S. Blocks run left to right, so a chain f₁ then f₂ is the composition f₂ ∘ f₁.</p>
     </header>
@@ -137,6 +151,17 @@
       <p class="mono formula" id="chain-formula"></p>
       <p class="verdict" id="chain-verdict"></p>
     </div>
+
+    <div class="brackets" id="brackets-panel">
+      <div class="brackets-head">
+        <div>
+          <h3>Do the brackets matter?</h3>
+          <p class="muted">A chain of k blocks can be bracketed in Cₖ₋₁ ways, the Catalan number Cₙ = C(2n, n) / (n + 1). Composition is associative, so every bracketing gives the same cipher.</p>
+        </div>
+        <p class="mono brackets-count" id="brackets-count"></p>
+      </div>
+      <div class="bracket-grid" id="bracket-grid"></div>
+    </div>
   </div>
 </section>
 
@@ -144,7 +169,7 @@
 <section class="chapter" id="inspect" aria-labelledby="inspect-title">
   <div class="plate">
     <header class="chapter-head">
-      <p class="step">Step 3 of 5 <span class="module">Modules 2 and 3: logic, bijections, pigeonhole</span></p>
+      <p class="step">Step 3 of 7 <span class="module">Modules 2 and 3: logic, bijections, pigeonhole</span></p>
       <h2 id="inspect-title">Check that it can be undone</h2>
       <p class="chapter-lead">A cipher can be decrypted only if its function is a bijection: one-to-one and onto. The arrow diagram shows the function; hover a symbol to trace its arrow.</p>
     </header>
@@ -191,11 +216,62 @@
   </div>
 </section>
 
-<!-- ============ 4. ENCRYPT ============ -->
+
+<!-- ============ 4. RELATIONS ============ -->
+<section class="chapter" id="relations" aria-labelledby="relations-title">
+  <div class="plate">
+    <header class="chapter-head">
+      <p class="step">Step 4 of 7 <span class="module">Modules 1 and 3: Cartesian product and relations</span></p>
+      <h2 id="relations-title">See the cipher as a relation</h2>
+      <p class="chapter-lead">A function is a special relation: a set of ordered pairs R = { (x, f(x)) } inside S × S. Drawn as a grid, a function has exactly one dot in every row, and a bijection also has exactly one dot in every column.</p>
+    </header>
+
+    <div class="split">
+      <div class="panel">
+        <h3>Relation matrix of F</h3>
+        <div class="matrix-stage"><svg id="rel-matrix" role="img" aria-labelledby="rel-cap"></svg></div>
+        <p class="diagram-cap" id="rel-cap"></p>
+        <ul class="ticks" id="rel-ticks"></ul>
+      </div>
+      <div class="panel">
+        <h3>Symbols the cipher can’t tell apart</h3>
+        <p class="muted">Define x ~ y when f(x) = f(y). Checked over every pair in S × S, this relation is:</p>
+        <ul class="ticks" id="eq-props"></ul>
+        <p class="muted">So ~ is an equivalence relation, and its classes split S into groups. Each group is one output; a bijection gives |S| groups of one.</p>
+        <p class="mono eq-count" id="eq-count"></p>
+        <div class="classes" id="eq-classes"></div>
+      </div>
+    </div>
+
+    <div class="panel pairs-panel">
+      <div class="pairs-head">
+        <div>
+          <h3>A two-letter cipher on S × S</h3>
+          <p class="muted">This block encrypts pairs of symbols, so it is a function on the Cartesian product S × S, not on S.</p>
+        </div>
+        <div class="segmented small" role="radiogroup" aria-label="Pair rule" id="pair-rule"></div>
+      </div>
+      <div class="pairs-body">
+        <div class="col">
+          <p class="mono" id="pair-formula"></p>
+          <label for="pair-in" class="io-label">Message</label>
+          <input type="text" id="pair-in" class="text-in" value="Hello world" spellcheck="false">
+          <p class="io-label">Pairs</p>
+          <div class="pair-list mono" id="pair-list"></div>
+          <p class="io-label">Ciphertext, then decrypted</p>
+          <p class="mono io-out" id="pair-out"></p>
+        </div>
+        <div class="col pair-checks" id="pair-checks"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 5. ENCRYPT ============ -->
 <section class="chapter" id="encrypt" aria-labelledby="encrypt-title">
   <div class="plate">
     <header class="chapter-head">
-      <p class="step">Step 4 of 5 <span class="module">Module 3: inverse of a composition</span></p>
+      <p class="step">Step 5 of 7 <span class="module">Module 3: inverse of a composition</span></p>
       <h2 id="encrypt-title">Encrypt, then undo it</h2>
       <p class="chapter-lead">Encryption applies every block in order. Decryption applies each inverse in reverse order, because (g ∘ f)⁻¹ = f⁻¹ ∘ g⁻¹. Symbols outside S pass through unchanged.</p>
     </header>
@@ -229,11 +305,55 @@
   </div>
 </section>
 
-<!-- ============ 5. ATTACK ============ -->
+
+<!-- ============ 6. BREAK ============ -->
+<section class="chapter" id="break" aria-labelledby="break-title">
+  <div class="plate">
+    <header class="chapter-head">
+      <p class="step">Step 6 of 7 <span class="module">Modules 1, 3 and 4: multisets, pigeonhole, brute force</span></p>
+      <h2 id="break-title">Break it</h2>
+      <p class="chapter-lead">An attacker has only the ciphertext. Brute force tries every key; frequency analysis counts the letters. Encrypt a paragraph with your cipher, then watch both attacks.</p>
+    </header>
+
+    <div class="break-input">
+      <label for="brk-in" class="io-label">Ciphertext to attack</label>
+      <textarea id="brk-in" rows="3" spellcheck="false"></textarea>
+      <div class="btn-row">
+        <button type="button" class="btn" id="brk-sample">Encrypt the sample paragraph with my cipher</button>
+        <button type="button" class="btn ghost" id="brk-mine">Use my ciphertext from step 5</button>
+        <button type="button" class="btn primary" id="brk-run">Crack it</button>
+      </div>
+    </div>
+
+    <div class="break-grid">
+      <div class="panel ring-panel">
+        <h3>Brute force: try all <span id="ring-n">26</span> shifts</h3>
+        <div class="ring-stage" id="ring-stage">
+          <div class="ring" id="ring"></div>
+          <div class="ring-window"></div>
+          <div class="ring-fade"></div>
+        </div>
+        <p class="ring-verdict" id="brk-verdict" aria-live="polite">Press “Crack it” to spin through every key.</p>
+      </div>
+      <div class="panel">
+        <h3>Frequency analysis</h3>
+        <p class="muted">The message’s letters form a multiset: each letter with its multiplicity. A substitution is a bijection, so it only relabels letters; the sorted counts keep English’s shape.</p>
+        <p class="mono multiset" id="multiset"></p>
+        <div class="bars-pair">
+          <div><p class="io-label">Ciphertext letters, most common first</p><div class="bars" id="bars-cipher"></div></div>
+          <div><p class="io-label">English letters, most common first</p><div class="bars" id="bars-english"></div></div>
+        </div>
+        <p class="freq-guess" id="freq-guess"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7. ATTACK ============ -->
 <section class="chapter" id="attack" aria-labelledby="attack-title">
   <div class="plate">
     <header class="chapter-head">
-      <p class="step">Step 5 of 5 <span class="module">Modules 4 and 5: counting</span></p>
+      <p class="step">Step 7 of 7 <span class="module">Modules 4 and 5: counting</span></p>
       <h2 id="attack-title">Count the keys an attacker must try</h2>
       <p class="chapter-lead">A brute-force attacker tries every key. The sum rule, product rule, permutations and combinations tell us how many there are. Counts are exact, computed with BigInt.</p>
     </header>
@@ -285,17 +405,20 @@
         <tbody>
           <tr><td>1</td><td>Sets, set-builder notation, cardinality</td><td><a href="#alphabet">Symbol set S and |S|</a></td></tr>
           <tr><td>1</td><td>Union, intersection, difference, symmetric difference</td><td><a href="#alphabet">Building S, set operations lab</a></td></tr>
-          <tr><td>1</td><td>Cartesian product</td><td><a href="#alphabet">S × S for two-symbol blocks</a></td></tr>
+          <tr><td>1</td><td>Cartesian product</td><td><a href="#relations">Two-letter cipher on S × S</a></td></tr>
+          <tr><td>1</td><td>Multisets</td><td><a href="#break">Letter counts in frequency analysis</a></td></tr>
           <tr><td>2</td><td>Propositions, truth tables, equivalence</td><td><a href="#inspect">Validity rule V ⇔ I ∧ O</a></td></tr>
           <tr><td>2</td><td>Predicate logic, quantifiers</td><td><a href="#inspect">∀ and ∃ definitions of one-to-one and onto</a></td></tr>
+          <tr><td>3</td><td>Relations, equivalence relations</td><td><a href="#relations">Relation matrix, symbols the cipher can’t tell apart</a></td></tr>
           <tr><td>3</td><td>Functions: one-to-one, onto, bijective</td><td><a href="#inspect">Checks and arrow diagram</a></td></tr>
           <tr><td>3</td><td>Composition of functions</td><td><a href="#forge">Chaining blocks</a></td></tr>
           <tr><td>3</td><td>Invertibility and inverse</td><td><a href="#encrypt">Decryption</a></td></tr>
-          <tr><td>3</td><td>Pigeonhole principle</td><td><a href="#inspect">Collision finder for Compress</a></td></tr>
-          <tr><td>4</td><td>Rules of sum and product</td><td><a href="#attack">Password symbol count and length</a></td></tr>
+          <tr><td>3</td><td>Pigeonhole principle</td><td><a href="#inspect">Collision finder</a>, <a href="#break">why long messages leak</a></td></tr>
+          <tr><td>4</td><td>Rules of sum and product</td><td><a href="#attack">Password symbol count and length</a>, <a href="#break">brute force</a></td></tr>
           <tr><td>4</td><td>Permutations, with repetition</td><td><a href="#attack">n!, P(n, r), nʳ key counts</a></td></tr>
           <tr><td>5</td><td>Combinations, with repetition</td><td><a href="#attack">Swap keys C(n, 2), frequency profiles</a></td></tr>
           <tr><td>5</td><td>Binomial theorem</td><td><a href="#alphabet">Counting subsets of S as 2ⁿ</a></td></tr>
+          <tr><td>5</td><td>Catalan numbers</td><td><a href="#forge">Ways to bracket a chain of blocks</a></td></tr>
         </tbody>
       </table>
     </div>
@@ -310,11 +433,31 @@
   <p class="muted">Plain HTML, CSS and JavaScript. No libraries.</p>
 </footer>
 
+<div class="tour" id="tour" role="dialog" aria-modal="false" aria-labelledby="tour-title" hidden>
+  <p class="tour-step mono" id="tour-step"></p>
+  <h3 id="tour-title"></h3>
+  <p class="tour-text" id="tour-text"></p>
+  <p class="tour-maths mono" id="tour-maths"></p>
+  <div class="tour-actions">
+    <button type="button" class="btn ghost" id="tour-prev">Back</button>
+    <button type="button" class="btn primary" id="tour-next">Next</button>
+    <button type="button" class="icon-btn" id="tour-close" aria-label="End walkthrough">×</button>
+  </div>
+  <p class="tour-keys">Arrow keys move, Esc ends</p>
+</div>
+
 <script src="js/sets.js"></script>
 <script src="js/functions.js"></script>
 <script src="js/blocks.js"></script>
 <script src="js/counting.js"></script>
+<script src="js/breaker.js"></script>
+<script src="js/relations.js"></script>
 <script src="js/scroll3d.js"></script>
 <script src="js/app.js"></script>
+<script src="js/lab2.js"></script>
+<script src="js/fx.js"></script>
+<script src="js/tour.js"></script>
+
+
 </body>
 </html>

@@ -90,28 +90,33 @@
       pal.appendChild(b);
     });
 
-    const presets = [
-      ['Caesar', function () { return [B.create('shift', { k: 3 })]; }],
-      ['Shift, then mirror', function () { return [B.create('shift', { k: 3 }), B.create('mirror')]; }],
-      ['Keyword', function () { return [B.create('keyword', { word: 'FORGE' })]; }],
-      ['Broken: multiply by 2', function () { return [B.create('multiply', { a: 2 })]; }],
-      ['Compress', function () { return [B.create('compress', { m: compressDefault() })]; }]
-    ];
-    const pre = $('presets');
     presets.forEach(function (p) {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'btn ghost';
       b.textContent = p[0];
-      b.addEventListener('click', function () {
-        state.chain = p[1]();
-        state.chain.forEach(function (blk) { blk.fresh = true; });
-        state.target = 'chain';
-        state.decEdited = false;
-        refreshAll(true);
-      });
-      pre.appendChild(b);
+      b.addEventListener('click', function () { loadPreset(p[0]); });
+      $('presets').appendChild(b);
     });
+  }
+
+  const presets = [
+      ['Caesar', function () { return [B.create('shift', { k: 3 })]; }],
+      ['Shift, then mirror', function () { return [B.create('shift', { k: 3 }), B.create('mirror')]; }],
+      ['Keyword', function () { return [B.create('keyword', { word: 'FORGE' })]; }],
+      ['Broken: multiply by 2', function () { return [B.create('multiply', { a: 2 })]; }],
+      ['Compress', function () { return [B.create('compress', { m: compressDefault() })]; }],
+      ['Three blocks', function () { return [B.create('shift', { k: 3 }), B.create('swap'), B.create('mirror')]; }]
+    ];
+
+  function loadPreset(name) {
+    const p = presets.find(function (x) { return x[0] === name; });
+    if (!p) return;
+    state.chain = p[1]();
+    state.chain.forEach(function (blk) { blk.fresh = true; });
+    state.target = 'chain';
+    state.decEdited = false;
+    refreshAll(true);
   }
 
   function compressDefault() { return Math.max(1, Math.ceil(set().length * 0.75)); }
@@ -462,7 +467,11 @@
     renderTabsLabelsOnly();
     renderInspector(false);
     renderCrypto();
+    announce();
   }
+
+  // Let the other modules (lab2.js, tour.js) know the cipher changed
+  function announce() { document.dispatchEvent(new CustomEvent('cf:change')); }
 
   function renderTabsLabelsOnly() {
     const tabs = $('inspect-tabs').querySelectorAll('.tab');
@@ -480,6 +489,7 @@
     renderInspector(animate);
     renderCrypto();
     renderAttack();
+    announce();
   }
 
   /* ---------- Wire up controls ---------- */
@@ -496,6 +506,15 @@
   document.querySelectorAll('.groups input').forEach(function (i) { i.addEventListener('change', renderAttack); });
   $('len').addEventListener('input', renderAttack);
   $('speed').addEventListener('change', renderAttack);
+
+  // Shared with lab2.js and tour.js
+  CF.app = {
+    state: state,
+    set: set,
+    chainMap: function () { return B.chainMap(state.chain, set()); },
+    loadPreset: loadPreset,
+    ciphertext: function () { return $('msg-out').textContent; }
+  };
 
   renderSetPicker();
   renderToolbar();
