@@ -22,7 +22,7 @@
     return id.toString(16).toUpperCase();
   }
 
-  let toneMs = 140;
+  let toneMs = 200;
   let band = 'audible';          // sender's band: 'audible' or 'silent'
   let rxBand = 'audible';        // band the receiver's spectrum shows
   let player = null;
@@ -224,7 +224,7 @@
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).then(done, function () { window.prompt('Copy this key:', code); });
     else window.prompt('Copy this key:', code);
   });
-  $('snd-speed').querySelectorAll('button').forEach(function (b) {
+  if ($('snd-speed')) $('snd-speed').querySelectorAll('button').forEach(function (b) {
     b.addEventListener('click', function () {
       toneMs = +b.dataset.ms;
       $('snd-speed').querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-checked', String(x === b)); });

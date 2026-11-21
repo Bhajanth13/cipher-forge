@@ -37,9 +37,9 @@ CF.sound = (function () {
 
   const BANDS = {
     audible: makeBand('audible', 'Audible', 1400, 1800, 150, 4350, 4650, 1200, 4900, 0.5,
-      { minMs: 0, markerMs: 350, snr: 15, minDb: -105, test: 3000 }),
+      { minMs: 0, markerMs: 350, snr: 12, minDb: -95, test: 3000 }),
     silent: makeBand('silent', 'Silent', 16900, 17250, 100, 18900, 17050, 16700, 19100, 1.0,
-      { minMs: 170, markerMs: 550, snr: 9, minDb: -125, test: 18000 })
+      { minMs: 200, markerMs: 600, snr: 9, minDb: -125, test: 18000 })
   };
 
   function freqOf(id, band) {
@@ -129,8 +129,11 @@ CF.sound = (function () {
     return ctx;
   }
 
-  // Silent mode never goes faster than its band allows
-  function effectiveMs(band, toneMs) { return Math.max(toneMs, (BANDS[band] || BANDS.audible).minMs); }
+  // Every data tone lasts exactly SYMBOL_MS. Because the receiver knows this,
+  // it can find each tone's time slot and judge it from the slot's middle,
+  // where the echo of the previous tone has faded most.
+  const SYMBOL_MS = 200;
+  function effectiveMs() { return SYMBOL_MS; }
 
   // Play a tone list. Calls onStep(i, fraction) as it goes, onDone at the end.
   function play(tones, toneMs, onStep, onDone, band) {
@@ -193,110 +196,218 @@ CF.sound = (function () {
   }
 
   /* ---------- Listening (microphone or loopback) ----------
-     The listener watches both bands. A start tone locks it to that band
-     until the end tone, so speech in the audible band cannot disturb a
-     silent message and the other way round. */
+     Detection runs on every audio sample, in order, as it arrives
+     (a ScriptProcessor feeds blocks of samples), so it never depends on
+     how busy the page is. Every HOP samples it looks at the last N
+     samples and measures each tone's strength with the Goertzel
+     algorithm. A tone counts once it has been the strongest for HOLD
+     hops in a row. The listener watches both bands; a start tone locks
+     it to that band until the end tone. */
   function createListener(handlers) {
     const ac = audio();
-    const analyser = ac.createAnalyser();
-    analyser.fftSize = 4096;
-    analyser.smoothingTimeConstant = 0;
-    const bins = new Float32Array(analyser.frequencyBinCount);
-    const binHz = ac.sampleRate / analyser.fftSize;
+    const SR = ac.sampleRate;
+    const N = 2048, HOP = 512, HOLD = 4;          // 43 ms window, 10.7 ms steps, 43 ms hold
 
-    let source = null, stream = null, timer = 0;
-    let state = 'idle', band = null, shown = 'audible', digits = [], prevDigit = null, lastHeard = 0;
-    let cand = undefined, candCount = 0, accepted = undefined;
-    const NEED = 3;                       // frames a tone must hold (~45 ms)
+    // Hann window and Goertzel coefficients
+    const hann = new Float32Array(N);
+    let wsum = 0;
+    for (let i = 0; i < N; i++) { hann[i] = 0.5 - 0.5 * Math.cos(2 * Math.PI * i / (N - 1)); wsum += hann[i]; }
+    function coeff(f) { return 2 * Math.cos(2 * Math.PI * f / SR); }
+    const GUARDS = {
+      audible: [1250, 1600, 1875, 2625, 3375, 4125, 4500, 4800],
+      silent: [16750, 17150, 17325, 17725, 18125, 18525, 18975, 19050]
+    };
+    const plans = {};
+    Object.keys(BANDS).forEach(function (k) {
+      plans[k] = {
+        band: BANDS[k],
+        tc: BANDS[k].targets.map(function (t) { return coeff(t.f); }),
+        gc: GUARDS[k].map(coeff)
+      };
+    });
 
-    function level(f) {
-      const c = Math.round(f / binHz);
-      let m = -Infinity;
-      for (let k = c - 2; k <= c + 2; k++) if (bins[k] > m) m = bins[k];
-      return m;
+    const ring = new Float32Array(N), frameBuf = new Float32Array(N);
+    let wpos = 0, sinceHop = 0;
+
+    // Amplitude (dB relative to full scale) of one frequency in the current frame
+    function amp(c) {
+      let s1 = 0, s2 = 0;
+      for (let i = 0; i < N; i++) { const s0 = frameBuf[i] + c * s1 - s2; s2 = s1; s1 = s0; }
+      const power = s1 * s1 + s2 * s2 - c * s1 * s2;
+      const a = 2 * Math.sqrt(Math.max(power, 0)) / wsum;
+      return 20 * Math.log10(a + 1e-12);
     }
-    function floorOf(b) {
-      const lo = Math.round(b.lo / binHz), hi = Math.min(bins.length - 1, Math.round(b.hi / binHz));
-      const arr = Array.prototype.slice.call(bins, lo, hi).sort(function (x, y) { return x - y; });
-      return arr[Math.floor(arr.length / 2)];
+    function median(arr) { const v = arr.slice().sort(function (a, b) { return a - b; }); return (v[(v.length - 1) >> 1] + v[v.length >> 1]) / 2; }
+
+    // Measure every tone of both bands in the current window
+    function measure() {
+      const out = {};
+      Object.keys(plans).forEach(function (k) {
+        const P = plans[k];
+        const lv = P.tc.map(amp), fl = median(P.gc.map(amp));
+        let best = 0;
+        for (let i = 1; i < lv.length; i++) if (lv[i] > lv[best]) best = i;
+        const snr = lv[best] - fl;
+        out[k] = { lv: lv, fl: fl, snr: Math.max(0, snr), id: (lv[best] > -95 && snr > P.band.snr) ? P.band.targets[best].id : null };
+      });
+      return out;
     }
-    // The strongest tone in one band, or null if nothing stands out
-    function strongest(b) {
-      const lv = b.targets.map(function (t) { return level(t.f); });
+
+    const T = Math.round(SYMBOL_MS / 1000 * SR);          // one symbol, in samples
+    function markerLen(k) { return Math.round(Math.max(BANDS[k].markerMs / 1000, 3 * SYMBOL_MS / 1000) * SR); }
+
+    let state = 'idle', band = null, shown = 'audible', digits = [], prevDigit = null;
+    let cand = null, candHops = 0, lastId = null, onsetC = 0, offC = 0, firstData = 0;
+    let levels = { audible: 0, silent: 0 };
+    let sampleNo = 0;                                       // samples seen so far
+    let t0 = 0, slot = 0, acc = null, prevWin = -1, lastStrong = 0;
+    const hist = [];                                        // recent windows, for replay and timing
+
+    function finish(ok) {
+      state = 'idle'; band = null; cand = null; candHops = 0;
+      if (ok && handlers.onMessage) handlers.onMessage(unpack(digits), digits.slice(), shown);
+      if (!ok && handlers.onLost) handlers.onLost(digits.slice());
+    }
+
+    // A slot has ended: its tone is the one strongest in the slot's middle.
+    // Then nudge the timing so slot boundaries line up with the moments
+    // the new tones actually took over.
+    function decideSlot() {
+      const P = plans[band];
       let best = 0;
-      for (let i = 1; i < lv.length; i++) if (lv[i] > lv[best]) best = i;
-      const ok = lv[best] > b.minDb && lv[best] - floorOf(b) > b.snr;
-      return ok ? b.targets[best].id : null;
-    }
-
-    function accept(id, b) {
-      lastHeard = performance.now();
-      if (handlers.onTone) handlers.onTone(id, b);
-      if (state === 'idle') {
-        if (id === 'S') {
-          state = 'rx'; band = b; shown = b; digits = []; prevDigit = null;
-          if (handlers.onStart) handlers.onStart(b);
+      for (let i = 1; i < acc.length; i++) if (acc[i] > acc[best]) best = i;
+      if (acc[best] === 0) return;                          // nothing heard in this slot
+      if (prevWin >= 0 && prevWin !== best) {
+        const edge = t0 + slot * T;
+        for (let j = 0; j < hist.length; j++) {
+          const h = hist[j];
+          if (h.c < edge - 0.4 * T || h.c > edge + 0.4 * T) continue;
+          if (h.m[band].lv[best] > h.m[band].lv[prevWin]) {
+            const err = Math.max(-0.25 * T, Math.min(0.25 * T, h.c - edge));
+            t0 += 0.3 * err;
+            break;
+          }
         }
-        return;
       }
+      prevWin = best;
+      const id = P.band.targets[best].id;
+      if (handlers.onTone) handlers.onTone(id, band);
+      if (id === 'E') { finish(true); return; }
       if (id === 'S') return;
-      if (id === 'E') {
-        state = 'idle'; band = null;
-        if (handlers.onMessage) handlers.onMessage(unpack(digits), digits.slice(), b);
-        return;
-      }
       const d = id === 'R' ? prevDigit : id;
       if (d === null) return;
       digits.push(d);
       prevDigit = d;
-      if (handlers.onDigit) handlers.onDigit(digits.slice(), b);
+      if (handlers.onDigit) handlers.onDigit(digits.slice(), band);
+      if (digits.length > 600) finish(false);
     }
 
-    function bandLevel(b) {
-      const lo = Math.round(b.lo / binHz), hi = Math.min(bins.length - 1, Math.round(b.hi / binHz));
-      let peak = -Infinity;
-      for (let k = lo; k <= hi; k++) if (bins[k] > peak) peak = bins[k];
-      return Math.max(0, peak - floorOf(b));
+    function dataStep(h) {
+      const rel = h.c - t0;
+      if (rel < 0) return;
+      const s = Math.floor(rel / T);
+      while (s > slot) {
+        decideSlot();
+        if (state !== 'data') return;
+        slot++;
+        acc = new Float64Array(plans[band].tc.length);
+      }
+      const frac = rel / T - s;
+      const r = h.m[band];
+      if (frac >= 0.3 && frac <= 0.9) {
+        // Only tones clearly above the noise count
+        for (let i = 0; i < r.lv.length; i++) if (r.lv[i] - r.fl > plans[band].band.snr * 0.5) acc[i] += Math.pow(10, r.lv[i] / 20);
+      }
+      if (r.id !== null) lastStrong = h.c;
+      if (h.c - lastStrong > 1.2 * SR) finish(false);       // the sound stopped: message lost
     }
 
-    function frame() {
-      analyser.getFloatFrequencyData(bins);
-      if (handlers.onLevels) handlers.onLevels({ audible: bandLevel(BANDS.audible), silent: bandLevel(BANDS.silent) });
-      let id = null, b = null;
-      if (state === 'rx') {
-        b = band; id = strongest(BANDS[band]);
-        if (performance.now() - lastHeard > 3000) {      // the message stopped half way
-          state = 'idle'; band = null;
-          if (handlers.onLost) handlers.onLost(digits.slice());
+    function hop() {
+      for (let i = 0; i < N; i++) frameBuf[i] = ring[(wpos + i) % N] * hann[i];
+      const h = { c: sampleNo - N / 2, m: measure() };      // c: the middle of this window, in samples
+      levels.audible = h.m.audible.snr; levels.silent = h.m.silent.snr;
+      hist.push(h);
+      if (hist.length > 160) hist.shift();
+
+      if (state === 'idle') {
+        // A start tone, held for HOLD windows, in either band
+        let b = null;
+        ['silent', 'audible'].forEach(function (k) { if (!b && h.m[k].id === 'S') b = k; });
+        lastId = b ? 'S' : null;
+        if (b !== cand) { cand = b; candHops = 0; if (b) onsetC = h.c; }
+        candHops++;
+        if (b && candHops === HOLD) {
+          state = 'start'; band = b; shown = b; digits = []; prevDigit = null; firstData = 0;
+          if (handlers.onTone) handlers.onTone('S', b);
+          if (handlers.onStart) handlers.onStart(b);
         }
-      } else {
-        // Idle: look for a start tone in either band
-        ['silent', 'audible'].forEach(function (k) {
-          if (b) return;
-          const s = strongest(BANDS[k]);
-          if (s === 'S') { id = 'S'; b = k; }
-        });
+        return;
       }
-      if (handlers.onFrame) handlers.onFrame(bins, binHz, id, b || shown);
 
-      const key = id === null ? null : b + ':' + id;
-      if (key === cand) candCount++;
-      else { cand = key; candCount = 1; }
-      if (candCount === NEED) {
-        if (key === null) { accepted = null; return; }
-        if (key !== accepted) { accepted = key; accept(id, b); }
+      if (state === 'start') {
+        // When the first data tone takes over, place slot 0. The start tone's
+        // beginning is the cleaner clue (echo smears endings, not beginnings),
+        // unless listening began part way through the start tone.
+        const r = h.m[band];
+        lastId = r.id;
+        if (r.id !== null && r.id !== 'S') {
+          if (++firstData === 1) offC = h.c;
+          if (firstData === 2) {
+            t0 = Math.min(onsetC + markerLen(band), offC);
+            slot = 0; acc = new Float64Array(plans[band].tc.length); prevWin = -1; lastStrong = h.c;
+            state = 'data';
+            hist.forEach(function (old) { if (state === 'data' && old.c >= t0) dataStep(old); });
+          }
+        } else firstData = 0;
+        if (state === 'start' && h.c - onsetC > markerLen(band) + 2 * SR) finish(false);
+        return;
+      }
+
+      lastId = h.m[band].id;
+      dataStep(h);
+    }
+
+    // Feed raw samples; run a hop every HOP samples
+    function feed(data) {
+      for (let i = 0; i < data.length; i++) {
+        ring[wpos] = data[i];
+        wpos = (wpos + 1) % N;
+        sampleNo++;
+        if (++sinceHop === HOP) { sinceHop = 0; hop(); }
       }
     }
+
+    // Audio graph: input → processor (detection) and analyser (pictures)
+    const analyser = ac.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0;
+    const bins = new Float32Array(analyser.frequencyBinCount);
+    const binHz = SR / analyser.fftSize;
+    const proc = ac.createScriptProcessor(2048, 1, 1);
+    const mute = ac.createGain();
+    mute.gain.value = 0;
+    proc.onaudioprocess = function (e) { feed(e.inputBuffer.getChannelData(0)); };
+    proc.connect(mute);
+    mute.connect(ac.destination);
+
+    let source = null, stream = null, drawTimer = 0;
+    function startDrawing() {
+      drawTimer = setInterval(function () {
+        if (handlers.onLevels) handlers.onLevels({ audible: levels.audible, silent: levels.silent });
+        if (handlers.onFrame) { analyser.getFloatFrequencyData(bins); handlers.onFrame(bins, binHz, lastId, band || shown); }
+      }, 40);
+    }
+    function connect(node) { node.connect(proc); node.connect(analyser); }
 
     return {
       // useMic = true: listen through the microphone. false: hear this device's own sender directly.
       start: function (useMic) {
         this.stop();
-        state = 'idle'; band = null; accepted = undefined;
+        state = 'idle'; band = null; cand = null; candHops = 0;
         if (!useMic) {
-          out.connect(analyser);
+          connect(out);
           source = 'loopback';
-          timer = setInterval(frame, 15);
+          startDrawing();
           return Promise.resolve();
         }
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -307,18 +418,21 @@ CF.sound = (function () {
         }).then(function (s) {
           stream = s;
           source = ac.createMediaStreamSource(s);
-          source.connect(analyser);
-          timer = setInterval(frame, 15);
+          connect(source);
+          startDrawing();
+          if (ac.state === 'suspended') ac.resume();
         });
       },
       stop: function () {
-        clearInterval(timer);
-        if (source === 'loopback') { try { out.disconnect(analyser); } catch (e) { /* not connected */ } }
-        else if (source) source.disconnect();
+        clearInterval(drawTimer);
+        if (source === 'loopback') {
+          try { out.disconnect(proc); } catch (e) { /* not connected */ }
+          try { out.disconnect(analyser); } catch (e) { /* not connected */ }
+        } else if (source) source.disconnect();
         if (stream) stream.getTracks().forEach(function (t) { t.stop(); });
         source = null; stream = null; state = 'idle'; band = null;
       },
-      sampleRate: ac.sampleRate
+      sampleRate: SR
     };
   }
 

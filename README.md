@@ -69,7 +69,7 @@ If silent messages don’t arrive, press **Play a silent test tone** on the send
 
 With one device, choose **This device, no microphone** on the receiver: the page decodes its own tones directly.
 
-How it works: `send = tones ∘ hex ∘ code ∘ F`. Each character code (0–255) is split into two base-16 digits, and each digit gets its own tone (16 tones from 1800 Hz to 4050 Hz). A digit equal to the one before is sent as a special repeat tone, so neighbouring tones always differ. Start and end tones mark the message, and a checksum (sum of the codes mod 256) shows whether anything was misheard. The receiver applies the inverses in reverse order.
+How it works: `send = tones ∘ hex ∘ code ∘ F`. Each character code (0–255) is split into two base-16 digits, and each digit gets its own tone (16 tones from 1800 Hz to 4050 Hz). Every tone lasts exactly 200 ms. A digit equal to the one before is sent as a special repeat tone, so neighbouring tones always differ. The receiver measures each tone with the Goertzel algorithm on every incoming sample, finds where the first data tone begins, and judges each 200 ms slot from its middle, where the echo of the previous tone has faded most. Start and end tones mark the message, and a checksum (sum of the codes mod 256) shows whether anything was misheard. The receiver applies the inverses in reverse order.
 
 ## Run it
 
