@@ -513,7 +513,25 @@
     set: set,
     chainMap: function () { return B.chainMap(state.chain, set()); },
     loadPreset: loadPreset,
-    ciphertext: function () { return $('msg-out').textContent; }
+    ciphertext: function () { return $('msg-out').textContent; },
+    encrypt: function (text) { return B.run(text, state.chain, set(), false).output; },
+    decrypt: function (text) {
+      const r = B.run(text, state.chain, set(), true);
+      return r ? r.output : null;
+    },
+    keyCode: function () { return B.keyCode(state.setKey, state.chain); },
+    loadKey: function (code) {
+      const k = B.parseKey(code);
+      if (!k) return false;
+      state.setKey = k.setKey;
+      state.chain = k.chain;
+      state.chain.forEach(function (blk) { blk.fresh = true; });
+      state.target = 'chain';
+      state.decEdited = false;
+      renderSetPicker();
+      refreshAll(true);
+      return true;
+    }
   };
 
   renderSetPicker();

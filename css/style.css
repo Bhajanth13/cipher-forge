@@ -576,6 +576,49 @@ table.keys, table.map { width: 100%; border-collapse: collapse; font-size: 15px;
 .freq-guess { font-size: 15px; color: var(--steel-2); line-height: 1.55; }
 .freq-guess b { color: var(--steel); }
 
+/* ---------- Send it by sound ---------- */
+.pipe { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; perspective: 1200px; }
+.pipe-stage {
+  position: relative; padding: 18px 18px 16px; background: var(--plate); border: 1px solid var(--rule-soft);
+  border-left: none; display: flex; flex-direction: column; gap: 8px; min-width: 0;
+  transform-style: preserve-3d; transition: transform .5s var(--ease);
+}
+.pipe-stage:first-child { border-left: 1px solid var(--rule-soft); border-radius: var(--radius) 0 0 var(--radius); }
+.pipe-stage:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
+.pipe-stage::after {
+  content: ''; position: absolute; right: -7px; top: 50%; z-index: 2;
+  width: 12px; height: 12px; background: var(--plate); border-top: 1px solid var(--rule); border-right: 1px solid var(--rule);
+  transform: translateY(-50%) rotate(45deg);
+}
+.pipe-stage:last-child::after { display: none; }
+.pipe-name { font-size: 13px; color: var(--muted); }
+.pipe-val { font-size: 14px; color: var(--steel); word-break: break-word; }
+.pipe-stage:nth-child(2) .pipe-val, .pipe-stage:nth-child(5) .pipe-val { color: var(--brass); }
+.pipe-formulas { display: grid; gap: 4px; margin: 18px 0 24px; }
+.pipe-formulas .mono { font-size: 15px; }
+.pipe-formulas .muted { font-size: 14px; margin-top: 4px; }
+
+.send-split .panel { gap: 14px; }
+.key-line { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.key-line .text-in { flex: 1; min-width: 200px; font-size: 14px; }
+.key-code { flex: 1; min-width: 0; padding: 9px 12px; border-radius: var(--radius); background: var(--graphite-2); border: 1px dashed var(--rule); font-size: 14px; color: var(--brass); word-break: break-all; }
+.tone-strip { display: flex; flex-wrap: wrap; gap: 4px; font-size: 12px; max-height: 120px; overflow: hidden; }
+.tone-strip span { min-width: 26px; text-align: center; padding: 3px 6px; border-radius: 4px; border: 1px solid var(--rule-soft); color: var(--muted); transition: background .1s, color .1s; }
+.tone-strip span.is-done { color: var(--steel-2); }
+.tone-strip span.is-now { background: var(--brass); border-color: var(--brass); color: var(--on-brass); }
+.tone-strip .more { border-style: dashed; }
+.send-bar { height: 3px; background: var(--rule-soft); border-radius: 2px; overflow: hidden; }
+.send-bar span { display: block; height: 100%; width: 0; background: var(--brass); }
+.send-status { font-size: 14px; }
+.spectrum { width: 100%; height: 120px; border-radius: var(--radius); border: 1px solid var(--rule-soft); display: block; }
+#rcv-listen { align-self: flex-start; }
+.rcv-out { display: grid; gap: 10px; }
+.rcv-out div { display: grid; grid-template-columns: 170px 1fr; gap: 12px; align-items: baseline; }
+.rcv-out dt { font-size: 14px; color: var(--muted); }
+.rcv-out dd { margin: 0; font-size: 14px; word-break: break-word; }
+.rcv-plain { font-size: 18px !important; color: var(--steel); }
+.rcv-plain.is-ok { color: var(--brass); }
+
 /* ---------- Presentation mode ---------- */
 .tour {
   position: fixed; z-index: 60; right: 24px; bottom: 24px; width: min(420px, calc(100vw - 32px));
@@ -611,6 +654,12 @@ body.touring .chapter .plate { transform: none !important; opacity: 1 !important
   .rotor-stage { height: 46vh; min-height: 300px; }
   .hero-hint { margin-top: 20px; }
   .split, .io, .checks, .truth, .break-grid, .pairs-body, .brackets-head { grid-template-columns: 1fr; }
+  .pipe { grid-template-columns: 1fr; }
+  .pipe-stage { border-left: 1px solid var(--rule-soft); border-top: none; border-radius: 0 !important; }
+  .pipe-stage:first-child { border-top: 1px solid var(--rule-soft); border-radius: var(--radius) var(--radius) 0 0 !important; }
+  .pipe-stage:last-child { border-radius: 0 0 var(--radius) var(--radius) !important; }
+  .pipe-stage::after { right: auto; left: 50%; top: auto; bottom: -7px; transform: translateX(-50%) rotate(135deg); }
+  .rcv-out div { grid-template-columns: 1fr; gap: 2px; }
   .nav-btn span { display: none; }
   .nav-btn:not(.icon) { width: 36px; padding: 0; justify-content: center; }
   .attack-controls { grid-template-columns: 1fr; }

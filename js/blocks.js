@@ -167,7 +167,36 @@ CF.blocks = (function () {
     return { output: cur.join(''), steps: steps, names: names };
   }
 
+  /* ---------- Key codes: the whole cipher as one short line ----------
+     e.g. "letters/shift-3/mirror/keyword-FORGE". Sender and receiver
+     must share this key; it is never sent with the message. */
+  function clean(v) { return String(v).replace(/[^A-Za-z0-9]/g, ''); }
+
+  function keyCode(setKey, chain) {
+    return [setKey].concat(chain.map(function (b) {
+      return [b.type].concat(TYPES[b.type].params.map(function (p) { return clean(b.params[p.key]); })).join('-');
+    })).join('/');
+  }
+
+  // Returns { setKey, chain } or null if the code is not valid
+  function parseKey(code) {
+    const parts = String(code || '').trim().split('/').filter(Boolean);
+    if (!parts.length || !CF.sets.PRESETS[parts[0]]) return null;
+    const chain = [];
+    for (let i = 1; i < parts.length; i++) {
+      const bits = parts[i].split('-');
+      const def = TYPES[bits[0]];
+      if (!def || bits.length - 1 !== def.params.length) return null;
+      const params = {};
+      def.params.forEach(function (p, j) { params[p.key] = p.kind === 'number' ? parseInt(bits[j + 1], 10) || 0 : bits[j + 1]; });
+      chain.push(create(bits[0], params));
+    }
+    return { setKey: parts[0], chain: chain };
+  }
+
   return {
+    keyCode: keyCode,
+    parseKey: parseKey,
     TYPES: TYPES,
     create: create,
     mapOf: mapOf,

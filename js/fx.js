@@ -100,7 +100,8 @@
       document.querySelectorAll('.tilt.is-tilting').forEach(function (c) {
         if (c !== card) { c.classList.remove('is-tilting'); c.style.transform = ''; }
       });
-      if (!card || e.target.closest('input, textarea, select')) return;
+      // Hold the card still over controls, so buttons never slide out from under the pointer
+      if (!card || e.target.closest('input, textarea, select, button, a, label, canvas, svg, [role="radio"]')) return;
       const r = card.getBoundingClientRect();
       const px = (e.clientX - r.left) / r.width - 0.5;
       const py = (e.clientY - r.top) / r.height - 0.5;

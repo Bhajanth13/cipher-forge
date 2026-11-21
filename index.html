@@ -25,6 +25,7 @@
       <li><a href="#inspect">Check</a></li>
       <li><a href="#relations">Relate</a></li>
       <li><a href="#encrypt">Encrypt</a></li>
+      <li><a href="#send">Send</a></li>
       <li><a href="#break">Break</a></li>
       <li><a href="#attack">Count</a></li>
       <li><a href="#syllabus">Syllabus</a></li>
@@ -73,7 +74,7 @@
 <section class="chapter" id="alphabet" aria-labelledby="alphabet-title">
   <div class="plate">
     <header class="chapter-head">
-      <p class="step">Step 1 of 7 <span class="module">Module 1: sets</span></p>
+      <p class="step">Step 1 of 8 <span class="module">Module 1: sets</span></p>
       <h2 id="alphabet-title">Choose the symbols</h2>
       <p class="chapter-lead">Every cipher works on a set S of symbols. Its size, the cardinality |S|, decides everything that follows: how arrows are drawn, which blocks are safe, and how many keys exist.</p>
     </header>
@@ -128,7 +129,7 @@
 <section class="chapter" id="forge" aria-labelledby="forge-title">
   <div class="plate">
     <header class="chapter-head">
-      <p class="step">Step 2 of 7 <span class="module">Module 3: functions and composition</span></p>
+      <p class="step">Step 2 of 8 <span class="module">Module 3: functions and composition</span></p>
       <h2 id="forge-title">Build a cipher from blocks</h2>
       <p class="chapter-lead">Each block is a function f : S → S. Blocks run left to right, so a chain f₁ then f₂ is the composition f₂ ∘ f₁.</p>
     </header>
@@ -169,7 +170,7 @@
 <section class="chapter" id="inspect" aria-labelledby="inspect-title">
   <div class="plate">
     <header class="chapter-head">
-      <p class="step">Step 3 of 7 <span class="module">Modules 2 and 3: logic, bijections, pigeonhole</span></p>
+      <p class="step">Step 3 of 8 <span class="module">Modules 2 and 3: logic, bijections, pigeonhole</span></p>
       <h2 id="inspect-title">Check that it can be undone</h2>
       <p class="chapter-lead">A cipher can be decrypted only if its function is a bijection: one-to-one and onto. The arrow diagram shows the function; hover a symbol to trace its arrow.</p>
     </header>
@@ -221,7 +222,7 @@
 <section class="chapter" id="relations" aria-labelledby="relations-title">
   <div class="plate">
     <header class="chapter-head">
-      <p class="step">Step 4 of 7 <span class="module">Modules 1 and 3: Cartesian product and relations</span></p>
+      <p class="step">Step 4 of 8 <span class="module">Modules 1 and 3: Cartesian product and relations</span></p>
       <h2 id="relations-title">See the cipher as a relation</h2>
       <p class="chapter-lead">A function is a special relation: a set of ordered pairs R = { (x, f(x)) } inside S × S. Drawn as a grid, a function has exactly one dot in every row, and a bijection also has exactly one dot in every column.</p>
     </header>
@@ -271,7 +272,7 @@
 <section class="chapter" id="encrypt" aria-labelledby="encrypt-title">
   <div class="plate">
     <header class="chapter-head">
-      <p class="step">Step 5 of 7 <span class="module">Module 3: inverse of a composition</span></p>
+      <p class="step">Step 5 of 8 <span class="module">Module 3: inverse of a composition</span></p>
       <h2 id="encrypt-title">Encrypt, then undo it</h2>
       <p class="chapter-lead">Encryption applies every block in order. Decryption applies each inverse in reverse order, because (g ∘ f)⁻¹ = f⁻¹ ∘ g⁻¹. Symbols outside S pass through unchanged.</p>
     </header>
@@ -306,11 +307,79 @@
 </section>
 
 
-<!-- ============ 6. BREAK ============ -->
+
+<!-- ============ 6. SEND BY SOUND ============ -->
+<section class="chapter" id="send" aria-labelledby="send-title">
+  <div class="plate">
+    <header class="chapter-head">
+      <p class="step">Step 6 of 8 <span class="module">Module 3: a composition of bijections, and its inverse</span></p>
+      <h2 id="send-title">Send it by sound</h2>
+      <p class="chapter-lead">The ciphertext travels through the air as tones. Anyone nearby can hear them, but only a receiver holding the same key can turn them back into the message.</p>
+    </header>
+
+    <div class="pipe" id="pipe">
+      <div class="pipe-stage"><p class="pipe-name">Message</p><p class="mono pipe-val" id="pipe-msg"></p></div>
+      <div class="pipe-stage"><p class="pipe-name">F: your cipher</p><p class="mono pipe-val" id="pipe-ct"></p></div>
+      <div class="pipe-stage"><p class="pipe-name">code: character → 0–255</p><p class="mono pipe-val" id="pipe-codes"></p></div>
+      <div class="pipe-stage"><p class="pipe-name">hex: two base-16 digits</p><p class="mono pipe-val" id="pipe-hex"></p></div>
+      <div class="pipe-stage"><p class="pipe-name">tones: digit → frequency</p><p class="mono pipe-val" id="pipe-tones"></p></div>
+    </div>
+    <div class="pipe-formulas">
+      <p class="mono">send = tones ∘ hex ∘ code ∘ F</p>
+      <p class="mono">receive = F⁻¹ ∘ code⁻¹ ∘ hex⁻¹ ∘ tones⁻¹</p>
+      <p class="muted">16 tones carry one base-16 digit each (2⁴ = 16), and two digits make one character code: 16 × 16 = 256, by the product rule.</p>
+    </div>
+
+    <div class="split send-split">
+      <div class="panel">
+        <h3>Sender</h3>
+        <label for="snd-msg" class="io-label">Message</label>
+        <textarea id="snd-msg" rows="2" spellcheck="false" maxlength="120">Meet me at the library at noon</textarea>
+        <div class="key-row">
+          <p class="io-label">Shared key (send it separately, never with the message)</p>
+          <div class="key-line"><code class="mono key-code" id="snd-key"></code><button type="button" class="btn ghost" id="snd-copy">Copy key</button></div>
+        </div>
+        <div class="segmented small" role="radiogroup" aria-label="Tone speed" id="snd-speed">
+          <button type="button" role="radio" aria-checked="true" data-ms="140">Reliable</button>
+          <button type="button" role="radio" aria-checked="false" data-ms="90">Fast</button>
+        </div>
+        <div class="tone-strip mono" id="snd-tones" aria-label="Tones to be played"></div>
+        <div class="send-bar"><span id="snd-progress"></span></div>
+        <div class="btn-row">
+          <button type="button" class="btn primary" id="snd-play">Encrypt and send as sound</button>
+          <button type="button" class="btn ghost" id="snd-stop" disabled>Stop</button>
+        </div>
+        <p class="muted send-status" id="snd-status" aria-live="polite"></p>
+      </div>
+
+      <div class="panel">
+        <h3>Receiver</h3>
+        <label for="rcv-key" class="io-label">Key (on a second device, paste the sender’s key here)</label>
+        <div class="key-line"><input type="text" id="rcv-key" class="text-in" spellcheck="false" autocomplete="off"><button type="button" class="btn ghost" id="rcv-apply">Use this key</button></div>
+        <div class="segmented small" role="radiogroup" aria-label="How to listen" id="rcv-mode">
+          <button type="button" role="radio" aria-checked="true" data-mode="loop">This device, no microphone</button>
+          <button type="button" role="radio" aria-checked="false" data-mode="mic">Microphone</button>
+        </div>
+        <button type="button" class="btn" id="rcv-listen">Start listening</button>
+        <canvas id="spectrum" class="spectrum" height="120" aria-label="Live sound spectrum from 1.2 to 4.9 kHz"></canvas>
+        <p class="muted send-status" id="rcv-status" aria-live="polite">Not listening.</p>
+        <dl class="rcv-out">
+          <div><dt>Digits heard</dt><dd class="mono" id="rcv-hex">—</dd></div>
+          <div><dt>Ciphertext</dt><dd class="mono" id="rcv-cipher">—</dd></div>
+          <div><dt>Checksum</dt><dd id="rcv-check">—</dd></div>
+          <div><dt>Decrypted with your key</dt><dd class="mono rcv-plain" id="rcv-plain">—</dd></div>
+        </dl>
+      </div>
+    </div>
+    <p class="note">Someone listening without the key only gets the ciphertext. The next step shows what such an eavesdropper can still try.</p>
+  </div>
+</section>
+
+<!-- ============ 7. BREAK ============ -->
 <section class="chapter" id="break" aria-labelledby="break-title">
   <div class="plate">
     <header class="chapter-head">
-      <p class="step">Step 6 of 7 <span class="module">Modules 1, 3 and 4: multisets, pigeonhole, brute force</span></p>
+      <p class="step">Step 7 of 8 <span class="module">Modules 1, 3 and 4: multisets, pigeonhole, brute force</span></p>
       <h2 id="break-title">Break it</h2>
       <p class="chapter-lead">An attacker has only the ciphertext. Brute force tries every key; frequency analysis counts the letters. Encrypt a paragraph with your cipher, then watch both attacks.</p>
     </header>
@@ -353,7 +422,7 @@
 <section class="chapter" id="attack" aria-labelledby="attack-title">
   <div class="plate">
     <header class="chapter-head">
-      <p class="step">Step 7 of 7 <span class="module">Modules 4 and 5: counting</span></p>
+      <p class="step">Step 8 of 8 <span class="module">Modules 4 and 5: counting</span></p>
       <h2 id="attack-title">Count the keys an attacker must try</h2>
       <p class="chapter-lead">A brute-force attacker tries every key. The sum rule, product rule, permutations and combinations tell us how many there are. Counts are exact, computed with BigInt.</p>
     </header>
@@ -411,10 +480,10 @@
           <tr><td>2</td><td>Predicate logic, quantifiers</td><td><a href="#inspect">∀ and ∃ definitions of one-to-one and onto</a></td></tr>
           <tr><td>3</td><td>Relations, equivalence relations</td><td><a href="#relations">Relation matrix, symbols the cipher can’t tell apart</a></td></tr>
           <tr><td>3</td><td>Functions: one-to-one, onto, bijective</td><td><a href="#inspect">Checks and arrow diagram</a></td></tr>
-          <tr><td>3</td><td>Composition of functions</td><td><a href="#forge">Chaining blocks</a></td></tr>
-          <tr><td>3</td><td>Invertibility and inverse</td><td><a href="#encrypt">Decryption</a></td></tr>
+          <tr><td>3</td><td>Composition of functions</td><td><a href="#forge">Chaining blocks</a>, <a href="#send">the send-by-sound pipeline</a></td></tr>
+          <tr><td>3</td><td>Invertibility and inverse</td><td><a href="#encrypt">Decryption</a>, <a href="#send">receiving by sound</a></td></tr>
           <tr><td>3</td><td>Pigeonhole principle</td><td><a href="#inspect">Collision finder</a>, <a href="#break">why long messages leak</a></td></tr>
-          <tr><td>4</td><td>Rules of sum and product</td><td><a href="#attack">Password symbol count and length</a>, <a href="#break">brute force</a></td></tr>
+          <tr><td>4</td><td>Rules of sum and product</td><td><a href="#attack">Password symbol count and length</a>, <a href="#break">brute force</a>, <a href="#send">16 × 16 = 256 codes from two tones</a></td></tr>
           <tr><td>4</td><td>Permutations, with repetition</td><td><a href="#attack">n!, P(n, r), nʳ key counts</a></td></tr>
           <tr><td>5</td><td>Combinations, with repetition</td><td><a href="#attack">Swap keys C(n, 2), frequency profiles</a></td></tr>
           <tr><td>5</td><td>Binomial theorem</td><td><a href="#alphabet">Counting subsets of S as 2ⁿ</a></td></tr>
@@ -452,9 +521,11 @@
 <script src="js/counting.js"></script>
 <script src="js/breaker.js"></script>
 <script src="js/relations.js"></script>
+<script src="js/sound.js"></script>
 <script src="js/scroll3d.js"></script>
 <script src="js/app.js"></script>
 <script src="js/lab2.js"></script>
+<script src="js/lab3.js"></script>
 <script src="js/fx.js"></script>
 <script src="js/tour.js"></script>
 
