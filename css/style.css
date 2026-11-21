@@ -383,6 +383,11 @@ h3 { font-size: 19px; font-weight: 600; font-variation-settings: 'wdth' 110; let
 #diagram.has-focus .arrow { stroke-opacity: .08; }
 #diagram.has-focus .arrow.focus { stroke: var(--brass); stroke-opacity: 1; stroke-width: 2.2; }
 #diagram .hit { cursor: pointer; }
+#diagram .layer-lbl { font-family: var(--mono); font-size: 13px; fill: var(--muted); text-anchor: end; dominant-baseline: central; paint-order: stroke; stroke: var(--graphite); stroke-width: 6px; stroke-linejoin: round; }
+#diagram .layer-lbl.newest { fill: var(--brass); }
+#diagram .node.mid { fill: var(--graphite); }
+#diagram:not(.has-focus) .arrow.past:not(.clash) { stroke-opacity: .2; }
+#diagram:not(.has-focus) .arrow.newest:not(.clash) { stroke: var(--brass); stroke-opacity: .5; }
 #diagram .draw { stroke-dasharray: var(--len); stroke-dashoffset: var(--len); animation: draw .9s var(--ease) forwards; animation-delay: var(--d); }
 @keyframes draw { to { stroke-dashoffset: 0; } }
 .diagram-cap { margin-top: 10px; font-size: 14px; color: var(--muted); }

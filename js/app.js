@@ -230,20 +230,48 @@
   /* =========================================================
      Step 3: Check (bijections, predicates, pigeonhole)
      ========================================================= */
+  // Tab k shows the chain f₁, then f₂, … up to fₖ, drawn layer by layer:
+  // the composition fₖ ∘ … ∘ f₁. "Whole cipher F" shows the collapsed map.
+  function compName(k) {
+    if (k === 1) return 'f₁';
+    if (k <= 3) {
+      const parts = [];
+      for (let i = k; i >= 1; i--) parts.push('f' + subscript(i));
+      return parts.join(' ∘ ');
+    }
+    return 'f' + subscript(k) + ' ∘ … ∘ f₁';
+  }
+  function tabLabel(i) {
+    const k = i + 1, b = state.chain[i];
+    if (k === 1) return 'f₁ ' + B.TYPES[b.type].short(b.params);
+    return compName(k) + (k === state.chain.length ? ' = F' : '');
+  }
+
   function currentTarget() {
+    const s = set();
     if (state.target !== 'chain') {
-      const blk = state.chain.find(function (b) { return b.id === state.target; });
-      if (blk) return { name: 'f = ' + B.TYPES[blk.type].short(blk.params), map: B.mapOf(blk, set()) };
+      const k = state.chain.findIndex(function (b) { return b.id === state.target; }) + 1;
+      if (k > 0) {
+        const part = state.chain.slice(0, k);
+        return {
+          k: k,
+          name: (k === 1 ? 'f₁ = ' : compName(k) + ' = ') + B.chainName(part),
+          layers: part.map(function (b) { return B.mapOf(b, s); }),
+          labels: part.map(function (b, i) { return 'f' + subscript(i + 1) + '  ' + B.TYPES[b.type].short(b.params); }),
+          map: B.chainMap(part, s)
+        };
+      }
       state.target = 'chain';
     }
-    return { name: 'F = ' + B.chainName(state.chain), map: B.chainMap(state.chain, set()) };
+    const F = B.chainMap(state.chain, s);
+    return { k: 0, name: 'F = ' + B.chainName(state.chain), layers: [F], labels: [], map: F };
   }
 
   function renderTabs() {
     const box = $('inspect-tabs');
     box.innerHTML = '';
     const items = [{ id: 'chain', label: 'Whole cipher F' }].concat(state.chain.map(function (b, i) {
-      return { id: b.id, label: 'f' + subscript(i + 1) + ' ' + B.TYPES[b.type].short(b.params) };
+      return { id: b.id, label: tabLabel(i) };
     }));
     items.forEach(function (it) {
       const t = document.createElement('button');
@@ -266,12 +294,24 @@
     const s = set(), n = s.length;
     const tgt = currentTarget();
     const r = FN.analyse(tgt.map, n);
-    drawDiagram(s, tgt.map, r, animate || lastDiagramKey !== tgt.name + state.setKey);
-    lastDiagramKey = tgt.name + state.setKey;
+    const key = tgt.name + state.setKey;
+    drawDiagram(s, tgt, r, animate || lastDiagramKey !== key);
+    lastDiagramKey = key;
 
-    $('diagram-cap').textContent = tgt.name + '. ' + n + ' arrows from S to S; ' +
-      (r.bijective ? 'every output is hit exactly once.' :
-        r.collisions.length + ' output' + (r.collisions.length === 1 ? '' : 's') + ' hit more than once, ' + r.unused.length + ' never hit.');
+    const result = r.bijective ? 'every output is hit exactly once.' :
+      r.collisions.length + ' output' + (r.collisions.length === 1 ? '' : 's') + ' hit more than once, ' + r.unused.length + ' never hit.';
+    let cap;
+    if (tgt.k === 0) {
+      cap = tgt.name + '. ' + n + ' arrows from S to S; ' + result +
+        (state.chain.length > 1 ? ' Pick ' + compName(state.chain.length) + ' to watch the chain build F step by step.' : '');
+    } else if (tgt.k === 1) {
+      cap = tgt.name + '. The first block on its own; ' + result;
+    } else {
+      const route = tgt.k === 2 ? 'f₁, then f₂' : tgt.k === 3 ? 'f₁, then f₂, then f₃' : 'f₁, then f₂, and so on to f' + subscript(tgt.k);
+      cap = tgt.name + '. Each symbol goes through ' + route + '; ' + result +
+        (tgt.k === state.chain.length ? ' This is the whole cipher F.' : '');
+    }
+    $('diagram-cap').textContent = cap;
 
     // One-to-one
     setCheck('chk-inj', r.injective, r.injective ? 'Holds' : 'Fails',
@@ -310,33 +350,61 @@
     el.querySelector('.check-detail').innerHTML = detail;
   }
 
-  function drawDiagram(s, f, r, animate) {
+  function drawDiagram(s, tgt, r, animate) {
     const svg = $('diagram');
-    const n = s.length, W = 1000, PAD = 26, Y1 = 58, Y2 = 296, H = 340;
+    const layers = tgt.layers, L = layers.length, n = s.length;
+    const W = 1000, PAD = 26, Y0 = 58;
+    const G = L === 1 ? 238 : Math.max(120, 200 - (L - 2) * 25);
+    const H = Y0 + L * G + 44;
     const step = (W - 2 * PAD) / Math.max(1, n - 1);
     const rad = Math.max(8, Math.min(14, step / 2 - 1.5));
     const x = function (i) { return n === 1 ? W / 2 : PAD + i * step; };
+    const rowY = function (j) { return Y0 + j * G; };
     svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.classList.toggle('is-chain', tgt.k > 1);
 
-    const clashOut = new Set(r.collisions.map(function (c) { return c.y; }));
-    const unused = new Set(r.unused);
-
-    let html = '<text class="row-lbl" x="' + PAD + '" y="20">inputs x</text>' +
-      '<text class="row-lbl" x="' + PAD + '" y="' + (H - 6) + '">outputs f(x)</text>';
+    // Follow every input through the layers: paths[x][j] = value after j blocks
+    const paths = [];
     for (let i = 0; i < n; i++) {
-      const y = f[i];
-      const x1 = x(i), x2 = x(y);
-      const d = 'M' + x1.toFixed(1) + ' ' + (Y1 + rad) + ' C' + x1.toFixed(1) + ' ' + (Y1 + 120) + ' ' + x2.toFixed(1) + ' ' + (Y2 - 120) + ' ' + x2.toFixed(1) + ' ' + (Y2 - rad);
-      html += '<path class="arrow' + (clashOut.has(y) ? ' clash' : '') + (animate ? ' draw' : '') + '" data-from="' + i + '" data-to="' + y + '" d="' + d + '" style="--d:' + (i * 14) + 'ms"/>';
+      const p = [i];
+      for (let j = 0; j < L; j++) p.push(layers[j][p[j]]);
+      paths.push(p);
     }
-    for (let i = 0; i < n; i++) {
-      html += '<g class="hit" data-from="' + i + '" tabindex="0" role="button" aria-label="' + esc(s[i]) + ' maps to ' + esc(s[f[i]]) + '">' +
-        '<circle class="node" cx="' + x(i) + '" cy="' + Y1 + '" r="' + rad + '"/>' +
-        '<text class="lbl" x="' + x(i) + '" y="' + Y1 + '">' + esc(s[i]) + '</text></g>';
-      const cls = unused.has(i) ? ' unused' : (clashOut.has(i) ? ' hit2' : '');
-      html += '<g class="hit" data-to="' + i + '">' +
-        '<circle class="node' + cls + '" cx="' + x(i) + '" cy="' + Y2 + '" r="' + rad + '"/>' +
-        '<text class="lbl' + (unused.has(i) ? ' unused' : '') + '" x="' + x(i) + '" y="' + Y2 + '">' + esc(s[i]) + '</text></g>';
+    // Which nodes are reached in each row, and by how many arrows
+    const reach = [], incoming = [];
+    for (let j = 0; j <= L; j++) { reach.push(new Set()); incoming.push(new Array(n).fill(0)); }
+    paths.forEach(function (p) { for (let j = 0; j <= L; j++) reach[j].add(p[j]); });
+    for (let j = 1; j <= L; j++) reach[j - 1].forEach(function (v) { incoming[j][layers[j - 1][v]]++; });
+
+    const outLabel = tgt.k === 0 ? 'outputs F(x)' : tgt.k === 1 ? 'outputs f₁(x)' : 'outputs (' + compName(tgt.k) + ')(x)';
+    let html = '<text class="row-lbl" x="' + PAD + '" y="20">inputs x</text>' +
+      '<text class="row-lbl" x="' + PAD + '" y="' + (H - 6) + '">' + esc(outLabel) + '</text>';
+
+    // Arrows, layer by layer; earlier layers dimmer, the newest block bright
+    for (let j = 1; j <= L; j++) {
+      const ya = rowY(j - 1), yb = rowY(j), c = G * 0.5;
+      const past = L > 1 && j < L ? ' past' : '';
+      const fresh = L > 1 && j === L ? ' newest' : '';
+      Array.from(reach[j - 1]).sort(function (a, b) { return a - b; }).forEach(function (v, idx) {
+        const w = layers[j - 1][v];
+        const x1 = x(v), x2 = x(w);
+        const d = 'M' + x1.toFixed(1) + ' ' + (ya + rad) + ' C' + x1.toFixed(1) + ' ' + (ya + c) + ' ' + x2.toFixed(1) + ' ' + (yb - c) + ' ' + x2.toFixed(1) + ' ' + (yb - rad);
+        html += '<path class="arrow' + past + fresh + (incoming[j][w] > 1 ? ' clash' : '') + (animate ? ' draw' : '') +
+          '" data-k="' + j + ':' + v + '" d="' + d + '" style="--d:' + ((j - 1) * 520 + idx * 12) + 'ms"/>';
+      });
+      if (L > 1) {
+        html += '<text class="layer-lbl' + (j === L ? ' newest' : '') + '" x="' + (W - PAD) + '" y="' + (ya + G / 2) + '">' + esc(tgt.labels[j - 1]) + '</text>';
+      }
+    }
+    // Nodes
+    for (let j = 0; j <= L; j++) {
+      for (let i = 0; i < n; i++) {
+        const unused = j > 0 && !reach[j].has(i);
+        const cls = unused ? ' unused' : (j > 0 && incoming[j][i] > 1 ? ' hit2' : '');
+        html += '<g class="hit" data-row="' + j + '" data-v="' + i + '"' + (j === 0 ? ' tabindex="0" role="button" aria-label="' + esc(s[i]) + ' maps to ' + esc(s[tgt.map[i]]) + '"' : '') + '>' +
+          '<circle class="node' + cls + (j > 0 && j < L ? ' mid' : '') + '" cx="' + x(i) + '" cy="' + rowY(j) + '" r="' + rad + '"/>' +
+          '<text class="lbl' + (unused ? ' unused' : '') + '" x="' + x(i) + '" y="' + rowY(j) + '">' + esc(s[i]) + '</text></g>';
+      }
     }
     svg.innerHTML = html;
 
@@ -346,21 +414,24 @@
       });
     }
 
-    function focusOn(attr, val) {
-      svg.classList.add('has-focus');
-      svg.querySelectorAll('.arrow').forEach(function (p) {
-        p.classList.toggle('focus', p.getAttribute(attr) === val);
+    // Hover a symbol in any row to trace every path through it
+    function focusOn(row, v) {
+      const keys = new Set();
+      paths.forEach(function (p) {
+        if (p[row] !== v) return;
+        for (let j = 1; j <= L; j++) keys.add(j + ':' + p[j - 1]);
       });
+      svg.classList.add('has-focus');
+      svg.querySelectorAll('.arrow').forEach(function (a) { a.classList.toggle('focus', keys.has(a.getAttribute('data-k'))); });
     }
     function clear() {
       svg.classList.remove('has-focus');
-      svg.querySelectorAll('.arrow.focus').forEach(function (p) { p.classList.remove('focus'); });
+      svg.querySelectorAll('.arrow.focus').forEach(function (a) { a.classList.remove('focus'); });
     }
     svg.querySelectorAll('.hit').forEach(function (g) {
-      const attr = g.hasAttribute('data-from') ? 'data-from' : 'data-to';
-      const val = g.getAttribute(attr);
-      g.addEventListener('mouseenter', function () { focusOn(attr, val); });
-      g.addEventListener('focus', function () { focusOn(attr, val); });
+      const row = +g.getAttribute('data-row'), v = +g.getAttribute('data-v');
+      g.addEventListener('mouseenter', function () { focusOn(row, v); });
+      g.addEventListener('focus', function () { focusOn(row, v); });
       g.addEventListener('mouseleave', clear);
       g.addEventListener('blur', clear);
     });
@@ -479,7 +550,7 @@
   function renderTabsLabelsOnly() {
     const tabs = $('inspect-tabs').querySelectorAll('.tab');
     state.chain.forEach(function (b, i) {
-      if (tabs[i + 1]) tabs[i + 1].textContent = 'f' + subscript(i + 1) + ' ' + B.TYPES[b.type].short(b.params);
+      if (tabs[i + 1]) tabs[i + 1].textContent = tabLabel(i);
     });
   }
 

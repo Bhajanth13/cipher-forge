@@ -122,6 +122,9 @@
 /* Diagrams glow like signals */
 .fx.lab #diagram .arrow { stroke: var(--signal); stroke-opacity: .30; }
 .fx.lab #diagram .node { stroke: var(--signal-line); }
+.fx.lab #diagram:not(.has-focus) .arrow.past:not(.clash) { stroke-opacity: .18; }
+.fx.lab #diagram:not(.has-focus) .arrow.newest:not(.clash) { stroke: var(--brass); stroke-opacity: .55; }
+.fx.lab #diagram .layer-lbl { stroke: var(--plate); }
 .fx.lab #diagram .arrow.clash { stroke: var(--fault); stroke-opacity: .85; }
 .fx.lab #diagram.has-focus .arrow { stroke-opacity: .07; }
 .fx.lab #diagram.has-focus .arrow.focus { stroke: var(--brass); stroke-opacity: 1; }
