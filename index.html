@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="fx lab">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,12 +7,15 @@
 <meta name="description" content="Cipher Forge is an interactive lab for CS1812 Discrete Mathematics and Set Theory: build ciphers from blocks and watch sets, functions, bijections, the pigeonhole principle and counting at work.">
 <script>try{var t=localStorage.getItem('cf-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <link rel="stylesheet" href="css/fonts.css?v=8">
-<link rel="stylesheet" href="css/style.css?v=8">
+<link rel="stylesheet" href="css/style.css?v=9">
+<link rel="stylesheet" href="css/future.css?v=9">
+<link rel="stylesheet" href="css/lab-fx.css?v=9">
 </head>
 <body>
 
 <a class="skip" href="#alphabet">Skip to the lab</a>
 <div class="glyph-field" id="glyph-field" aria-hidden="true"></div>
+<canvas class="fx-stars" id="fx-stars" aria-hidden="true"></canvas>
 
 <header class="nav" id="nav">
   <a class="brand" href="#top" aria-label="Cipher Forge, back to top">
@@ -46,11 +49,20 @@
 
 <main>
 
-<!-- ============ HERO: the rotor drum ============ -->
+<!-- ============ HERO: the holographic rotor drum ============ -->
 <section class="hero" id="top" aria-labelledby="hero-title">
   <div class="hero-sticky">
+    <div class="hud" aria-hidden="true">
+      <span class="hud-corner tl"></span><span class="hud-corner tr"></span><span class="hud-corner bl"></span><span class="hud-corner br"></span>
+      <p class="hud-line hud-a mono">CIPHER LAB · CS1812</p>
+      <p class="hud-line hud-b mono">ROTORS 5 · SHIFT <span id="hud-k">0</span></p>
+      <p class="hud-line hud-c mono">KEY <span id="hud-key">——</span></p>
+      <p class="hud-line hud-d mono">7 STEPS · 5 MODULES</p>
+    </div>
+
     <div class="hero-copy">
-      <h1 id="hero-title" class="display">Cipher Forge</h1>
+      <p class="fx-kicker mono">Discrete mathematics, made visible</p>
+      <h1 id="hero-title" class="display">Cipher<br>Forge</h1>
       <p class="hero-lead">Build ciphers from small blocks. Watch discrete maths decide which ones can be undone, which ones break, and how long an attacker would need.</p>
       <p class="hero-readout" aria-live="polite">
         <span class="mono" id="hero-plain">HELLO</span>
@@ -58,13 +70,24 @@
         <span class="mono brass" id="hero-cipher">HELLO</span>
         <span class="hero-shift">shift k = <span id="hero-k">0</span></span>
       </p>
-      <p class="hero-hint">Scroll to turn the rotors</p>
+      <div class="fx-cta hero-cta">
+        <a class="btn primary fx-btn" href="#alphabet">Enter the lab</a>
+        <button type="button" class="btn ghost fx-btn" id="hero-present">Present it</button>
+        <a class="btn ghost fx-btn" href="future.html">Future enhancements</a>
+      </div>
+      <p class="hero-hint mono">Scroll to turn the rotors</p>
     </div>
+
     <div class="rotor-stage" aria-hidden="true">
+      <div class="halo">
+        <span class="halo-ring h1"></span><span class="halo-ring h2"></span><span class="halo-ring h3"></span>
+        <span class="halo-glow"></span>
+      </div>
       <div class="rotor-rig" id="rig">
         <div class="rotor-axle"></div>
         <div class="rotor-window" id="rotor-window"></div>
       </div>
+      <div class="rotor-scan"></div>
       <div class="rotor-fade"></div>
     </div>
   </div>
@@ -454,11 +477,12 @@
 <script src="js/counting.js?v=8"></script>
 <script src="js/breaker.js?v=8"></script>
 <script src="js/relations.js?v=8"></script>
-<script src="js/scroll3d.js?v=8"></script>
-<script src="js/app.js?v=8"></script>
-<script src="js/lab2.js?v=8"></script>
-<script src="js/fx.js?v=8"></script>
-<script src="js/tour.js?v=8"></script>
+<script src="js/scroll3d.js?v=9"></script>
+<script src="js/app.js?v=9"></script>
+<script src="js/lab2.js?v=9"></script>
+<script src="js/fx.js?v=9"></script>
+<script src="js/tour.js?v=9"></script>
+<script src="js/lab-fx.js?v=9"></script>
 
 
 </body>

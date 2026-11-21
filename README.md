@@ -32,6 +32,8 @@ future.html         future enhancement: send it by sound
 receive.html        the phone receiver page
 css/style.css       design and 3D effects
 css/fonts.css       self-hosted fonts (works offline)
+css/lab-fx.css      the lab's sci-fi look (shares the palette in future.css)
+js/lab-fx.js        the lab's star field, decoding title, HUD and slow glide links
 js/sets.js          Module 1: sets and set operations
 js/functions.js     Module 3: one-to-one, onto, bijection, composition, inverse, pigeonhole
 js/blocks.js        the cipher blocks and running a chain
