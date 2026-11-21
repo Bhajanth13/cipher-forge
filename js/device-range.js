@@ -27,19 +27,21 @@
     return 8.686 * f * f * (1.84e-11 * (pr / pa) * Math.pow(T / T0, 0.5) + Math.pow(T / T0, -2.5) *
       (0.01275 * Math.exp(-2239.1 / T) / (frO + f * f / frO) + 0.1068 * Math.exp(-3352.0 / T) / (frN + f * f / frN)));
   }
-  const dish = function (D, f) { const lam = 343 / f; return 10 * log10(0.5 * Math.pow(Math.PI * D / lam, 2)); };
+  const sound = function (tC) { return 331.3 * Math.sqrt(1 + tC / 273.15); };   // speed of sound in air, m/s
+  const ETA = 0.5;   // assumed aperture efficiency of the fold-out reflector
+  const dish = function (D, f, tC) { const lam = sound(tC) / f; return 10 * log10(ETA * Math.pow(Math.PI * D / lam, 2)); };
   const SYMS = [0.2, 0.4, 0.8, 1.6];
   const MODES = {
     phone: { name: 'Phone, Send it by sound', f: 17900, SL: 70, AG: 0, CG: 0, dish: 0, sym: 0, band: '16.9–18.9 kHz' },
-    q: { name: 'Cipher Echo, quiet', f: 17900, SL: 80, AG: 6, CG: 0, dish: 0, sym: 0, band: '16.9–18.9 kHz' },
-    lr: { name: 'Cipher Echo, long-range', f: 21250, SL: 100, AG: 6, CG: 4, dish: 0, sym: 1, band: '20.5–22.0 kHz' },
-    far: { name: 'Cipher Echo, far', f: 21250, SL: 100, AG: 6, CG: 4, dish: 0.10, sym: 3, band: '20.5–22.0 kHz' }
+    q: { name: 'Cipher Echo, quiet', f: 17900, SL: 80, AG: 10 * log10(4), CG: 0, dish: 0, sym: 0, band: '16.9–18.9 kHz' },
+    lr: { name: 'Cipher Echo, long-range', f: 21250, SL: 100, AG: 10 * log10(4), CG: 4, dish: 0, sym: 1, band: '20.5–22.0 kHz' },
+    far: { name: 'Cipher Echo, far', f: 21250, SL: 100, AG: 10 * log10(4), CG: 4, dish: 0.10, sym: 3, band: '20.5–22.0 kHz' }
   };
   const NEED = 12, REAL = 15, FADE = 6;   // dB: 16-tone detection, real-world losses, fade margin
   function budget(m, o) {
     const M = MODES[m];
     const T = SYMS[o.sym != null ? o.sym : M.sym];
-    const g = M.dish ? dish(M.dish, M.f) : 0;
+    const g = M.dish ? dish(M.dish, M.f, o.t) : 0;
     const a = alpha(M.f, o.t, o.h);
     const noise = o.n + 10 * log10(1 / T);
     const need = NEED - M.CG + REAL + FADE;
@@ -62,7 +64,7 @@
   const MAP = {
     q: { half: 65, scale: 40, read: 'QUIET · 16.9–18.9 kHz · ~' + fmt(R.q) + ' m indoors · phones running Send it by sound can join' },
     lr: { half: 24, scale: 80, read: 'LONG-RANGE · 20.5–22.0 kHz · 4 horns, 4 mics, error correction · ~' + fmt(R.lr) + ' m line of sight' },
-    far: { half: 10, scale: 160, read: 'FAR · reflectors on both units, 1.6 s tones · ~' + fmt(R.far) + ' m line of sight · 2.5 bits a second' }
+    far: { half: 10, scale: 160, read: 'FAR · reflectors on both units, 1.6 s tones · ~' + fmt(R.far) + ' m line of sight · 2.5 bits a second raw' }
   };
   const MARKS = [
     { key: 'phone', t: 'Phone', y: 50 }, { key: 'q', t: 'Quiet', y: -70 },
@@ -199,7 +201,7 @@
     $('lb-t-o').textContent = st.t + ' °C';
     $('lb-h-o').textContent = st.h + ' %';
     const n = 12, tones = b.M.CG ? 15 * Math.ceil(2 * n / 9) : 2 * n + 2;
-    $('lb-meta').textContent = b.M.name + ' · ' + b.M.band + ' · ' + b.rate.toFixed(1) + ' bits/s · a 12-letter message takes ' + Math.round(tones * b.T) + ' s';
+    $('lb-meta').textContent = b.M.name + ' · ' + b.M.band + ' · ' + b.rate.toFixed(1) + ' bits/s raw' + (b.M.CG ? ' (' + (b.rate * 9 / 15).toFixed(1) + ' after error correction)' : '') + ' · a 12-letter message takes ' + Math.round(tones * b.T) + ' s';
     $('lb-table').innerHTML =
       row('Source, 1 m', b.M.SL + ' dB SPL') +
       (b.g ? row('Reflectors, both ends', sgn(2 * b.g)) : '') +
@@ -223,7 +225,7 @@
     chart.innerHTML = p;
     const spread = 20 * log10(r), absorb = b.a * r;
     $('lb-why').textContent = 'At ' + fmt(r) + ' m the sound has lost ' + spread.toFixed(0) + ' dB to spreading and ' + absorb.toFixed(0) + ' dB to the air itself. ' +
-      (absorb > spread ? 'Air absorption is now the limit: each extra 10 m costs another ' + (b.a * 10).toFixed(1) + ' dB, so no handheld unit can go much further. That is physics, not engineering.'
+      (absorb > spread ? 'Air absorption is now the limit: each extra 10 m costs another ' + (b.a * 10).toFixed(1) + ' dB, so at this frequency more power buys very little extra distance.'
         : 'Spreading is still the main loss here, so more power, reflectors or slower tones would reach further.');
     maths(b);
   }
@@ -231,39 +233,68 @@
   const sub = function (a, b) { return a + '<sub>' + b + '</sub>'; };
   const n1 = function (v) { return (Math.round(v * 10) / 10).toFixed(1); };
   let fitTile = function () {};
+  // Lambert W (principal branch, x > 0) by Halley's method: solves w·e^w = x
+  function lambertW(x) {
+    let w = x < 3 ? Math.log1p(x) : Math.log(x) - Math.log(Math.log(x)), n = 0;
+    for (; n < 60; n++) {
+      const e = Math.exp(w), f = w * e - x;
+      const dw = f / (e * (w + 1) - (w + 2) * f / (2 * w + 2));
+      w -= dw;
+      if (Math.abs(dw) < 1e-12 * (1 + Math.abs(w))) { n++; break; }
+    }
+    return { w: w, n: n };
+  }
   function maths(b) {
-    const M = b.M, r = b.range, lam = 343 / M.f, mics = M.AG ? 4 : 1;
+    const M = b.M, r = b.range, c = sound(st.t), lam = c / M.f, mics = M.AG ? 4 : 1;
     const Ls = sub('L', 's'), Gr = sub('G', 'r'), Ga = sub('G', 'a'), Gc = sub('G', 'c'), N0 = sub('N', '0'), Lw = sub('L', 'w'), Mf = sub('M', 'f'), Sreq = sub('S', 'req');
     const v = function (sym, name, how, val) {
       return '<div class="lb-var"><dt class="mono">' + sym + '</dt><dd><span class="lb-vn">' + name + '</span>' +
         (how ? '<span class="lb-vh mono">' + how + '</span>' : '') + '<b class="mono">' + val + '</b></dd></div>';
     };
     const place = st.n === 0 ? 'calm outdoors' : st.n === 10 ? 'quiet room' : 'noisy place';
+    const n2 = function (x) { return x.toFixed(2); };
+    const a4 = b.a.toFixed(5), k4 = (20 / Math.LN10).toFixed(4);
     $('lb-vars').innerHTML =
-      v('f', 'Carrier frequency', '', M.f.toLocaleString('en-IN') + ' Hz') +
-      v('λ', 'Wavelength', 'c ÷ f = 343 ÷ ' + M.f, (lam * 100).toFixed(2) + ' cm') +
-      v(Ls, 'Source level at 1 m', M.SL === 100 ? '4 piezo horns' : M.SL === 80 ? 'horns, quiet mode' : 'phone speaker', M.SL + ' dB') +
-      v(Gr, 'Reflector gain, each end', M.dish ? '10·log₁₀(0.5·(πD/λ)²), D = ' + (M.dish * 100) + ' cm' : 'no reflector', n1(b.g) + ' dB') +
-      v(Ga, 'Mic-array gain', '10·log₁₀(' + mics + ' mic' + (mics > 1 ? 's' : '') + ')', n1(M.AG) + ' dB') +
-      v('α', 'Air absorption, ISO 9613-1', st.t + ' °C, ' + st.h + ' % humidity', b.a.toFixed(3) + ' dB/m') +
-      v('T', 'Tone length', '', b.T + ' s') +
-      v(N0, 'Background noise', place, st.n + ' dB') +
-      v('N', 'Noise in each detector', N0 + ' + 10·log₁₀(1/T)', n1(b.noise) + ' dB') +
-      v('D', 'Detection threshold', '16 tones to tell apart', NEED + ' dB') +
-      v(Gc, 'Coding gain', M.CG ? 'Reed–Solomon RS(15, 9)' : 'no error correction', M.CG + ' dB') +
-      v(Lw, 'Real-world allowance', 'hands, walls, aim', REAL + ' dB') +
-      v(Mf, 'Fade margin', 'wind and turbulence', FADE + ' dB') +
-      v('r', 'Distance to the receiver', 'the unknown', '?');
+      v('f', 'Carrier frequency', 'middle of the ' + M.band + ' band', M.f.toLocaleString('en-IN') + ' Hz') +
+      v('c', 'Speed of sound', '331.3·√(1 + t/273.15), t = ' + st.t + ' °C', n1(c) + ' m/s') +
+      v('λ', 'Wavelength', 'c ÷ f', n2(lam * 100) + ' cm') +
+      v(Ls, 'Source level at 1 m', (M.SL === 100 ? '4 piezo horns' : M.SL === 80 ? 'horns, quiet mode' : 'phone speaker') + ', design target', M.SL + ' dB SPL') +
+      v(Gr, 'Reflector gain, each end', M.dish ? '10·log₁₀(η·(πD/λ)²), η = ' + ETA + ' assumed, D = ' + (M.dish * 100) + ' cm' : 'no reflector in this mode', n2(b.g) + ' dB') +
+      v(Ga, 'Mic-array gain', mics > 1 ? '10·log₁₀ ' + mics + ', ideal for ' + mics + ' mics' : 'single microphone', n2(M.AG) + ' dB') +
+      v('α', 'Air absorption, ISO 9613-1', st.t + ' °C, ' + st.h + ' % humidity, sea-level pressure', a4 + ' dB/m') +
+      v('T', 'Tone length', 'each detector listens 1/T Hz wide', b.T + ' s') +
+      v(N0, 'Background noise near f', place + ', assumed, dB per Hz', st.n + ' dB') +
+      v('N', 'Noise in each detector', N0 + ' + 10·log₁₀(1/T)', n2(b.noise) + ' dB') +
+      v('D', 'Detection threshold', 'to tell 16 tones apart, assumed', NEED + ' dB') +
+      v(Gc, 'Coding gain', M.CG ? 'Reed–Solomon RS(15, 9), approximate' : 'no error correction', M.CG + ' dB') +
+      v(Lw, 'Real-world allowance', 'hands, walls, aim; assumed', REAL + ' dB') +
+      v(Mf, 'Fade margin', 'wind and turbulence; assumed', FADE + ' dB') +
+      v('r', 'Distance to the receiver', 'the unknown we solve for', '?');
     const B = M.SL + 2 * b.g + M.AG - b.noise - b.need;
-    const sp = 20 * log10(r), ab = b.a * r;
+    const K = 20 / Math.LN10;                       // 20·log10 r = K·ln r
+    const X = (b.a / K) * Math.exp(B / K);
+    const W = lambertW(X), rW = (K / b.a) * W.w;
+    // the check uses the numbers exactly as displayed, so a reader can redo it by hand
+    const rD = +rW.toFixed(2), sp = +(20 * log10(rD)).toFixed(2), ab = +(+a4 * rD).toFixed(2), ok = (sp + ab).toFixed(2) === B.toFixed(2);
+    const sx = function (x) {
+      if (x < 1e4) return x.toPrecision(4);
+      const e = Math.floor(log10(x)), m = x / Math.pow(10, e);
+      return m.toFixed(3) + ' × 10' + String(e).split('').map(function (d) { return '⁰¹²³⁴⁵⁶⁷⁸⁹'[+d]; }).join('');
+    };
     const li = function (t, h) { return '<li><span class="lb-wt">' + t + '</span><span class="lb-wm">' + h + '</span></li>'; };
+    const Bsym = 'B';
     $('lb-work').innerHTML =
-      li('Signal above the noise at distance r', 'SNR(r) = ' + Ls + ' + 2·' + Gr + ' + ' + Ga + ' − 20·log₁₀ r − α·r − N') +
+      li('Signal above the noise at distance r, with spherical spreading from 1 m', 'SNR(r) = ' + Ls + ' + 2·' + Gr + ' + ' + Ga + ' − 20·log₁₀ r − α·r − N') +
       li('How far above the noise it must be', Sreq + ' = D − ' + Gc + ' + ' + Lw + ' + ' + Mf + ' = ' + NEED + ' − ' + M.CG + ' + ' + REAL + ' + ' + FADE + ' = <b>' + b.need.toFixed(0) + ' dB</b>') +
-      li('The range is where SNR(r) = ' + Sreq + '. Move the losses to one side', '20·log₁₀ r + α·r = ' + Ls + ' + 2·' + Gr + ' + ' + Ga + ' − N − ' + Sreq) +
-      li('Put the numbers in', '20·log₁₀ r + ' + b.a.toFixed(3) + '·r = ' + M.SL + ' + ' + n1(2 * b.g) + ' + ' + n1(M.AG) + ' − ' + n1(b.noise) + ' − ' + b.need.toFixed(0) + ' = <b>' + n1(B) + ' dB</b>') +
-      li('No neat formula solves this, so the page halves the interval 80 times', 'r ≈ <b>' + n1(r) + ' m</b>, shown as ~' + fmt(r) + ' m') +
-      li('Check', '20·log₁₀ ' + n1(r) + ' = ' + n1(sp) + ' dB spreading, ' + b.a.toFixed(3) + ' × ' + n1(r) + ' = ' + n1(ab) + ' dB air · total ' + n1(sp + ab) + ' dB ✓');
+      li('The range is the r where SNR(r) = ' + Sreq + '. Collect the losses on one side', '20·log₁₀ r + α·r = ' + Ls + ' + 2·' + Gr + ' + ' + Ga + ' − N − ' + Sreq + ' = ' + Bsym) +
+      li('Put the numbers in', '20·log₁₀ r + ' + a4 + '·r = ' + M.SL + ' + ' + n2(2 * b.g) + ' + ' + n2(M.AG) + (b.noise < 0 ? ' + ' + n2(-b.noise) : ' − ' + n2(b.noise)) + ' − ' + b.need.toFixed(0) + ' = <b>' + n2(B) + ' dB</b>') +
+      li('r sits inside a logarithm and also on its own, so ordinary algebra cannot isolate it. Rewrite the log with k = 20 ÷ ln 10 = ' + k4, 'k·ln r + α·r = ' + Bsym) +
+      li('Divide by k, raise e to both sides, then multiply by α/k', '(α/k)·r · e<sup>(α/k)·r</sup> = (α/k) · e<sup>' + Bsym + '/k</sup>') +
+      li('This has the form w·e<sup>w</sup> = x, whose solution is the Lambert W function, w = W(x)', 'r = (k/α) · W(x),  x = (α/k) · e<sup>' + Bsym + '/k</sup>') +
+      li('Put the numbers in', 'x = (' + a4 + ' ÷ ' + k4 + ') · e<sup>' + n2(B) + ' ÷ ' + k4 + '</sup> = ' + sx(X) +
+        '<br>W(' + sx(X) + ') = ' + W.w.toFixed(4) + '<br>r = (' + k4 + ' ÷ ' + a4 + ') × ' + W.w.toFixed(4) + ' = <b>' + n2(rW) + ' m</b>') +
+      li('W(x) has no formula in elementary functions, so it is evaluated numerically (Halley’s method, ' + W.n + ' steps). As a cross-check, solving step 4 directly by bisection (80 halvings of 0.1–5000 m) gives', 'r = ' + n2(r) + ' m · the tile rounds it to the nearest ' + (r >= 20 ? '5 m' : 'metre') + ': ~' + fmt(r) + ' m') +
+      li('Check by putting r back into step 4', '20·log₁₀ ' + n2(rD) + ' = ' + n2(sp) + ' dB spreading, ' + a4 + ' × ' + n2(rD) + ' = ' + n2(ab) + ' dB air<br>' + n2(sp) + ' + ' + n2(ab) + ' = ' + n2(sp + ab) + ' dB ' + (ok ? '= ' + Bsym + ' ✓' : '≈ ' + Bsym + ' (' + n2(B) + ' dB; the gap is rounding to 2 decimals) ✓'));
     $('lb-back-r').textContent = '~' + fmt(r) + ' m';
     fitTile();
   }

@@ -700,7 +700,7 @@
 .lb-wt { font-family: var(--sans, inherit); font-size: 12px; color: var(--muted); }
 .lb-wm { font-size: 13px; color: var(--steel); overflow-wrap: anywhere; }
 .lb-wm b, .lb-work b { font-weight: 400; color: var(--signal); }
-.lb-work sub, .lb-vars sub { font-size: .7em; }
+.lb-work sub, .lb-vars sub, .lb-work sup { font-size: .7em; }
 @media (max-width: 640px) { .lb-vars { grid-template-columns: 1fr; } .lb-front .lb-flip-btn { position: static; margin-bottom: 10px; } }
 @media (prefers-reduced-motion: reduce) {
   .lb-inner { transition: none; }
