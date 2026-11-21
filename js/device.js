@@ -1,6 +1,6 @@
 /* =========================================================
    Cipher Forge — device.js
-   Future enhancement 02: Whisper, the pocket cipher pager.
+   Future enhancement 02: Cipher Echo, an acoustic cipher communicator.
    Builds the device out of real 3D slabs, assembles it in the
    hero, takes it apart layer by layer as you scroll, draws the
    cross-section, and runs the battery-life calculator.
@@ -47,7 +47,7 @@
   }).join('') + '</div>';
 
   const PAPER = '<div class="paper">' +
-    '<div class="paper-bar"><span>WHISPER · TO K</span><span>KEY ● 17.6 kHz · ▮▮▮▯</span></div>' +
+    '<div class="paper-bar"><span>CIPHER ECHO · TO K</span><span>KEY ● 17.6 kHz · ▮▮▮▯</span></div>' +
     '<p class="paper-lbl">PLAINTEXT</p><p class="paper-msg"><span class="pm-text">MEET AT NOON</span><span class="caret"></span></p>' +
     '<p class="paper-lbl">CIPHERTEXT · F = shift(3)</p><p class="paper-cip">PHHW DW QRRQ</p>' +
     '<div class="paper-foot"><span class="pf-state">READY</span><span class="pf-bar"><i></i></span></div>' + OSK +
@@ -91,7 +91,7 @@
   const LAYERS = [
     { name: 'Titanium bezel', mm: '1.0 mm', cls: 'L-front', z: 60, ex: 3.7,
       html: function () {
-        return slab('bezel', 0, 0, DW, DH, 5, 0, '<span class="pinhole" style="left:193px;top:263px"></span><span class="engrave e1">WHISPER</span><span class="engrave e2">ONE</span>');
+        return slab('bezel', 0, 0, DW, DH, 5, 0, '<span class="pinhole" style="left:193px;top:263px"></span><span class="engrave e1">CIPHER</span><span class="engrave e2">ECHO</span>');
       },
       pts: [[195, 137, 5, 'Screen window', '70 × 46 mm, edge to edge'], [195, 10, 5, 'Earpiece slot', 'speaker and top mic behind it'],
         [195, 266, 5, 'Bottom mic port', 'Ø 0.8 mm, mesh-backed'], [3, 140, 5, 'Slim bezel', '2 mm titanium sides']],
@@ -165,7 +165,7 @@
     { name: 'Ceramic back', mm: '1.0 mm', cls: 'L-back', z: 0, ex: -3.2,
       html: function () {
         const sinks = CORNERS.map(function (c) { return '<span class="sink" style="left:' + (c[0] - 7) + 'px;top:' + (c[1] - 7) + 'px"></span>'; }).join('');
-        return slab('ceramic', 0, 0, DW, DH, 5, 0, '<span class="graphite"></span><span class="foam2"></span>' + sinks + '<span class="stamp">WHISPER ONE · ZrO₂<br>SN 0417 · CONCEPT</span>');
+        return slab('ceramic', 0, 0, DW, DH, 5, 0, '<span class="graphite"></span><span class="foam2"></span>' + sinks + '<span class="stamp">CIPHER ECHO · ZrO₂<br>SN 0417 · CONCEPT</span>');
       },
       pts: [[195, 140, 5, 'Graphite sheet', 'spreads heat while charging'], [16, 16, 5, 'Countersunk hole', 'for the M1.4 screws'],
         [330, 230, 5, 'Zirconia ceramic', 'scratch-proof, light-tight']],
@@ -261,19 +261,22 @@
 
   /* ---------- Title decodes itself ---------- */
   (function () {
-    const el = $('dv-title'), word = el.textContent;
-    el.setAttribute('aria-label', word);
+    // Two lines (Cipher / Echo); each line settles left to right
+    const el = $('dv-title'), lines = ['Cipher', 'Echo'];
+    el.setAttribute('aria-label', lines.join(' '));
     if (reduce) return;
     const start = performance.now(), DUR = 900;
     (function step(now) {
       const k = Math.min(1, ((now || start) - start) / DUR);
-      const done = Math.floor(k * word.length);
-      el.textContent = word.split('').map(function (c, i) {
-        if (i < done) return c;
-        const r = LETTERS[Math.floor(Math.random() * 26)];
-        return c === c.toUpperCase() ? r : r.toLowerCase();
-      }).join('');
-      if (k < 1) requestAnimationFrame(step); else el.textContent = word;
+      el.innerHTML = lines.map(function (line) {
+        const done = Math.floor(k * line.length);
+        return line.split('').map(function (c, i) {
+          if (i < done) return c;
+          const r = LETTERS[Math.floor(Math.random() * 26)];
+          return c === c.toUpperCase() ? r : r.toLowerCase();
+        }).join('');
+      }).join('<br>');
+      if (k < 1) requestAnimationFrame(step); else el.innerHTML = lines.join('<br>');
     })();
   })();
 
@@ -630,5 +633,5 @@
     });
   });
   // Shared with device-steps.js
-  window.WHISPER = { build: build, slab: slab, PAPER: PAPER, LAYERS: LAYERS, LETTERS: LETTERS, ease: ease, clamp: clamp, reduce: reduce, glideTo: glideTo };
+  window.CIPHER_ECHO = { build: build, slab: slab, PAPER: PAPER, LAYERS: LAYERS, LETTERS: LETTERS, ease: ease, clamp: clamp, reduce: reduce, glideTo: glideTo };
 })();

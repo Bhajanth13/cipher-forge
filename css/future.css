@@ -285,7 +285,7 @@
 .why-back { margin-top: 40px; }
 .why-back .btn { text-decoration: none; }
 
-/* ---------- Sub-page switch: Send it by sound / Whisper pager ---------- */
+/* ---------- Sub-page switch: Send it by sound / Cipher Echo ---------- */
 .subnav {
   position: absolute; top: calc(100% + 12px); left: 50%; transform: translateX(-50%);
   display: flex; gap: 4px; padding: 4px; border-radius: 999px;

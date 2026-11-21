@@ -1,13 +1,13 @@
 /* =========================================================
    Cipher Forge — device-steps.js
-   Two 3D walkthroughs on the Whisper page, each seven steps:
+   Two 3D walkthroughs on the Cipher Echo page, each seven steps:
    1. From air to screen: one message, sender to receiver.
    2. The lab's seven steps, lit up inside an X-ray of the unit.
    ========================================================= */
 (function () {
   'use strict';
 
-  const W = window.WHISPER;
+  const W = window.CIPHER_ECHO;
   if (!W) return;
   const $ = function (id) { return document.getElementById(id); };
   const reduce = W.reduce, LETTERS = W.LETTERS;
@@ -77,7 +77,7 @@
       wrap.innerHTML = '<div class="device lite">' + html + '</div>';
       cam.appendChild(wrap);
       const el = wrap.firstChild;
-      el.querySelector('.paper-bar span').textContent = 'WHISPER · ' + label;
+      el.querySelector('.paper-bar span').textContent = 'CIPHER ECHO · ' + label;
       return {
         el: el, wrap: wrap,
         text: el.querySelector('.pm-text'), cip: el.querySelector('.paper-cip'),
@@ -300,7 +300,7 @@
       $('lb-card').innerHTML = '<p class="sc-num mono">Step ' + (i + 1) + ' of 7</p><h3>' + s.t + '</h3>' +
         '<dl class="sc-dl">' +
         '<div><dt class="mono">In the lab</dt><dd>' + s.lab + '</dd></div>' +
-        '<div><dt class="mono">In Whisper</dt><dd>' + s.dev + '</dd></div>' +
+        '<div><dt class="mono">In Cipher Echo</dt><dd>' + s.dev + '</dd></div>' +
         '<div><dt class="mono">The maths</dt><dd class="mono sc-m">' + s.m + '</dd></div>' +
         '<div><dt class="mono">Parts</dt><dd>' + chips(s.parts) + '</dd></div></dl>' +
         '<a class="sc-link" href="index.html#' + ['alphabet', 'forge', 'inspect', 'relations', 'encrypt', 'break', 'attack'][i] + '">Open step ' + (i + 1) + ' in the lab</a>';
