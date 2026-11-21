@@ -301,7 +301,7 @@
     const silent = e.detail.band === 'silent';
     hudBand.textContent = silent ? 'SILENT' : 'AUDIBLE';
     bandNote.textContent = silent
-      ? 'Silent: 17–19.2 kHz near-ultrasound. Most people can’t hear it; some laptops and phones can’t play or pick it up, so switch back if a message doesn’t arrive.'
+      ? 'Silent: 16.9–18.9 kHz near-ultrasound, sent a little slower. Turn the volume up and keep the phone close. If nothing arrives, play the test tone: if the receiver’s Silent meter stays quiet, this speaker can’t do ultrasound, so use Audible.'
       : 'Audible: 1.4–4.65 kHz, works on almost every speaker.';
   });
 

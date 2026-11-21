@@ -77,7 +77,7 @@
 <section class="fx-specs" aria-label="The protocol in numbers">
   <div class="spec"><p class="spec-num mono" data-count="16">0</p><p class="spec-label">tones, one per base-16 digit</p></div>
   <div class="spec"><p class="spec-num mono" data-count="2">0</p><p class="spec-label">tones per character (16 × 16 = 256)</p></div>
-  <div class="spec"><p class="spec-num mono"><span data-count="17" data-dec="0">0</span>–<span data-count="19.2" data-dec="1">0</span></p><p class="spec-label">kHz in silent mode, above most people’s hearing</p></div>
+  <div class="spec"><p class="spec-num mono"><span data-count="16.9" data-dec="1">0</span>–<span data-count="18.9" data-dec="1">0</span></p><p class="spec-label">kHz in silent mode, above most people’s hearing</p></div>
   <div class="spec"><p class="spec-num mono" data-count="256">0</p><p class="spec-label">the checksum is taken mod 256</p></div>
   <div class="spec"><p class="spec-num mono" data-count="0">0</p><p class="spec-label">internet connections needed</p></div>
 </section>
@@ -145,6 +145,7 @@
         </div>
       </div>
       <p class="muted band-note" id="band-note">Audible: 1.4–4.65 kHz, works on almost every speaker.</p>
+      <button type="button" class="btn ghost test-btn" id="snd-test">Play a silent test tone (18 kHz, 3 s)</button>
       <div class="tone-strip mono" id="snd-tones" aria-label="Tones to be played"></div>
       <div class="send-bar"><span id="snd-progress"></span></div>
       <div class="btn-row">
@@ -172,7 +173,11 @@
         <button type="button" role="radio" aria-checked="false" data-mode="mic">Microphone</button>
       </div>
       <button type="button" class="btn fx-btn" id="rcv-listen">Start listening</button>
-      <canvas id="spectrum" class="spectrum" height="120" aria-label="Live sound spectrum from 1.2 to 4.9 kHz"></canvas>
+      <div class="meters" aria-label="How strongly each band is heard">
+        <div class="meter"><span class="meter-name">Audible</span><span class="meter-bar"><i id="m-audible"></i></span><span class="meter-db mono" id="m-audible-db">—</span></div>
+        <div class="meter"><span class="meter-name">Silent</span><span class="meter-bar"><i id="m-silent"></i></span><span class="meter-db mono" id="m-silent-db">—</span></div>
+      </div>
+      <canvas id="spectrum" class="spectrum" height="120" aria-label="Live sound spectrum of the band in use"></canvas>
       <p class="muted send-status" id="rcv-status" aria-live="polite">Not listening.</p>
       <dl class="rcv-out">
         <div><dt>Digits heard</dt><dd class="mono" id="rcv-hex">—</dd></div>
@@ -207,7 +212,7 @@
     <article class="why-card"><p class="why-num mono">01</p><h3>Everyone can hear it</h3><p>The tones fill the room like a radio broadcast. Hiding the signal is not the goal.</p></article>
     <article class="why-card"><p class="why-num mono">02</p><h3>Only the key reads it</h3><p>Without the key, a listener gets ciphertext. <a href="index.html#break">Break it</a> in the lab shows what they could still try.</p></article>
     <article class="why-card"><p class="why-num mono">03</p><h3>Nothing is lost silently</h3><p>The sum of the character codes mod 256 travels with the message. One misheard tone and the check fails.</p></article>
-    <article class="why-card"><p class="why-num mono">04</p><h3>Silent if you want</h3><p>No Wi-Fi, no pairing, no server. In silent mode the tones sit at 17–19.2 kHz, above what most people can hear.</p></article>
+    <article class="why-card"><p class="why-num mono">04</p><h3>Silent if you want</h3><p>No Wi-Fi, no pairing, no server. In silent mode the tones sit at 16.9–18.9 kHz, above what most people can hear.</p></article>
   </div>
   <p class="why-back"><a class="btn ghost" href="index.html">Back to the lab</a></p>
 </section>

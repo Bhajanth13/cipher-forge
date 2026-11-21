@@ -52,10 +52,11 @@
       return '<span data-i="' + i + '" title="' + SD.freqOf(id, band) + ' Hz">' + toneLabel(id) + '</span>';
     }).join('') + (cur.p.tones.length > 48 ? '<span class="more">+' + (cur.p.tones.length - 48) + '</span>' : '');
 
-    const seconds = ((cur.p.tones.length - 2) * toneMs / 1000 + 2 * Math.max(0.35, toneMs * 3 / 1000)).toFixed(1);
+    const ms = SD.effectiveMs(band, toneMs);
+    const seconds = ((cur.p.tones.length - 2) * ms / 1000 + 2 * Math.max(SD.BANDS[band].markerMs / 1000, ms * 3 / 1000)).toFixed(1);
     if (!player) {
       $('snd-status').textContent = cur.p.codes.length + ' characters + 1 checksum = ' + (cur.p.digits.length) + ' digits, ' +
-        cur.p.tones.length + ' tones, about ' + seconds + ' s of ' + (band === 'silent' ? 'near-ultrasound (17–19.2 kHz)' : 'sound (1.4–4.65 kHz)') + '. Checksum = ' + SD.hex(cur.p.sum) + '.';
+        cur.p.tones.length + ' tones, about ' + seconds + ' s of ' + (band === 'silent' ? 'near-ultrasound (16.9–18.9 kHz)' : 'sound (1.4–4.65 kHz)') + '. Checksum = ' + SD.hex(cur.p.sum) + '.';
     }
   }
 
@@ -105,7 +106,8 @@
   function startListening() {
     if (!listener) {
       listener = SD.createListener({
-        onStart: function (b) { rxBand = b; resetOut(); $('rcv-status').textContent = (b === 'silent' ? 'Silent start tone heard (17 kHz).' : 'Start tone heard.') + ' Receiving…'; },
+        onStart: function (b) { rxBand = b; resetOut(); $('rcv-status').textContent = (b === 'silent' ? 'Silent start tone heard (16.9 kHz).' : 'Start tone heard.') + ' Receiving…'; },
+        onLevels: meters,
         onLost: function () { $('rcv-status').textContent = 'The message stopped half way. Listening again.'; },
         onTone: function (id) { emit('cf:rx', { id: id }); },
         onDigit: function (d) { $('rcv-hex').textContent = digitsText(d); },
@@ -148,6 +150,22 @@
     $('rcv-listen').classList.remove('primary');
     $('rcv-status').textContent = 'Not listening.';
     clearSpectrum();
+  }
+
+  /* ---------- Signal meters: how strongly each band is heard ---------- */
+  let lastMeter = 0;
+  function meters(lv) {
+    const now = performance.now();
+    if (now - lastMeter < 80) return;
+    lastMeter = now;
+    ['audible', 'silent'].forEach(function (b) {
+      const bar = $('m-' + b), txt = $('m-' + b + '-db');
+      if (!bar) return;
+      const db = lv[b];
+      bar.style.width = Math.min(100, db / 40 * 100).toFixed(0) + '%';
+      bar.classList.toggle('is-strong', db >= SD.BANDS[b].snr);
+      txt.textContent = db < 1 ? 'quiet' : (db > 60 ? '+60 dB+' : '+' + db.toFixed(0) + ' dB');
+    });
   }
 
   /* ---------- Live spectrum ---------- */
@@ -212,6 +230,13 @@
       $('snd-speed').querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-checked', String(x === b)); });
       renderPipe();
     });
+  });
+  const testBtn = $('snd-test');
+  if (testBtn) testBtn.addEventListener('click', function () {
+    const t = SD.testTone('silent', 3);
+    testBtn.disabled = true;
+    $('snd-status').textContent = 'Playing a ' + (t.freq / 1000) + ' kHz test tone for 3 seconds. The receiver’s “Silent” meter should jump; if it stays quiet, this speaker or that microphone can’t do ultrasound, so use Audible.';
+    setTimeout(function () { testBtn.disabled = false; }, 3200);
   });
   const bandBox = $('snd-band');
   if (bandBox) bandBox.querySelectorAll('button').forEach(function (b) {

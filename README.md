@@ -56,9 +56,11 @@ Plain HTML, CSS and JavaScript, with no libraries or build step.
 
 ## Future enhancement: sending a message by sound
 
-The sender can choose **Audible** (1.4–4.65 kHz) or **Silent** near-ultrasound (17–19.2 kHz, above most people’s hearing). The receiver watches both bands and locks onto whichever one a start tone arrives on.
+The sender can choose **Audible** (1.4–4.65 kHz) or **Silent** near-ultrasound (16.9–18.9 kHz, above most people’s hearing; sent a little slower, with the start and end markers at the bottom of the band where speakers are strongest). The receiver watches both bands and locks onto whichever one a start tone arrives on.
 
 **Phone receiver:** `receive.html` is a full-screen receiver for a second device. On the Future enhancements page, scan the QR code with a phone: it opens the receiver with the key already loaded (`receive.html?key=…`). Tap the circle, allow the microphone, then send.
+
+If silent messages don’t arrive, press **Play a silent test tone** on the sender and watch the receiver’s **Silent** meter. If it stays quiet, that speaker or microphone can’t handle ultrasound, so use Audible.
 
 1. Open the Future enhancements page on two devices (https://bhajanth13.github.io/cipher-forge/future.html, so the microphone is allowed).
 2. On the sender, build a cipher in the lab (the page remembers it) and press **Copy key**. Give the key to the receiver separately; it is never sent with the message.

@@ -236,6 +236,16 @@
 .seg-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .band-note { font-size: 13px; margin-top: -4px; }
 
+
+/* Signal meters (both receivers) */
+.meters { display: grid; gap: 6px; }
+.meter { display: grid; grid-template-columns: 64px 1fr 64px; gap: 10px; align-items: center; font-size: 13px; color: var(--muted); }
+.meter-bar { height: 6px; border-radius: 3px; background: var(--rule-soft); overflow: hidden; }
+.meter-bar i { display: block; height: 100%; width: 0; background: var(--steel-2); border-radius: 3px; transition: width .08s linear; }
+.meter-bar i.is-strong { background: var(--signal); box-shadow: 0 0 10px var(--signal-glow); }
+.meter-db { text-align: right; font-size: 12px; }
+.test-btn { align-self: flex-start; font-size: 14px; }
+
 /* The phone panel */
 .phone {
   margin-top: 28px; display: grid; grid-template-columns: auto 1fr; gap: 32px; align-items: center;

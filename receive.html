@@ -57,7 +57,11 @@
 
   <div class="rx-bands" aria-label="Bands being watched">
     <span class="band-chip" id="chip-audible">Audible 1.4–4.65 kHz</span>
-    <span class="band-chip" id="chip-silent">Silent 17–19.2 kHz</span>
+    <span class="band-chip" id="chip-silent">Silent 16.9–18.9 kHz</span>
+  </div>
+  <div class="meters" aria-label="How strongly each band is heard">
+    <div class="meter"><span class="meter-name">Audible</span><span class="meter-bar"><i id="m-audible"></i></span><span class="meter-db mono" id="m-audible-db">—</span></div>
+    <div class="meter"><span class="meter-name">Silent</span><span class="meter-bar"><i id="m-silent"></i></span><span class="meter-db mono" id="m-silent-db">—</span></div>
   </div>
   <canvas class="rx-spectrum" id="rx-spectrum" height="90" aria-hidden="true"></canvas>
   <p class="rx-status" id="rx-status" aria-live="polite">Tap the circle, allow the microphone, then send from the other device.</p>
@@ -74,7 +78,7 @@
     <ol id="rx-list"></ol>
   </section>
 
-  <p class="rx-hint">Keep this phone near the sender with its screen on. Silent messages use 17–19.2 kHz, which most people cannot hear; if a phone misses them, ask the sender to switch to Audible.</p>
+  <p class="rx-hint">Keep this phone near the sender with its screen on. Silent messages use 16.9–18.9 kHz, which most people cannot hear. To check that ultrasound reaches this phone, ask the sender to play the silent test tone and watch the Silent meter.</p>
 </main>
 
 <script src="js/sets.js"></script>

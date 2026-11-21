@@ -88,11 +88,12 @@
           radar.classList.add('is-rx');
           chips(b);
           setState('Receiving', b === 'silent' ? 'silent band' : 'audible band');
-          $('rx-status').textContent = 'Start tone heard on the ' + (b === 'silent' ? 'silent 17 kHz' : 'audible') + ' band. Hold still…';
+          $('rx-status').textContent = 'Start tone heard on the ' + (b === 'silent' ? 'silent 16.9 kHz' : 'audible') + ' band. Hold still…';
         },
         onTone: function () { radar.classList.add('pulse'); setTimeout(function () { radar.classList.remove('pulse'); }, 80); },
         onDigit: function (d) { $('rx-sub').textContent = Math.floor(d.length / 2) + ' characters'; },
         onFrame: drawSpectrum,
+        onLevels: meters,
         onLost: function () {
           radar.classList.remove('is-rx'); chips(null);
           setState('Listening', 'waiting for a start tone');
@@ -134,6 +135,20 @@
   }
 
   radar.addEventListener('click', function () { listening ? stop() : start(); });
+
+  /* ---------- Signal meters ---------- */
+  let lastMeter = 0;
+  function meters(lv) {
+    const now = performance.now();
+    if (now - lastMeter < 80) return;
+    lastMeter = now;
+    ['audible', 'silent'].forEach(function (b) {
+      const db = lv[b];
+      $('m-' + b).style.width = Math.min(100, db / 40 * 100).toFixed(0) + '%';
+      $('m-' + b).classList.toggle('is-strong', db >= SD.BANDS[b].snr);
+      $('m-' + b + '-db').textContent = db < 1 ? 'quiet' : (db > 60 ? '+60 dB+' : '+' + db.toFixed(0) + ' dB');
+    });
+  }
 
   /* ---------- Spectrum of the band in use ---------- */
   const canvas = $('rx-spectrum');

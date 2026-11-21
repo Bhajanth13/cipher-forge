@@ -11,8 +11,11 @@
    A checksum (sum of the codes mod 256) catches errors.
 
    Two bands carry the same tones:
-     audible  1.4–4.65 kHz   works on almost any device
-     silent   17–19.2 kHz    near-ultrasound: most people can't hear it
+     audible  1.4–4.65 kHz    works on almost any device
+     silent   16.9–18.9 kHz   near-ultrasound: most people can't hear it.
+              Laptop speakers get weaker as pitch rises, so the start and
+              end markers sit at the bottom of the band, tones last longer,
+              and the listener is more sensitive here.
    ========================================================= */
 window.CF = window.CF || {};
 
@@ -20,18 +23,23 @@ CF.sound = (function () {
   'use strict';
 
   /* ---------- The tone plans ---------- */
-  function makeBand(name, label, start, base, step, repeat, end, lo, hi, gain) {
+  function makeBand(name, label, start, base, step, repeat, end, lo, hi, gain, opts) {
     const data = [];
     for (let i = 0; i < 16; i++) data.push(base + i * step);
     const targets = [{ id: 'S', f: start }]
       .concat(data.map(function (f, i) { return { id: i, f: f }; }))
       .concat([{ id: 'R', f: repeat }, { id: 'E', f: end }]);
-    return { name: name, label: label, START: start, DATA: data, REPEAT: repeat, END: end, lo: lo, hi: hi, gain: gain, targets: targets };
+    return {
+      name: name, label: label, START: start, DATA: data, REPEAT: repeat, END: end, lo: lo, hi: hi, gain: gain, targets: targets,
+      minMs: opts.minMs, markerMs: opts.markerMs, snr: opts.snr, minDb: opts.minDb, test: opts.test
+    };
   }
 
   const BANDS = {
-    audible: makeBand('audible', 'Audible', 1400, 1800, 150, 4350, 4650, 1200, 4900, 0.5),
-    silent: makeBand('silent', 'Silent', 17000, 17250, 110, 19050, 19200, 16800, 19400, 0.9)
+    audible: makeBand('audible', 'Audible', 1400, 1800, 150, 4350, 4650, 1200, 4900, 0.5,
+      { minMs: 0, markerMs: 350, snr: 15, minDb: -105, test: 3000 }),
+    silent: makeBand('silent', 'Silent', 16900, 17250, 100, 18900, 17050, 16700, 19100, 1.0,
+      { minMs: 170, markerMs: 550, snr: 9, minDb: -125, test: 18000 })
   };
 
   function freqOf(id, band) {
@@ -121,6 +129,9 @@ CF.sound = (function () {
     return ctx;
   }
 
+  // Silent mode never goes faster than its band allows
+  function effectiveMs(band, toneMs) { return Math.max(toneMs, (BANDS[band] || BANDS.audible).minMs); }
+
   // Play a tone list. Calls onStep(i, fraction) as it goes, onDone at the end.
   function play(tones, toneMs, onStep, onDone, band) {
     band = BANDS[band] ? band : 'audible';
@@ -131,8 +142,8 @@ CF.sound = (function () {
     osc.connect(amp);
     amp.connect(out);
     const t0 = ac.currentTime + 0.08;
-    const dur = toneMs / 1000;
-    const marker = Math.max(0.35, dur * 3);           // longer start and end markers
+    const dur = effectiveMs(band, toneMs) / 1000;
+    const marker = Math.max(BANDS[band].markerMs / 1000, dur * 3);   // longer start and end markers
     const level = BANDS[band].gain;
     let t = t0;
     const times = [];
@@ -164,6 +175,21 @@ CF.sound = (function () {
       duration: t - t0,
       stop: function () { try { osc.stop(); } catch (e) { /* already stopped */ } }
     };
+  }
+
+  // A steady test tone (between the data tones, so it never starts a message)
+  function testTone(band, seconds) {
+    const ac = audio(), b = BANDS[band] || BANDS.silent;
+    const osc = ac.createOscillator(), amp = ac.createGain();
+    osc.frequency.value = b.test;
+    osc.connect(amp); amp.connect(out);
+    const t0 = ac.currentTime + 0.05, t1 = t0 + seconds;
+    amp.gain.setValueAtTime(0, t0);
+    amp.gain.linearRampToValueAtTime(b.gain, t0 + 0.05);
+    amp.gain.setValueAtTime(b.gain, t1 - 0.05);
+    amp.gain.linearRampToValueAtTime(0, t1);
+    osc.start(t0); osc.stop(t1 + 0.02);
+    return { freq: b.test, stop: function () { try { osc.stop(); } catch (e) { /* done */ } } };
   }
 
   /* ---------- Listening (microphone or loopback) ----------
@@ -199,7 +225,7 @@ CF.sound = (function () {
       const lv = b.targets.map(function (t) { return level(t.f); });
       let best = 0;
       for (let i = 1; i < lv.length; i++) if (lv[i] > lv[best]) best = i;
-      const ok = lv[best] > -105 && lv[best] - floorOf(b) > 15;
+      const ok = lv[best] > b.minDb && lv[best] - floorOf(b) > b.snr;
       return ok ? b.targets[best].id : null;
     }
 
@@ -226,8 +252,16 @@ CF.sound = (function () {
       if (handlers.onDigit) handlers.onDigit(digits.slice(), b);
     }
 
+    function bandLevel(b) {
+      const lo = Math.round(b.lo / binHz), hi = Math.min(bins.length - 1, Math.round(b.hi / binHz));
+      let peak = -Infinity;
+      for (let k = lo; k <= hi; k++) if (bins[k] > peak) peak = bins[k];
+      return Math.max(0, peak - floorOf(b));
+    }
+
     function frame() {
       analyser.getFloatFrequencyData(bins);
+      if (handlers.onLevels) handlers.onLevels({ audible: bandLevel(BANDS.audible), silent: bandLevel(BANDS.silent) });
       let id = null, b = null;
       if (state === 'rx') {
         b = band; id = strongest(BANDS[band]);
@@ -294,6 +328,6 @@ CF.sound = (function () {
     toCodes: toCodes, fromCodes: fromCodes, checksum: checksum,
     toDigits: toDigits, fromDigits: fromDigits, toTones: toTones,
     plan: plan, unpack: unpack, hex: hex,
-    play: play, createListener: createListener
+    play: play, testTone: testTone, effectiveMs: effectiveMs, createListener: createListener
   };
 })();
