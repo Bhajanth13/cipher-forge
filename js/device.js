@@ -18,10 +18,13 @@
   /* =========================================================
      The device, built from slabs (units: px, 5 px = 1 mm)
      ========================================================= */
-  function slab(cls, x, y, w, h, t, z, inner) {
+  // A slab is a box with a top, a bottom and four edges. "lite" slabs (tiny parts) only
+  // draw the three faces the camera can see.
+  function slab(cls, x, y, w, h, t, z, inner, lite) {
+    const faces = lite ? '<div class="f e-s"></div><div class="f e-e"></div>'
+      : '<div class="f bot"></div><div class="f e-n"></div><div class="f e-s"></div><div class="f e-w"></div><div class="f e-e"></div>';
     return '<div class="slab ' + cls + '" style="--x:' + x + 'px;--y:' + y + 'px;--w:' + w + 'px;--h:' + h + 'px;--t:' + t + 'px;--z:' + (z || 0) + 'px">' +
-      '<div class="f bot"></div><div class="f e-n"></div><div class="f e-s"></div><div class="f e-w"></div><div class="f e-e"></div>' +
-      '<div class="f top">' + (inner || '') + '</div></div>';
+      faces + '<div class="f top">' + (inner || '') + '</div></div>';
   }
   function cylinder(cls, x, y, w, h, t, n, z) {
     let html = '<div class="' + cls + '" style="left:' + x + 'px;top:' + y + 'px;width:' + w + 'px;height:' + h + 'px;transform:translateZ(' + (z || 0) + 'px)">';
@@ -31,99 +34,181 @@
     return html + '</div>';
   }
 
-  const PAPER = '<div class="paper"><div class="paper-bar"><span>WHISPER</span><span>17.6 kHz ▮▮▮</span></div>' +
-    '<div class="paper-from">FROM K · MSG 03 · 04:12</div><div class="paper-msg">MEET AT\nNOON</div>' +
-    '<div class="paper-foot"><span>KEY OK</span><span>F⁻¹ APPLIED</span></div></div>';
+  /* The unit: 78 × 56 × 13 mm, drawn at 5 px per mm (390 × 280 × 65 px) */
+  const DW = 390, DH = 280;
+  const CORNERS = [[16, 16], [374, 16], [16, 264], [374, 264]];
 
-  const TRACES = '<svg class="traces" viewBox="0 0 304 194" aria-hidden="true">' +
-    '<path d="M148 90 H180 V82"/><path d="M148 96 H170 V116"/><path d="M110 92 H60 V130"/><path d="M110 100 H44 V88"/>' +
-    '<path d="M148 104 H200 V150 H230"/><path d="M148 84 V40 H232 V52"/><path d="M128 108 V120"/><path d="M140 108 V170 H130"/>' +
-    '<path d="M60 150 V176 H120"/><path d="M36 88 V30 H110 V70"/><path d="M200 74 H260 V130"/><path d="M20 20 H280 M20 174 H90"/>' +
-    '<circle cx="180" cy="82" r="2"/><circle cx="60" cy="130" r="2"/><circle cx="232" cy="52" r="2"/><circle cx="260" cy="130" r="2"/><circle cx="44" cy="88" r="2"/><circle cx="110" cy="70" r="2"/></svg>';
+  // Keyboard: 33 keys in four rows
+  const ROWS = [
+    'QWERTYUIOP'.split(''),
+    'ASDFGHJKL⌫'.split(''),
+    ['⇧', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '.', '↵'],
+    ['SYM', 'SPACE', 'SEND']
+  ];
+  const KEYS = [];
+  ROWS.forEach(function (row, r) {
+    const y = 170 + r * 24;
+    if (r < 3) row.forEach(function (k, i) { KEYS.push({ k: k, x: 26 + i * 34, y: y, w: 30, h: 20 }); });
+    else {
+      KEYS.push({ k: 'SYM', x: 26, y: y, w: 64, h: 20 });
+      KEYS.push({ k: 'SPACE', x: 94, y: y, w: 200, h: 20 });
+      KEYS.push({ k: 'SEND', x: 298, y: y, w: 64, h: 20 });
+    }
+  });
 
-  const CORNERS = [[20, 20], [300, 20], [20, 190], [300, 190]];
+  const PAPER = '<div class="paper">' +
+    '<div class="paper-bar"><span>WHISPER · TO K</span><span>KEY ● 17.6 kHz</span></div>' +
+    '<p class="paper-lbl">PLAINTEXT</p><p class="paper-msg"><span class="pm-text">MEET AT NOON</span><span class="caret"></span></p>' +
+    '<p class="paper-lbl">CIPHERTEXT · F = shift(3)</p><p class="paper-cip">PHHW DW QRRQ</p>' +
+    '<div class="paper-foot"><span class="pf-state">READY</span><span class="pf-bar"><i></i></span></div></div>';
 
-  // Eight layers, front to back (5 px = 1 mm; the case is 13 mm = 65 px).
-  // z: where the layer sits when closed. ex: how far it travels when taken apart, in gap units.
+  // Dense board artwork: traces, vias, pads, silkscreen
+  const TRACES = (function () {
+    let p = '<svg class="traces" viewBox="0 0 374 264" aria-hidden="true">';
+    const paths = ['M178 104 V150 H192', 'M150 104 V160', 'M210 104 V130 H250', 'M218 60 H232 V66', 'M218 76 H232 V95',
+      'M122 70 H70 V112', 'M122 84 H60 V168', 'M122 96 H40 V160', 'M226 40 V20 H292 V32', 'M218 50 H300', 'M226 96 H300 V192',
+      'M160 160 V200 H70', 'M200 160 V236 H160', 'M240 160 H330 V174', 'M260 128 V116 H300', 'M30 30 H120 M30 234 H120 M254 234 H344',
+      'M96 112 V60 H120', 'M300 70 H344 V160', 'M120 150 H40', 'M190 30 V12', 'M196 236 V246'];
+    paths.forEach(function (d) { p += '<path d="' + d + '"/>'; });
+    for (let i = 0; i < 46; i++) {
+      const x = 20 + ((i * 73) % 330), y = 20 + ((i * 41) % 220);
+      p += '<circle class="via" cx="' + x + '" cy="' + y + '" r="1.6"/>';
+    }
+    [[24, 248], [36, 248], [48, 248], [340, 20], [352, 20]].forEach(function (c) { p += '<circle class="tp" cx="' + c[0] + '" cy="' + c[1] + '" r="3"/>'; });
+    CORNERS.forEach(function (c) { p += '<circle class="hole" cx="' + (c[0] - 8) + '" cy="' + (c[1] - 8) + '" r="5"/>'; });
+    [['U1', 124, 36], ['U2', 236, 52], ['U3', 236, 82], ['U4', 146, 166], ['J1', 116, 120], ['J2', 256, 120], ['J3', 196, 146], ['BT1', 56, 116], ['MK1', 182, 8], ['MK2', 192, 246]].forEach(function (l) {
+      p += '<text x="' + l[1] + '" y="' + l[2] + '">' + l[0] + '</text>';
+    });
+    return p + '</svg>';
+  })();
+
+  // Tiny resistors and capacitors around the chips
+  function passives() {
+    let h = '';
+    const clusters = [[112, 36, 2, 7], [232, 112, 4, 2], [100, 150, 3, 4], [282, 64, 2, 4], [282, 160, 3, 3], [30, 196, 3, 3], [256, 82, 1, 3], [70, 92, 4, 2], [320, 112, 2, 4]];
+    clusters.forEach(function (c, ci) {
+      for (let r = 0; r < c[2]; r++) for (let q = 0; q < c[3]; q++) {
+        const cap = (r + q + ci) % 3 !== 0;
+        h += slab('pas ' + (cap ? 'capc' : 'res'), c[0] + q * 9, c[1] + r * 7, 6, 3, cap ? 2.4 : 1.6, 5, '', true);
+      }
+    });
+    return h;
+  }
+
+  // Ten layers, front to back. z: where the layer sits when closed (px). ex: how far it travels apart (gap units).
   // pts: callouts [x, y, z, name, detail]. spec: the card's table.
   const LAYERS = [
-    { name: 'Front shell', mm: '1.2 mm', cls: 'L-front', z: 59, ex: 3.7,
+    { name: 'Titanium bezel', mm: '1.0 mm', cls: 'L-front', z: 60, ex: 4.6,
       html: function () {
-        return slab('shell', 0, 0, 320, 210, 6, 0,
-          '<span class="grille"></span><span class="pinhole"></span><span class="engrave e1">WHISPER</span><span class="engrave e2">CF-1</span>');
+        return slab('bezel', 0, 0, DW, DH, 5, 0, '<span class="pinhole" style="left:193px;top:271px"></span><span class="engrave e1">WHISPER</span><span class="engrave e2">ONE</span>');
       },
-      pts: [[100, 105, 6, 'Screen window', '32 × 32 mm aperture'], [284, 54, 6, 'Speaker grille', '30 holes, Ø 0.6 mm'],
-        [247, 152, 6, 'Microphone port', 'Ø 0.8 mm, mesh-backed'], [160, 210, 3, 'Chamfered edge', '0.3 mm, hard-anodised']],
-      text: 'The outer face. One window for the screen, a pinhole for the microphone, a grid of holes for the speaker. No logo and no lights, so nothing reflects or glows.',
-      spec: [['Material', '6061-T6 aluminium'], ['Thickness', '1.2 mm'], ['Finish', 'Bead-blasted, hard-anodised matte black'], ['Job', 'Protects the stack; carries window, grille and mic port']] },
-    { name: 'Cover glass and gasket', mm: '0.5 mm', cls: 'L-glass', z: 59, ex: 2.75,
+      pts: [[195, 88, 5, 'Screen window', '49 × 24 mm, flush to the glass'], [195, 15, 5, 'Earpiece slot', 'speaker and top mic behind it'],
+        [28, 216, 5, 'Keyboard opening', '33 keys rise through it'], [195, 273, 5, 'Bottom mic port', 'Ø 0.8 mm, mesh-backed']],
+      text: 'One piece of titanium frames the screen and the keyboard. No logo, no lights.',
+      spec: [['Material', 'Grade 5 titanium'], ['Thickness', '1.0 mm'], ['Finish', 'Bead-blasted, PVD graphite'], ['Job', 'Holds glass and keys; the face of the unit']] },
+    { name: 'Sapphire glass and touch layer', mm: '0.7 + 0.2 mm', cls: 'L-glass', z: 53, ex: 3.7,
       html: function () {
-        return slab('gasket', 16, 19, 172, 172, 1.5, 0) + slab('glass3', 22, 25, 160, 160, 2.5, 1.5);
+        return slab('touch', 66, 22, 258, 132, 1, 0) + slab('tfpc', 324, 60, 56, 16, 0.6, 0, '<span class="tchip"></span>') +
+          slab('glass3', 66, 22, 258, 132, 4, 1.2);
       },
-      pts: [[60, 58, 4, 'Cover glass', '0.5 mm, strengthened, anti-glare'], [160, 165, 4, 'Optical adhesive', '0.15 mm, no air gap'],
-        [17, 120, 1.5, 'Foam gasket', 'closed-cell, splash seal']],
-      text: 'A thin sheet of strengthened glass bonded to the screen with clear adhesive, so there is no air gap to fog or reflect. A foam ring seals the window against dust and splashes.',
-      spec: [['Material', 'Chemically strengthened glass, closed-cell foam'], ['Thickness', '0.5 mm glass + 0.15 mm adhesive'], ['Finish', 'Etched anti-glare'], ['Job', 'Protects the e-paper; seals the front']] },
-    { name: 'E-paper display', mm: '1.4 mm', cls: 'L-disp', z: 52, ex: 1.85,
+      pts: [[110, 50, 5.2, 'Sapphire cover glass', '0.7 mm, scratch-proof, anti-glare'], [290, 140, 1, 'Capacitive touch film', 'ITO grid, works with gloves'],
+        [352, 68, 1, 'Touch controller', 'on its own flex tail']],
+      text: 'Sapphire over a capacitive touch film: tap and swipe on the e-paper as well as typing.',
+      spec: [['Glass', 'Sapphire crystal, 0.7 mm'], ['Touch', 'Capacitive ITO film, 5-point'], ['Bond', 'Optically clear adhesive, no air gap'], ['Job', 'Protects the screen; reads touch']] },
+    { name: 'Touch e-paper display', mm: '1.2 mm', cls: 'L-disp', z: 47, ex: 2.85,
       html: function () {
-        return slab('panel3', 22, 25, 160, 160, 7, 0, PAPER) + slab('cog', 84, 178, 36, 5, 2, 7) + slab('fpc', 82, 185, 40, 22, 1, 0);
+        return slab('panel3', 47, 18, 296, 146, 6, 0, PAPER) + slab('cog', 165, 158, 60, 5, 1.6, 6) + slab('fpc', 170, 163, 50, 34, 0.8, 0);
       },
-      pts: [[70, 90, 7, 'E-paper panel', '1.54″, 200 × 200 px, 184 ppi'], [102, 180, 9, 'Driver chip on glass', 'SSD1681 controller'],
-        [102, 202, 1, 'Flex cable', '24 pins, 0.5 mm pitch']],
-      text: 'A 1.54-inch e-paper panel. It keeps the last image with no power and gives off no light, so it can’t be seen glowing in a dark room, and stays readable in sunlight.',
-      spec: [['Part', 'GDEY0154D67 (or similar)'], ['Resolution', '200 × 200 px, 184 ppi, black and white'], ['Power', '0 mW to hold an image; full refresh about 2 s'], ['Job', 'Shows the decrypted message, then clears it']] },
-    { name: 'Mid-frame and thumb rotor', mm: '0.9 mm', cls: 'L-mid', z: 47.5, ex: 0.95,
-      html: function () { return slab('frame', 0, 0, 320, 210, 4.5, 0) + cylinder('wheel', 286, 72, 66, 66, 9, 4, -2); },
-      pts: [[22, 160, 4.5, 'Mid-frame', 'glass-filled nylon'], [182, 60, 4.5, 'Screen pocket', 'holds the panel square'],
-        [338, 105, 7, 'Thumb rotor', 'Ø 13 mm, 26 detents, push to select']],
-      text: 'A stiff frame that holds the screen and carries the thumb rotor on the right edge. Roll it to pick letters, like the lab’s rotors; press to select; hold for five seconds to wipe the keys.',
-      spec: [['Material', 'PA66 nylon, 30% glass fibre'], ['Thickness', '0.9 mm'], ['Rotor', 'Side jog encoder with push switch (Panasonic EVQ-WK series)'], ['Job', 'Stiffens the case; holds screen and rotor']] },
-    { name: 'Main board', mm: '2.0 mm with parts', cls: 'L-board', z: 37.5, ex: 0,
+      pts: [[150, 70, 6, 'E-paper panel', '2.13″, 250 × 122 px'], [195, 160, 7.6, 'Driver chip on glass', 'SSD1680 controller'],
+        [195, 192, 0.8, 'Display flex', '24 pins to the board']],
+      text: 'A 2.13-inch e-paper panel. No glow, no power to hold the image, readable in full sun.',
+      spec: [['Panel', '2.13″, 250 × 122 px, black and white'], ['Power', '0 mW to hold; partial refresh 0.3 s'], ['Driver', 'SSD1680, chip-on-glass'], ['Job', 'Compose, read, confirm']] },
+    { name: 'Keyboard', mm: '33 keys', cls: 'L-keys', z: 48.5, ex: 2.05,
       html: function () {
-        return slab('pcb', 8, 8, 304, 194, 5, 0, TRACES) +
-          slab('chip big', 118, 78, 38, 38, 4.5, 5, 'RP2040') + slab('chip', 170, 80, 26, 20, 4, 5, 'W25Q16') +
-          slab('chip key', 172, 114, 18, 18, 3, 5, '608B') + slab('chip can', 128, 124, 14, 9, 3.5, 5, '12M') +
-          slab('chip', 232, 58, 16, 16, 4, 5, 'AMP') + slab('chip can', 238, 144, 18, 14, 5, 5, 'MIC') +
-          slab('chip', 64, 136, 16, 16, 4, 5, 'HAP') + slab('chip', 40, 92, 14, 9, 4, 5, 'CHG') +
-          slab('chip can', 130, 180, 50, 24, 8, 5, 'USB-C') + slab('chip under', 52, 40, 12, 8, 2, -2);
+        return slab('keymat', 22, 166, 346, 100, 2, 0) + KEYS.map(function (k) {
+          return slab('cap' + (k.w > 30 ? ' wide' : '') + (k.k === 'SEND' ? ' send' : ''), k.x, k.y, k.w, k.h, 15, 2, '<b>' + (k.k === 'SPACE' ? '' : k.k) + '</b>', true).replace('class="slab cap', 'data-key="' + k.k + '" class="slab cap');
+        }).join('');
       },
-      pts: [[137, 97, 9.5, 'RP2040', '2 × Cortex-M0+, 133 MHz, 264 KB RAM'], [181, 123, 8, 'ATECC608B', 'secure element, holds the key'],
-        [247, 151, 10, 'ICS-43434', 'I²S MEMS mic, to 20 kHz'], [240, 66, 9, 'MAX98357A', 'I²S class-D amplifier'],
-        [183, 90, 9, 'W25Q16', '2 MB flash, firmware only'], [155, 192, 13, 'USB-C', 'charging and key loading'],
-        [47, 96, 9, 'MCP73831', 'LiPo charger, 500 mA'], [58, 44, -2, 'Light sensor (underside)', 'tamper alarm, faces the tray']],
-      text: 'The brain, every part on one side of a 4-layer board. The processor listens with 16 tone detectors, rebuilds the bytes, checks the mod-256 checksum and applies F⁻¹ with the key from the secure chip. A DRV2605L drives the vibration motor.',
-      spec: [['Board', '4-layer FR-4, 1.0 mm'], ['Finish', 'Matte solder mask, ENIG gold pads'], ['Parts', 'RP2040, ATECC608B, ICS-43434, MAX98357A, DRV2605L, MCP73831, W25Q16, USB-C'], ['Job', 'Listen, decode, decrypt, show']] },
-    { name: 'Power and sound bay', mm: '5.0 mm', cls: 'L-bay', z: 0, ex: -1.15,
+      pts: [[43, 180, 17, 'Keycap', 'sculpted polycarbonate, 6 × 4 mm'], [314, 252, 17, 'SEND key', 'encrypt, then transmit'],
+        [194, 252, 17, 'Space bar', 'long-press for numbers'], [366, 262, 2, 'Silicone keymat', 'one piece, sealed']],
+      text: 'A full keyboard, 33 sculpted keys on one sealed silicone mat, quiet enough to type in a meeting.',
+      spec: [['Keys', '33, QWERTY, 6 × 4 mm caps'], ['Mat', 'Silicone rubber, one piece'], ['Travel', '0.3 mm, soft click'], ['Job', 'Type the message']] },
+    { name: 'Dome sheet', mm: '0.3 mm', cls: 'L-domes', z: 47, ex: 1.45,
       html: function () {
-        return slab('cell', 8, 20, 250, 170, 25, 9.5, '<span>LiPo · 503450</span><span><b>3.7 V · 1000 mAh</b><br>3.7 Wh</span>') +
-          slab('pcm', 236, 70, 18, 70, 3, 34.5) +
-          cylinder('spk', 262, 22, 45, 65, 15, 4, 9.5) + cylinder('mot', 265, 140, 40, 40, 12, 3, 9.5);
+        return slab('domesheet', 22, 166, 346, 100, 1.4, 0) + KEYS.map(function (k) {
+          return cylinder('dome', k.x + k.w / 2 - 6, k.y + k.h / 2 - 6, 12, 12, 2.2, 2, 1.4);
+        }).join('') + slab('kfpc', 180, 150, 30, 18, 0.6, 0);
       },
-      pts: [[120, 105, 34.5, 'LiPo cell', '503450, 3.7 V, 1000 mAh'], [245, 105, 37.5, 'Protection circuit', 'over-charge, over-drain, short'],
-        [284, 54, 24.5, 'Micro speaker', '9 × 13 mm, response to 20 kHz'], [285, 160, 21.5, 'Vibration motor', '8 mm LRA, silent alerts']],
-      text: 'A 1000 mAh lithium-polymer cell, a micro speaker and a coin vibration motor sit side by side, held by foam tape. The speaker sends the tones; the motor gives a silent buzz when a message arrives.',
-      spec: [['Cell', 'LiPo 503450, 3.7 V, 1000 mAh (3.7 Wh)'], ['Protection', 'Built-in circuit: over-charge, over-discharge, short'], ['Sound', '9 × 13 mm micro speaker, 8 mm LRA motor'], ['Mount', 'Double-sided foam tape, 0.7 mm']] },
-    { name: 'Back tray', mm: '1.2 mm walls', cls: 'L-back', z: 0, ex: -2.65,
+      pts: [[43, 180, 3.6, 'Metal dome', 'stainless, 160 gf, ×33'], [100, 258, 1.4, 'Polyester sheet', 'holds all domes in place'],
+        [195, 156, 0.6, 'Keyboard flex', 'to the keypad scanner']],
+      text: 'Each key presses a stainless dome that snaps onto contacts below: crisp, silent, rated for millions of presses.',
+      spec: [['Domes', '33 × stainless steel, 160 gf'], ['Sheet', 'Polyester, adhesive-backed'], ['Life', 'Over 1 million presses'], ['Job', 'Turns a press into a contact']] },
+    { name: 'Titanium mid-frame', mm: '55 × 1.2 mm walls', cls: 'L-mid', z: 5, ex: 0.55,
       html: function () {
-        const posts = CORNERS.map(function (c) { return cylinder('post', c[0] - 7, c[1] - 7, 14, 14, 22, 4, 6); }).join('');
-        return slab('shell', 0, 0, 320, 210, 6, 0, '<span class="foam"></span><span class="stamp">CF-1 · WHISPER<br>SN 0417 · CONCEPT</span>') +
-          slab('shell', 0, 0, 320, 6, 59, 0) + slab('shell', 0, 204, 320, 6, 59, 0) +
-          slab('shell', 0, 6, 6, 198, 59, 0) + slab('shell', 314, 6, 6, 198, 59, 0) + posts +
-          slab('port', 132, 207, 46, 4, 17, 34);
+        const posts = CORNERS.map(function (c) { return cylinder('post', c[0] - 6, c[1] - 6, 12, 12, 28, 4, 0); }).join('');
+        return slab('frame', 6, 6, 378, 268, 4, 38, '<span class="ribs"></span>') +
+          slab('wall', 0, 0, DW, 6, 55, 0) + slab('wall', 0, 274, DW, 6, 55, 0) +
+          slab('wall', 0, 6, 6, 268, 55, 0) + slab('wall', 384, 6, 6, 268, 55, 0) + posts +
+          cylinder('wheel', 362, 64, 48, 48, 8, 4, 30) +
+          slab('fp', 388, 176, 6, 46, 10, 26, '<span class="fp-ring"></span>') +
+          slab('kill', -3, 60, 4, 36, 8, 28) + slab('nub', -6, 64, 4, 12, 6, 29) +
+          slab('port', 172, 273, 46, 8, 16, 22);
       },
-      pts: [[20, 20, 28, 'Screw post', 'M1.4 thread, ×4'], [160, 3, 59, 'Side wall', '1.2 mm, CNC-machined'],
-        [155, 210, 42, 'USB-C opening', '9.0 × 3.3 mm'], [160, 112, 6, 'Serial stamp', 'laser-etched inside']],
-      text: 'One machined piece forms the back and all four sides. It is light-tight, so if the case is opened the light sensor under the board sees daylight and Whisper erases its keys.',
-      spec: [['Material', '6061-T6 aluminium'], ['Walls', '1.2 mm, machined from solid'], ['Posts', '4 × M1.4 threaded'], ['Job', 'Forms the case; keeps the inside dark for the tamper sensor']] },
-    { name: 'Fasteners and seal', mm: 'M1.4 × 4', cls: 'L-screws', z: 0, ex: -3.7,
+      pts: [[386, 88, 34, 'Thumb rotor', 'Ø 9.6 mm, 26 detents'], [392, 199, 31, 'Fingerprint power key', 'unlocks the key store'],
+        [-5, 70, 32, 'Mic kill switch', 'cuts both mics in hardware'], [195, 276, 30, 'USB-C port', 'charge and load keys'],
+        [100, 60, 42, 'Inner shelf', 'stiffening ribs, 0.8 mm']],
+      text: 'The skeleton: titanium walls, an inner shelf, and every control on the sides.',
+      spec: [['Material', 'Grade 5 titanium, CNC-machined'], ['Walls', '1.2 mm, inner shelf 0.8 mm'], ['Controls', 'Rotor, fingerprint key, mic kill switch'], ['Job', 'Strength; carries all side controls']] },
+    { name: 'Main board', mm: '1.0 mm, 8 layers', cls: 'L-board', z: 33, ex: -0.75,
+      html: function () {
+        return slab('pcb', 8, 8, 374, 264, 5, 0, TRACES) +
+          slab('chip can shield', 130, 40, 96, 72, 6, 5, '<span class="perf"></span><i>STM32U585</i>') +
+          slab('chip key', 240, 56, 20, 20, 3, 5, 'SE050') + slab('chip', 240, 86, 26, 18, 4, 5, 'W25Q128') +
+          slab('chip', 150, 170, 18, 18, 3, 5, 'KPD') + slab('chip', 60, 200, 12, 10, 2.5, 5, 'FG', true) +
+          slab('chip', 40, 170, 14, 12, 3, 5, 'CHG', true) + slab('chip', 300, 40, 16, 16, 4, 5, 'AMP') +
+          slab('chip', 300, 200, 16, 16, 4, 5, 'HAP') + slab('chip can', 186, 12, 18, 12, 5, 5, 'MIC') +
+          slab('chip can', 196, 250, 18, 12, 5, 5, 'MIC') + slab('chip can', 232, 112, 14, 8, 3.5, 5, '', true) +
+          slab('conn', 120, 124, 60, 10, 5, 5) + slab('conn', 260, 124, 34, 10, 5, 5) + slab('conn', 200, 150, 60, 10, 5, 5) +
+          slab('conn', 340, 170, 26, 10, 5, 5) + slab('jst', 60, 120, 22, 12, 6, 5) +
+          slab('chip can', 130, 244, 46, 26, 14, 5, 'USB-C') + slab('chip under', 40, 40, 12, 8, 2, -2) + passives();
+      },
+      pts: [[178, 76, 11, 'STM32U585 under shield', 'Cortex-M33, 160 MHz, AES in hardware'], [250, 66, 8, 'NXP SE050', 'secure element, holds the key'],
+        [253, 95, 9, 'W25Q128', '16 MB flash, firmware only'], [159, 179, 8, 'TCA8418', 'keypad scanner'],
+        [195, 18, 10, 'Dual ICS-43434', 'mics top and bottom, noise-cancelling'], [308, 48, 9, 'MAX98357A', 'I²S amplifier'],
+        [153, 257, 19, 'USB-C', 'charge, load keys; data off when locked'], [46, 44, -2, 'Light sensor (underside)', 'tamper alarm']],
+      text: 'Eight layers, parts on one side, the processor under a metal shield. About 70 parts in a card-sized space.',
+      spec: [['Board', '8-layer HDI, 1.0 mm'], ['Brain', 'STM32U585, TrustZone, hardware AES'], ['Key store', 'NXP SE050, certified secure element'], ['Also', 'BQ25180 charger, MAX17048 gauge, DRV2605L haptics']] },
+    { name: 'Power and sound', mm: '5.0 mm', cls: 'L-bay', z: 0, ex: -1.9,
+      html: function () {
+        return slab('cell', 20, 90, 250, 170, 25, 7, '<span>LiPo · 503450</span><span><b>3.7 V · 1000 mAh</b><br>3.7 Wh · 2C</span>') +
+          slab('pcm', 30, 93, 70, 10, 3, 32) + slab('bflex', 60, 96, 22, 26, 0.8, 32) + slab('tab', 120, 250, 40, 24, 0.6, 7) +
+          slab('spkbox', 280, 16, 90, 62, 15, 8, '<span class="membrane"></span><span class="sport"></span>') +
+          cylinder('mot', 300, 196, 36, 36, 12, 3, 8) +
+          slab('boot', 184, 6, 22, 8, 4, 40, '', true) + slab('boot', 194, 266, 22, 8, 4, 40, '', true);
+      },
+      pts: [[145, 175, 32, 'LiPo cell', '503450, 3.7 V, 1000 mAh'], [65, 98, 35, 'Protection circuit', 'over-charge, over-drain, short'],
+        [325, 47, 23, 'Sealed speaker box', '11 × 15 mm driver, to 20 kHz'], [318, 214, 20, 'Vibration motor', '8 mm LRA'],
+        [140, 262, 7.6, 'Pull tab', 'removes the cell without tools']],
+      text: 'A 1000 mAh cell, a sealed speaker box for clean high tones, and a motor for silent alerts.',
+      spec: [['Cell', 'LiPo 503450, 3.7 V, 1000 mAh (3.7 Wh)'], ['Speaker', 'Sealed box, 11 × 15 mm driver'], ['Haptics', '8 mm LRA'], ['Mount', 'Stretch-release adhesive, pull tab']] },
+    { name: 'Ceramic back', mm: '1.0 mm', cls: 'L-back', z: 0, ex: -3.2,
+      html: function () {
+        const sinks = CORNERS.map(function (c) { return '<span class="sink" style="left:' + (c[0] - 7) + 'px;top:' + (c[1] - 7) + 'px"></span>'; }).join('');
+        return slab('ceramic', 0, 0, DW, DH, 5, 0, '<span class="graphite"></span><span class="foam2"></span>' + sinks + '<span class="stamp">WHISPER ONE · ZrO₂<br>SN 0417 · CONCEPT</span>');
+      },
+      pts: [[195, 140, 5, 'Graphite sheet', 'spreads heat while charging'], [16, 16, 5, 'Countersunk hole', 'for the M1.4 screws'],
+        [330, 230, 5, 'Zirconia ceramic', 'scratch-proof, light-tight']],
+      text: 'Zirconia ceramic: hard, cool to the touch, and completely dark inside for the tamper sensor.',
+      spec: [['Material', 'Zirconia ceramic (ZrO₂)'], ['Thickness', '1.0 mm'], ['Inside', 'Graphite heat sheet, foam pads'], ['Job', 'Closes the unit; keeps it dark inside']] },
+    { name: 'Fasteners and seal', mm: 'M1.4 × 4', cls: 'L-screws', z: 0, ex: -4.3,
       html: function () {
         return CORNERS.map(function (c) {
           return cylinder('shaft', c[0] - 3, c[1] - 3, 6, 6, 20, 6, 0) + cylinder('head', c[0] - 6, c[1] - 6, 12, 12, 3, 3, -3);
-        }).join('') + slab('seal', 292, 182, 16, 16, 0.6, -3.8);
+        }).join('') + slab('seal', 366, 256, 16, 16, 0.6, -3.8);
       },
-      pts: [[20, 20, 18, 'Torx T3 screw', 'M1.4 × 4 mm stainless, ×4'], [300, 190, -3, 'Tamper label', 'void pattern shows if lifted']],
-      text: 'Four tiny Torx screws close the case. A void label over one of them shows at a glance if anyone has opened it.',
-      spec: [['Screws', '4 × M1.4 × 4 mm, Torx T3, stainless A2'], ['Thread-lock', 'Low-strength, removable'], ['Seal', 'Void label over screw 4'], ['Job', 'Holds the case shut; shows tampering']] }
+      pts: [[16, 16, 18, 'Torx T3 screw', 'M1.4 × 4 mm titanium, ×4'], [374, 264, -3, 'Tamper label', 'void pattern if lifted']],
+      text: 'Four titanium screws close the unit. A void label over one shows if anyone opened it.',
+      spec: [['Screws', '4 × M1.4 × 4 mm, Torx T3, titanium'], ['Thread-lock', 'Low-strength, removable'], ['Seal', 'Void label over screw 4'], ['Job', 'Closes the unit; shows tampering']] }
   ];
   const NL = LAYERS.length;
 
@@ -142,17 +227,20 @@
       el: el,
       layers: layers,
       wheel: el.querySelector('.wheel'),
-      msg: el.querySelector('.paper-msg'),
-      paper: el.querySelector('.panel3 > .top'),
+      text: el.querySelector('.pm-text'),
+      cip: el.querySelector('.paper-cip'),
+      state: el.querySelector('.pf-state'),
+      bar: el.querySelector('.pf-bar i'),
+      key: function (k) { return el.querySelector('.cap[data-key="' + k + '"]'); },
       // sep 0 = closed, 1 = fully apart. active = index of the highlighted layer, or -1
       set: function (sep, active, gap) {
-        const G = gap || 70;
+        const G = gap || 56;
         let zmin = 0, zmax = 65;
         layers.forEach(function (l, k) {
-          const z = LAYERS[k].z + sep * LAYERS[k].ex * G + (k === active ? 22 : 0);
+          const z = LAYERS[k].z + sep * LAYERS[k].ex * G + (k === active ? 18 : 0);
           l.style.transform = 'translateZ(' + z.toFixed(1) + 'px)';
           l.classList.toggle('is-active', k === active);
-          if (k === 0) zmax = z + 6;
+          if (k === 0) zmax = z + 5;
           if (k === NL - 1) zmin = z - 4;
         });
         axes.forEach(function (a) {
@@ -224,7 +312,7 @@
   function heroFrame(now) {
     const t = (now - t0) / 1000;
     const k = reduce ? 1 : ease(clamp((t - 0.3) / 1.8, 0, 1));
-    hero.set(1 - k, -1, 58);
+    hero.set(1 - k, -1, 46);
     const az = -32 + (reduce ? 0 : Math.sin(t * 0.35) * 9);
     const ax = 56 + (reduce ? 0 : Math.sin(t * 0.5) * 3);
     const fl = reduce ? 0 : Math.sin(t * 0.9) * 8;
@@ -234,28 +322,49 @@
   }
   requestAnimationFrame(heroFrame);
 
-  // The screen receives a new message every few seconds, with an e-paper flash
+  // Typing demo: keys press as the message is typed, then it is encrypted with
+  // shift(3) and sent as tones
   (function () {
-    const MSGS = ['MEET AT\nNOON', 'PACKAGE AT\nGATE 4', 'GO DARK\nAT 0400', 'TRUST\nNO ONE'];
-    let i = 0;
-    function show(text) {
-      const el = hero.msg, paper = hero.paper;
-      if (reduce) { el.textContent = text; return; }
-      paper.classList.add('flash');
-      setTimeout(function () { paper.classList.remove('flash'); }, 160);
-      let f = 0; const total = 22;
-      (function step() {
-        f++;
-        const done = Math.floor((f / total) * text.length);
-        el.textContent = text.split('').map(function (c, j) {
-          if (j < done || c === ' ' || c === '\n') return c;
-          return LETTERS[Math.floor(Math.random() * 26)];
-        }).join('');
-        if (f < total) setTimeout(step, 40); else el.textContent = text;
-      })();
+    const MSGS = ['MEET AT NOON', 'PACKAGE AT GATE 4', 'GO DARK AT 0400', 'TRUST NO ONE'];
+    const shift3 = function (t) {
+      return t.replace(/[A-Z]/g, function (c) { return LETTERS[(LETTERS.indexOf(c) + 3) % 26]; });
+    };
+    const wait = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+    function press(k) {
+      const cap = hero.key(k);
+      if (!cap) return;
+      cap.classList.add('down');
+      setTimeout(function () { cap.classList.remove('down'); }, 120);
     }
-    setTimeout(function () { show(MSGS[0]); }, 1900);
-    setInterval(function () { i = (i + 1) % MSGS.length; show(MSGS[i]); }, 5200);
+    if (reduce) return;
+    async function loop() {
+      let m = 0;
+      for (;;) {
+        const msg = MSGS[m % MSGS.length]; m++;
+        hero.text.textContent = ''; hero.cip.textContent = '—'; hero.state.textContent = 'TYPING'; hero.bar.style.width = '0%';
+        for (const ch of msg) {
+          press(ch === ' ' ? 'SPACE' : ch);
+          hero.text.textContent += ch;
+          await wait(ch === ' ' ? 170 : 120 + Math.random() * 90);
+        }
+        await wait(500);
+        press('SEND');
+        hero.state.textContent = 'ENCRYPTING';
+        const target = shift3(msg);
+        for (let f = 1; f <= 14; f++) {
+          const done = Math.floor(f / 14 * target.length);
+          hero.cip.textContent = target.split('').map(function (c, i) {
+            return i < done || c === ' ' ? c : LETTERS[Math.floor(Math.random() * 26)];
+          }).join('');
+          await wait(45);
+        }
+        hero.state.textContent = 'SENDING · 17.6 kHz';
+        for (let i = 0; i <= 20; i++) { hero.bar.style.width = (i * 5) + '%'; await wait(70); }
+        hero.state.textContent = 'SENT ✓';
+        await wait(1600);
+      }
+    }
+    setTimeout(loop, 2000);
   })();
 
   /* =========================================================
@@ -280,7 +389,7 @@
   }).join('');
   const items = Array.prototype.slice.call(document.querySelectorAll('#ex-index li'));
   const cards = Array.prototype.slice.call(document.querySelectorAll('.ex-card'));
-  const P0 = 0.12;  // the first 12% of the section separates the layers
+  const P0 = 0.1;  // the first 12% of the section separates the layers
 
   // Click a layer name to glide to it
   document.querySelectorAll('#ex-index button').forEach(function (b) {
@@ -337,20 +446,42 @@
     lines.innerHTML = path;
   }
 
-  let lastActive = null;
+  // The camera follows the active layer: it glides to it and zooms in
+  const devEl = $('ex-device');
+  const cam = { z: 32, s: 0.64, ax: 58, az: -36 }, tgt = { z: 32, s: 0.64 };
+  let lastActive = null, camRun = false;
+  function baseScale() { return innerWidth < 560 ? 0.42 : innerWidth < 980 ? 0.5 : 0.62; }
+  function applyCam() {
+    devEl.style.transform = 'translateY(6px) scale3d(' + cam.s.toFixed(3) + ',' + cam.s.toFixed(3) + ',' + cam.s.toFixed(3) + ')';
+    exCam.style.transform = 'rotateX(' + cam.ax.toFixed(2) + 'deg) rotateZ(' + cam.az.toFixed(2) + 'deg) translateZ(' + (-cam.z * cam.s).toFixed(1) + 'px)';
+    drawCallouts(lastActive);
+  }
+  function camTick() {
+    const k = reduce ? 1 : 0.12;
+    cam.z += (tgt.z - cam.z) * k; cam.s += (tgt.s - cam.s) * k;
+    applyCam();
+    if (Math.abs(tgt.z - cam.z) > 0.3 || Math.abs(tgt.s - cam.s) > 0.002) requestAnimationFrame(camTick);
+    else { cam.z = tgt.z; cam.s = tgt.s; applyCam(); camRun = false; }
+  }
   function exFrame() {
     const r = exSec.getBoundingClientRect();
     const total = exSec.offsetHeight - innerHeight;
     const p = clamp(-r.top / total, 0, 1);
     const sep = ease(clamp(p / P0, 0, 1));
     const active = p < P0 ? -1 : Math.min(NL - 1, Math.floor((p - P0) / (1 - P0) * NL));
-    const gap = innerWidth < 560 ? 44 : innerWidth < 980 ? 58 : 70;
+    const gap = innerWidth < 560 ? 52 : innerWidth < 980 ? 64 : 84;
     ex.set(sep, active, gap);
-    const ax = 60 - 6 * p, az = -38 + 18 * p;
-    exCam.style.transform = 'rotateX(' + ax.toFixed(2) + 'deg) rotateZ(' + az.toFixed(2) + 'deg) translateZ(-32px)';
+    cam.ax = 58 - 6 * p; cam.az = -36 + 16 * p;
+    if (active >= 0) {
+      const L = LAYERS[active];
+      tgt.z = L.z + L.ex * gap + 18 + (active === 5 ? 30 : 8);
+      tgt.s = baseScale() * 1.65;
+    } else {
+      tgt.z = 32 + sep * 0.2 * gap; tgt.s = baseScale();
+    }
     if (ex.wheel) ex.wheel.style.setProperty('--rot', (p * 720).toFixed(1) + 'deg');
     hint.style.opacity = p > 0.04 ? 0 : 1;
-    $('exh-sep').textContent = 'SEPARATION ' + Math.round(sep * 100) + '%';
+    $('exh-sep').textContent = 'SEPARATION ' + Math.round(sep * 100) + '%  ·  ZOOM ' + (tgt.s / baseScale() * 100).toFixed(0) + '%';
     if (active !== lastActive) {
       lastActive = active;
       const show = Math.max(0, active);
@@ -358,7 +489,7 @@
       cards.forEach(function (c, i) { c.classList.toggle('is-active', i === show); });
       $('exh-layer').textContent = active < 0 ? 'ASSEMBLED' : 'LAYER ' + String(active + 1).padStart(2, '0') + ' / ' + String(NL).padStart(2, '0') + ' · ' + LAYERS[active].name.toUpperCase();
     }
-    drawCallouts(active);
+    if (!camRun) { camRun = true; requestAnimationFrame(camTick); }
   }
 
   /* ---------- Nav progress ---------- */
@@ -382,35 +513,42 @@
      ========================================================= */
   (function () {
     const svg = $('xsec');
-    const SX = 14, SY = 28, X0 = 50, Y0 = 34;
+    const SX = 16, SY = 28, X0 = 50, Y0 = 40;
     const X = function (mm) { return X0 + mm * SX; }, Y = function (mm) { return Y0 + mm * SY; };
     const rect = function (r) { return '<rect x="' + X(r[0]).toFixed(1) + '" y="' + Y(r[1]).toFixed(1) + '" width="' + (r[2] * SX).toFixed(1) + '" height="' + (r[3] * SY).toFixed(1) + '" rx="' + (r[4] || 0) + '"/>'; };
+    // Slice along the short side: 0 mm = top edge (earpiece), 56 mm = bottom edge (keyboard)
+    const keys = [34, 38.8, 43.6, 48.4].map(function (x) { return [x, -0.4, 4, 2.0, 2]; });
+    const domes = [34, 38.8, 43.6, 48.4].map(function (x) { return [x + 1.2, 1.85, 1.6, 0.3, 1]; });
     const PARTS = [
-      { k: 'front', cls: 'p-shell', d: 0, r: [[0, 0, 4.4, 1.2, 2], [36.4, 0, 27.6, 1.2, 2]] },
-      { k: 'disp', cls: 'p-glass', d: 1, r: [[4.4, 0.35, 32, 0.85]] },
-      { k: 'disp', cls: 'p-paper', d: 1, r: [[4.6, 1.2, 31.6, 1.4]] },
-      { k: 'mid', cls: 'p-frame', d: 2, r: [[1.2, 2.6, 61.6, 0.9]] },
-      { k: 'mid', cls: 'p-wheel', d: 2, r: [[57, 2.35, 8.6, 1.4, 4]] },
-      { k: 'board', cls: 'p-chip', d: 3, r: [[20, 3.6, 7, 0.9], [29, 3.7, 4, 0.8], [44, 3.7, 3, 0.8], [52, 3.5, 3.5, 1.0], [40, 5.5, 2, 0.5]] },
-      { k: 'board', cls: 'p-chip key', d: 3, r: [[34.5, 3.9, 2, 0.6]] },
-      { k: 'board', cls: 'p-usb', d: 3, r: [[1.2, 3.7, 7.3, 2.4, 2]] },
-      { k: 'board', cls: 'p-pcb', d: 3, r: [[1.2, 4.5, 61.6, 1.0]] },
-      { k: 'cell', cls: 'p-cell', d: 4, r: [[1.8, 6.1, 50, 5.0, 6]] },
-      { k: 'bay', cls: 'p-spk', d: 5, r: [[52.6, 8.1, 9.4, 3.0, 3]] },
-      { k: 'foam', cls: 'p-foam', d: 6, r: [[1.2, 11.1, 61.6, 0.7]] },
-      { k: 'back', cls: 'p-shell', d: 7, r: [[0, 1.2, 1.2, 11.8], [62.8, 1.2, 1.2, 11.8], [1.2, 11.8, 61.6, 1.2]] }
+      { k: 'front', cls: 'p-shell', d: 0, r: [[0, 0, 2.4, 1.0, 1], [3.6, 0, 2.0, 1.0], [29.6, 0, 3.6, 1.0], [53.2, 0, 2.8, 1.0, 1]] },
+      { k: 'glass', cls: 'p-glass', d: 1, r: [[5.0, 0.3, 25.2, 0.7]] },
+      { k: 'glass', cls: 'p-touch', d: 1, r: [[5.0, 1.0, 25.2, 0.2]] },
+      { k: 'disp', cls: 'p-paper', d: 2, r: [[3.6, 1.2, 29.2, 1.2]] },
+      { k: 'keys', cls: 'p-key', d: 3, r: keys.concat([[33.2, 1.6, 20, 0.25]]) },
+      { k: 'keys', cls: 'p-dome', d: 3, r: domes.concat([[33.2, 2.15, 20, 0.2]]) },
+      { k: 'mid', cls: 'p-frame', d: 4, r: [[1.2, 2.6, 53.6, 0.8]] },
+      { k: 'board', cls: 'p-chip', d: 5, r: [[10, 3.4, 16, 1.0], [27.2, 3.6, 4, 0.8], [30, 3.8, 3, 0.6], [36, 3.7, 3.2, 0.7], [44, 3.6, 3, 0.8], [2.6, 3.5, 3.6, 0.9], [8, 5.4, 2.4, 0.4]] },
+      { k: 'board', cls: 'p-chip key', d: 5, r: [[22, 3.8, 3, 0.6]] },
+      { k: 'board', cls: 'p-pcb', d: 5, r: [[1.2, 4.4, 53.6, 1.0]] },
+      { k: 'cell', cls: 'p-cell', d: 6, r: [[18, 6.2, 34, 5.0, 6]] },
+      { k: 'spk', cls: 'p-spk', d: 6, r: [[4, 6.2, 12, 3.0, 3]] },
+      { k: 'foam', cls: 'p-foam', d: 7, r: [[1.2, 11.2, 53.6, 0.8]] },
+      { k: 'back', cls: 'p-shell', d: 8, r: [[0, 1.0, 1.2, 11.0], [54.8, 1.0, 1.2, 11.0]] },
+      { k: 'back', cls: 'p-ceramic', d: 8, r: [[0, 12.0, 56, 1.0, 2]] }
     ];
     const TAGS = [
-      { k: 'front', at: [63.4, 0.6], ly: 40, t: 'Front shell', s: 'aluminium · 1.2 mm' },
-      { k: 'disp', at: [36.2, 1.9], ly: 88, t: 'E-paper and cover glass', s: '1.54″ panel · 1.4 mm' },
-      { k: 'mid', at: [65.6, 3.05], ly: 136, t: 'Mid-frame and thumb rotor', s: '0.9 mm · rotor stands out 1.6 mm' },
-      { k: 'board', at: [62, 5.0], ly: 184, t: 'Main board', s: '1.0 mm board · parts up to 1.0 mm' },
-      { k: 'cell', at: [42, 6.6], ly: 236, t: 'LiPo cell', s: '3.7 V · 1000 mAh · 5.0 mm' },
-      { k: 'bay', at: [60, 8.5], ly: 288, t: 'Micro speaker', s: '3.0 mm · the motor sits behind it' },
-      { k: 'foam', at: [62.4, 11.45], ly: 340, t: 'Foam pad', s: '0.7 mm, holds the cell still' },
-      { k: 'back', at: [63.4, 12.4], ly: 392, t: 'Back shell', s: 'aluminium tray · 1.2 mm' }
+      { k: 'front', at: [55.4, 0.5], ly: 36, t: 'Titanium bezel', s: '1.0 mm · windows for screen and keys' },
+      { k: 'glass', at: [30, 0.6], ly: 78, t: 'Sapphire glass and touch film', s: '0.7 mm + 0.2 mm' },
+      { k: 'disp', at: [32.6, 1.8], ly: 120, t: 'Touch e-paper', s: '2.13″ panel · 1.2 mm' },
+      { k: 'keys', at: [52.2, 0.6], ly: 162, t: 'Keycaps, keymat, metal domes', s: 'keys stand 0.4 mm proud' },
+      { k: 'mid', at: [54.4, 3.0], ly: 204, t: 'Mid-frame shelf', s: 'titanium · 0.8 mm' },
+      { k: 'board', at: [54, 4.9], ly: 246, t: 'Main board', s: '8 layers · 1.0 mm · shield over the MCU' },
+      { k: 'cell', at: [51.8, 8.4], ly: 288, t: 'LiPo cell', s: '3.7 V · 1000 mAh · 5.0 mm' },
+      { k: 'spk', at: [15.8, 7.0], ly: 330, t: 'Sealed speaker box', s: '3.0 mm, under the earpiece' },
+      { k: 'foam', at: [54.6, 11.6], ly: 372, t: 'Foam and graphite sheet', s: '0.8 mm' },
+      { k: 'back', at: [55.6, 12.5], ly: 414, t: 'Zirconia ceramic back', s: '1.0 mm' }
     ];
-    const W = 1260, H = Y(13) + 74, LX = X(64) + 64;
+    const W = 1300, H = Y(13) + 90, LX = X(56) + 64;
     let html = '<defs>' +
       '<pattern id="hatch-shell" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" class="hs-bg"/><line x1="0" y1="0" x2="0" y2="7" class="hs-ln"/></pattern>' +
       '<pattern id="hatch-cell" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)"><rect width="10" height="10" class="hc-bg"/><line x1="0" y1="0" x2="0" y2="10" class="hc-ln"/></pattern>' +
@@ -420,12 +558,12 @@
       html += '<g class="part ' + p.cls + '" data-k="' + p.k + '" style="--d:' + (p.d * 140 + 200) + 'ms">' + p.r.map(rect).join('') + '</g>';
     });
     // Dimensions
-    const dy = Y(13) + 30;
+    const dy = Y(13) + 34;
     html += '<g class="dims" style="--d:1500ms">' +
-      '<path class="dim" d="M' + (X0 - 24) + ' ' + Y0 + ' V' + Y(13) + ' M' + (X0 - 30) + ' ' + Y0 + ' H' + (X0 - 18) + ' M' + (X0 - 30) + ' ' + Y(13) + ' H' + (X0 - 18) + '"/>' +
+      '<path class="dim" d="M' + (X0 - 24) + ' ' + Y(0) + ' V' + Y(13) + ' M' + (X0 - 30) + ' ' + Y0 + ' H' + (X0 - 18) + ' M' + (X0 - 30) + ' ' + Y(13) + ' H' + (X0 - 18) + '"/>' +
       '<text class="dim-t" transform="translate(' + (X0 - 32) + ' ' + Y(6.5) + ') rotate(-90)" text-anchor="middle">13.0 mm</text>' +
-      '<path class="dim" d="M' + X0 + ' ' + dy + ' H' + X(64) + ' M' + X0 + ' ' + (dy - 6) + ' V' + (dy + 6) + ' M' + X(64) + ' ' + (dy - 6) + ' V' + (dy + 6) + '"/>' +
-      '<text class="dim-t" x="' + X(32) + '" y="' + (dy + 22) + '" text-anchor="middle">64 mm</text></g>';
+      '<path class="dim" d="M' + X0 + ' ' + dy + ' H' + X(56) + ' M' + X0 + ' ' + (dy - 6) + ' V' + (dy + 6) + ' M' + X(56) + ' ' + (dy - 6) + ' V' + (dy + 6) + '"/>' +
+      '<text class="dim-t" x="' + X(28) + '" y="' + (dy + 22) + '" text-anchor="middle">56 mm · top edge to bottom edge</text></g>';
     // Labels with leader lines
     TAGS.forEach(function (t, i) {
       const tx = X(t.at[0]), ty = Y(t.at[1]);
