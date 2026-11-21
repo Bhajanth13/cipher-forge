@@ -595,12 +595,14 @@
     const CAP = 1000, LISTEN = 11.5, SLEEP = 0.3;
     const input = $('duty');
     function calc() {
-      const d = input.value / 100;
-      const avg = d * LISTEN + (1 - d) * SLEEP;
+      const on = +input.value, off = 24 - on;
+      const hs = function (v) { return (Math.round(v * 10) / 10).toString(); };
+      const avg = (on * LISTEN + off * SLEEP) / 24;
       const hours = CAP / avg;
-      $('duty-out').textContent = input.value + '%';
-      $('duty-formula').textContent = CAP + ' mAh ÷ (' + d.toFixed(2) + ' × ' + LISTEN + ' + ' + (1 - d).toFixed(2) + ' × ' + SLEEP + ') mA = ' +
-        CAP + ' ÷ ' + avg.toFixed(2) + ' ≈ ' + Math.round(hours) + ' h';
+      $('duty-out').textContent = hs(on) + ' h / 24 h';
+      input.setAttribute('aria-valuetext', hs(on) + ' hours a day');
+      $('duty-formula').textContent = 'average = (' + hs(on) + ' h × ' + LISTEN + ' mA + ' + hs(off) + ' h × ' + SLEEP + ' mA) ÷ 24 h = ' + avg.toFixed(2) + ' mA · ' +
+        CAP + ' mAh ÷ ' + avg.toFixed(2) + ' mA ≈ ' + Math.round(hours) + ' h';
       $('life-out').textContent = hours < 72 ? Math.round(hours) + ' hours' : Math.round(hours / 24) + ' days';
     }
     input.addEventListener('input', calc);

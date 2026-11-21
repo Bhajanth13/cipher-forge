@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="css/fonts.css?v=8">
 <link rel="stylesheet" href="css/style.css?v=10">
 <link rel="stylesheet" href="css/future.css?v=11">
-<link rel="stylesheet" href="css/device.css?v=21">
+<link rel="stylesheet" href="css/device.css?v=22">
 </head>
 <body>
 
@@ -86,7 +86,7 @@
 <section class="fx-specs dv-specs" aria-label="Cipher Echo in numbers">
   <div class="spec"><p class="spec-num mono">0</p><p class="spec-label">radios: no Wi-Fi, Bluetooth or cellular</p></div>
   <div class="spec"><p class="spec-num mono">13<small> mm</small></p><p class="spec-label">thin, 78 × 56 mm face</p></div>
-  <div class="spec"><p class="spec-num mono">≈29<small> days</small></p><p class="spec-label">on one charge, listening 1 minute in 10 (estimate)</p></div>
+  <div class="spec"><p class="spec-num mono">≈29<small> days</small></p><p class="spec-label">on one charge, listening 2.4 h / 24 h (estimate)</p></div>
   <div class="spec"><p class="spec-num mono">3.3<small>″</small></p><p class="spec-label">full-face touch e-paper with an on-screen keyboard</p></div>
 </section>
 
@@ -203,11 +203,27 @@
           <input type="range" id="lb-h" min="10" max="90" step="1" value="50"><b class="mono" id="lb-h-o"></b></div>
         <table class="lb-table mono" id="lb-table"></table>
       </div>
-      <div class="lb-out">
-        <p class="lb-big"><span class="mono" id="lb-range">—</span><small>maximum range</small></p>
-        <p class="lb-meta mono" id="lb-meta"></p>
-        <svg id="lb-chart" viewBox="0 -6 520 266" role="img" aria-label="Signal-to-noise ratio against distance"></svg>
-        <p class="lb-why" id="lb-why"></p>
+      <div class="lb-tile" id="lb-tile">
+        <div class="lb-inner">
+          <div class="lb-out lb-face lb-front">
+            <button type="button" class="lb-flip-btn" aria-expanded="false" aria-controls="lb-back"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8a6 6 0 0 1 10.4-4M14 8a6 6 0 0 1-10.4 4M12.4 1v3h-3M3.6 15v-3h3"/></svg>Show the maths</button>
+            <p class="lb-big"><span class="mono" id="lb-range">—</span><small>maximum range</small></p>
+            <p class="lb-meta mono" id="lb-meta"></p>
+            <svg id="lb-chart" viewBox="0 -6 520 266" role="img" aria-label="Signal-to-noise ratio against distance"></svg>
+            <p class="lb-why" id="lb-why"></p>
+            <p class="lb-hint">Tap the tile to see how this number is worked out.</p>
+          </div>
+          <div class="lb-out lb-face lb-back" id="lb-back" aria-hidden="true" inert>
+            <div class="lb-back-head">
+              <h4 class="lb-back-title">How <span class="mono" id="lb-back-r">—</span> is worked out</h4>
+              <button type="button" class="lb-flip-btn"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8a6 6 0 0 1 10.4-4M14 8a6 6 0 0 1-10.4 4M12.4 1v3h-3M3.6 15v-3h3"/></svg>Back to the graph</button>
+            </div>
+            <p class="lb-sec">The variables</p>
+            <dl class="lb-vars" id="lb-vars"></dl>
+            <p class="lb-sec">The working</p>
+            <ol class="lb-work mono" id="lb-work"></ol>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -334,8 +350,8 @@
       </tbody>
     </table>
     <div class="power-calc panel">
-      <label for="duty" class="pc-label">Time spent listening: <b class="mono" id="duty-out">10%</b></label>
-      <input type="range" id="duty" min="2" max="100" step="1" value="10">
+      <label for="duty" class="pc-label">Time spent listening: <b class="mono" id="duty-out">2.4 h / 24 h</b></label>
+      <input type="range" id="duty" min="0.5" max="24" step="0.1" value="2.4" aria-valuetext="2.4 hours a day">
       <p class="pc-formula mono" id="duty-formula"></p>
       <p class="pc-life"><span class="mono" id="life-out">29 days</span> on one charge</p>
     </div>
@@ -351,8 +367,8 @@
 </footer>
 
 <script src="js/fx.js?v=8"></script>
-<script src="js/device.js?v=21"></script>
+<script src="js/device.js?v=22"></script>
 <script src="js/device-steps.js?v=21"></script>
-<script src="js/device-range.js?v=22"></script>
+<script src="js/device-range.js?v=23"></script>
 </body>
 </html>

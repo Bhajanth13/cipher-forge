@@ -225,7 +225,64 @@
     $('lb-why').textContent = 'At ' + fmt(r) + ' m the sound has lost ' + spread.toFixed(0) + ' dB to spreading and ' + absorb.toFixed(0) + ' dB to the air itself. ' +
       (absorb > spread ? 'Air absorption is now the limit: each extra 10 m costs another ' + (b.a * 10).toFixed(1) + ' dB, so no handheld unit can go much further. That is physics, not engineering.'
         : 'Spreading is still the main loss here, so more power, reflectors or slower tones would reach further.');
+    maths(b);
   }
+  /* ---------- The flip side: every variable named, every step shown ---------- */
+  const sub = function (a, b) { return a + '<sub>' + b + '</sub>'; };
+  const n1 = function (v) { return (Math.round(v * 10) / 10).toFixed(1); };
+  let fitTile = function () {};
+  function maths(b) {
+    const M = b.M, r = b.range, lam = 343 / M.f, mics = M.AG ? 4 : 1;
+    const Ls = sub('L', 's'), Gr = sub('G', 'r'), Ga = sub('G', 'a'), Gc = sub('G', 'c'), N0 = sub('N', '0'), Lw = sub('L', 'w'), Mf = sub('M', 'f'), Sreq = sub('S', 'req');
+    const v = function (sym, name, how, val) {
+      return '<div class="lb-var"><dt class="mono">' + sym + '</dt><dd><span class="lb-vn">' + name + '</span>' +
+        (how ? '<span class="lb-vh mono">' + how + '</span>' : '') + '<b class="mono">' + val + '</b></dd></div>';
+    };
+    const place = st.n === 0 ? 'calm outdoors' : st.n === 10 ? 'quiet room' : 'noisy place';
+    $('lb-vars').innerHTML =
+      v('f', 'Carrier frequency', '', M.f.toLocaleString('en-IN') + ' Hz') +
+      v('λ', 'Wavelength', 'c ÷ f = 343 ÷ ' + M.f, (lam * 100).toFixed(2) + ' cm') +
+      v(Ls, 'Source level at 1 m', M.SL === 100 ? '4 piezo horns' : M.SL === 80 ? 'horns, quiet mode' : 'phone speaker', M.SL + ' dB') +
+      v(Gr, 'Reflector gain, each end', M.dish ? '10·log₁₀(0.5·(πD/λ)²), D = ' + (M.dish * 100) + ' cm' : 'no reflector', n1(b.g) + ' dB') +
+      v(Ga, 'Mic-array gain', '10·log₁₀(' + mics + ' mic' + (mics > 1 ? 's' : '') + ')', n1(M.AG) + ' dB') +
+      v('α', 'Air absorption, ISO 9613-1', st.t + ' °C, ' + st.h + ' % humidity', b.a.toFixed(3) + ' dB/m') +
+      v('T', 'Tone length', '', b.T + ' s') +
+      v(N0, 'Background noise', place, st.n + ' dB') +
+      v('N', 'Noise in each detector', N0 + ' + 10·log₁₀(1/T)', n1(b.noise) + ' dB') +
+      v('D', 'Detection threshold', '16 tones to tell apart', NEED + ' dB') +
+      v(Gc, 'Coding gain', M.CG ? 'Reed–Solomon RS(15, 9)' : 'no error correction', M.CG + ' dB') +
+      v(Lw, 'Real-world allowance', 'hands, walls, aim', REAL + ' dB') +
+      v(Mf, 'Fade margin', 'wind and turbulence', FADE + ' dB') +
+      v('r', 'Distance to the receiver', 'the unknown', '?');
+    const B = M.SL + 2 * b.g + M.AG - b.noise - b.need;
+    const sp = 20 * log10(r), ab = b.a * r;
+    const li = function (t, h) { return '<li><span class="lb-wt">' + t + '</span><span class="lb-wm">' + h + '</span></li>'; };
+    $('lb-work').innerHTML =
+      li('Signal above the noise at distance r', 'SNR(r) = ' + Ls + ' + 2·' + Gr + ' + ' + Ga + ' − 20·log₁₀ r − α·r − N') +
+      li('How far above the noise it must be', Sreq + ' = D − ' + Gc + ' + ' + Lw + ' + ' + Mf + ' = ' + NEED + ' − ' + M.CG + ' + ' + REAL + ' + ' + FADE + ' = <b>' + b.need.toFixed(0) + ' dB</b>') +
+      li('The range is where SNR(r) = ' + Sreq + '. Move the losses to one side', '20·log₁₀ r + α·r = ' + Ls + ' + 2·' + Gr + ' + ' + Ga + ' − N − ' + Sreq) +
+      li('Put the numbers in', '20·log₁₀ r + ' + b.a.toFixed(3) + '·r = ' + M.SL + ' + ' + n1(2 * b.g) + ' + ' + n1(M.AG) + ' − ' + n1(b.noise) + ' − ' + b.need.toFixed(0) + ' = <b>' + n1(B) + ' dB</b>') +
+      li('No neat formula solves this, so the page halves the interval 80 times', 'r ≈ <b>' + n1(r) + ' m</b>, shown as ~' + fmt(r) + ' m') +
+      li('Check', '20·log₁₀ ' + n1(r) + ' = ' + n1(sp) + ' dB spreading, ' + b.a.toFixed(3) + ' × ' + n1(r) + ' = ' + n1(ab) + ' dB air · total ' + n1(sp + ab) + ' dB ✓');
+    $('lb-back-r').textContent = '~' + fmt(r) + ' m';
+    fitTile();
+  }
+  (function () {
+    const tile = $('lb-tile'), front = tile.querySelector('.lb-front'), back = $('lb-back'), inner = tile.querySelector('.lb-inner');
+    // the tile takes the height of whichever side is showing
+    fitTile = function () { inner.style.height = (tile.classList.contains('flipped') ? back : front).offsetHeight + 'px'; };
+    window.addEventListener('resize', fitTile);
+    tile.addEventListener('click', function (e) {
+      if (window.getSelection && String(window.getSelection()).length > 2) return;   // let people select the maths
+      const on = !tile.classList.contains('flipped');
+      tile.classList.toggle('flipped', on);
+      front.querySelector('.lb-flip-btn').setAttribute('aria-expanded', String(on));
+      back.toggleAttribute('inert', !on); back.setAttribute('aria-hidden', String(!on));
+      front.toggleAttribute('inert', on); front.setAttribute('aria-hidden', String(on));
+      fitTile();
+      if (e.detail === 0) (on ? back : front).querySelector('.lb-flip-btn').focus({ preventScroll: true });   // keyboard: keep focus on the visible side
+    });
+  })();
   document.querySelectorAll('.seg-mini button').forEach(function (b) {
     b.addEventListener('click', function () {
       st.m = b.getAttribute('data-m'); st.sym = MODES[st.m].sym; $('lb-sym').value = st.sym;
@@ -239,6 +296,8 @@
   $('lb-t').addEventListener('input', function (e) { st.t = +e.target.value; calc(); });
   $('lb-h').addEventListener('input', function (e) { st.h = +e.target.value; calc(); });
   calc();
+  window.addEventListener('load', function () { fitTile(); });
+  if (document.fonts) document.fonts.ready.then(function () { fitTile(); });
 
   window.CIPHER_ECHO_RANGE = { R: R, alpha: alpha, budget: budget };
 })();
