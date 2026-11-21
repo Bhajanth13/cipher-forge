@@ -15,9 +15,10 @@ You build a cipher out of small blocks, and the app uses discrete maths to check
 | 3. Check that it can be undone | Arrow diagram, one-to-one / onto / pigeonhole checks, truth table | Injective, surjective, bijective; predicate logic (∀, ∃); V ⇔ I ∧ O; pigeonhole principle |
 | 4. See the cipher as a relation | Relation matrix, equivalence classes, a two-letter cipher | Relations R ⊆ S × S, equivalence relations, Cartesian product |
 | 5. Encrypt, then undo it | Encrypt a message and decrypt it with a step-by-step trace | Inverse functions, (g ∘ f)⁻¹ = f⁻¹ ∘ g⁻¹ |
-| 6. Send it by sound | Encrypt, turn the ciphertext into tones, play it; another device listens, decodes and decrypts with the shared key | Composition of bijections and its inverse, base 16, product rule (16 × 16 = 256), checksum mod 256 |
-| 7. Break it | Brute-force all shifts on a 3D drum; frequency analysis | Multisets, counting, pigeonhole |
-| 8. Count the keys | Key counts and brute-force time | Sum and product rules, n!, P(n, r), nʳ, C(n, r), combinations with repetition |
+| 6. Break it | Brute-force all shifts on a 3D drum; frequency analysis | Multisets, counting, pigeonhole |
+| 7. Count the keys | Key counts and brute-force time | Sum and product rules, n!, P(n, r), nʳ, C(n, r), combinations with repetition |
+
+Future enhancement: **send it by sound** (see below).
 
 Extras: a light/dark switch, and a **Present** button (or press `P`) for a guided walkthrough during the viva. Use the arrow keys to move and `Esc` to finish.
 
@@ -46,7 +47,7 @@ js/lab3.js          send-by-sound on the page
 
 Plain HTML, CSS and JavaScript, with no libraries or build step.
 
-## Sending a message by sound
+## Future enhancement: sending a message by sound
 
 1. Open the site on two devices (the GitHub Pages link, so the microphone is allowed).
 2. On the sender, build a cipher and press **Copy key**. Give the key to the receiver separately; it is never sent with the message.
