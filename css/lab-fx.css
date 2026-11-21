@@ -17,13 +17,13 @@
   --axle-b: rgba(114, 226, 255, 0.45);
 }
 .fx.lab[data-theme="light"] {
-  --glyph: rgba(11, 111, 143, 0.45);
+  --glyph: rgba(7, 94, 122, 0.55);
   --face-a: #FFFFFF;
-  --face-b: #E7EDF4;
-  --face-edge: rgba(11, 111, 143, 0.30);
-  --face-seam: #D3DCE6;
-  --axle-a: rgba(11, 111, 143, 0.15);
-  --axle-b: rgba(11, 111, 143, 0.45);
+  --face-b: #E3EAF2;
+  --face-edge: rgba(7, 94, 122, 0.42);
+  --face-seam: #C3CEDA;
+  --axle-a: rgba(7, 94, 122, 0.18);
+  --axle-b: rgba(7, 94, 122, 0.5);
 }
 
 /* The drifting letters come back on the lab page, tinted like the signal */
@@ -155,3 +155,5 @@
 }
 .fx.lab #diagram .hit.on .node { stroke: var(--brass); stroke-width: 2; }
 .fx.lab #diagram .hit.picked .node { fill: var(--brass); stroke: var(--brass); }
+/* Light mode only: arrows strong enough to follow on white */
+.fx.lab[data-theme="light"] #diagram:not(.has-focus) .arrow:not(.past):not(.newest):not(.clash) { stroke-opacity: .55; }

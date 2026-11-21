@@ -18,11 +18,12 @@
   --key-a: #2D333B; --key-b: #1A1E24; --key-ink: #D9E0E8;
 }
 .fx.dev[data-theme="light"] {
-  --ti-a: #D9DEE4; --ti-b: #B7BFC9; --ti-edge: #A3ACB7; --ti-rim: rgba(255, 255, 255, .8);
-  --frame-a: #C9D0D8; --frame-b: #AEB7C1;
+  /* titanium a shade darker than the page so every part has a visible edge */
+  --ti-a: #C3CBD4; --ti-b: #98A3AF; --ti-edge: #7D8896; --ti-rim: rgba(255, 255, 255, .75);
+  --frame-a: #B3BDC8; --frame-b: #8E99A6;
   --pcb-a: #17324A; --pcb-b: #10263A; --pcb-edge: #23476A; --trace: rgba(222, 186, 110, .5);
   --cell-a: #9AA4AF; --cell-b: #7D8792; --cell-edge: #AEB7C1; --cell-ink: #1A2230;
-  --cer-a: #F2F3F4; --cer-b: #D9DCE0;
+  --cer-a: #FBFCFD; --cer-b: #CDD3DA;
   --key-a: #EEF1F4; --key-b: #CDD3DA; --key-ink: #1A2230;
 }
 
@@ -900,3 +901,8 @@
 .fx.dev[data-theme="light"] .fp-in { fill: #F4F6F8; }
 .fx.dev[data-theme="light"] .fp-n text { fill: #fff; }
 @media (max-width: 980px) { .fit-grid { grid-template-columns: 1fr; } }
+
+/* ---- Light mode only: keep ghosted layers, map labels and lines readable ---- */
+.fx.dev[data-theme="light"] .device.is-exploded .layer3:not(.is-active) .f, .fx.dev[data-theme="light"] .device.is-exploded .layer3:not(.is-active) .disc { opacity: .22; }
+.fx.dev[data-theme="light"] #range-svg .rg-m, .fx.dev[data-theme="light"] #range-svg .rg-s { fill: var(--steel-2); }
+.fx.dev[data-theme="light"] .bl-wave line { opacity: .7; }
