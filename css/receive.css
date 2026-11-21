@@ -1,0 +1,95 @@
+/* =========================================================
+   Cipher Forge — receive.css
+   The phone receiver: one column, one big radar button.
+   ========================================================= */
+
+.rx body { min-height: 100vh; min-height: 100dvh; }
+.rx-top {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; gap: 12px;
+  padding: calc(10px + env(safe-area-inset-top)) 18px 10px;
+  background: var(--nav-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.rx-top .brand { font-size: 16px; }
+.rx-title { margin-left: auto; font-size: 12px; letter-spacing: .22em; text-transform: uppercase; color: var(--signal); }
+
+.rx-main {
+  position: relative; z-index: 1;
+  max-width: 520px; margin: 0 auto;
+  padding: 18px 18px calc(36px + env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; gap: 16px;
+}
+.rx-card {
+  padding: 16px 18px; border-radius: 14px; border: 1px solid var(--rule);
+  background: linear-gradient(170deg, var(--plate-2), var(--plate));
+}
+.rx-label { font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--signal); }
+.rx-key-row { display: flex; align-items: center; gap: 12px; }
+.rx-keycode { flex: 1; min-width: 0; font-size: 14px; color: var(--brass); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rx-link { background: none; border: 0; color: var(--steel-2); text-decoration: underline; font-size: 14px; cursor: pointer; padding: 6px 0; }
+.rx-keyform { display: flex; gap: 8px; margin-top: 12px; }
+.rx-keyform[hidden], .rx-msg[hidden], .rx-history[hidden] { display: none; }
+.rx-keyform .text-in { flex: 1; min-width: 0; font-size: 15px; }
+.rx-keymsg { font-size: 13px; color: var(--muted); margin-top: 6px; }
+.rx-keymsg:empty { display: none; }
+
+/* ---------- The radar button ---------- */
+.radar-wrap { display: grid; place-items: center; padding: 18px 0 6px; perspective: 900px; }
+.radar {
+  position: relative; width: min(72vw, 280px); aspect-ratio: 1; border-radius: 50%;
+  border: 1px solid var(--signal-line); cursor: pointer; color: var(--steel);
+  background: radial-gradient(circle at 50% 45%, var(--plate-2), var(--graphite) 70%);
+  box-shadow: 0 0 0 1px var(--rule-soft), 0 20px 60px rgba(0, 0, 0, .35), inset 0 0 50px var(--signal-soft);
+  transform: rotateX(14deg); transition: transform .6s var(--ease), box-shadow .4s;
+  -webkit-tap-highlight-color: transparent;
+}
+.radar:active { transform: rotateX(14deg) scale(.97); }
+.radar-ring { position: absolute; border-radius: 50%; border: 1px solid var(--signal-line); pointer-events: none; }
+.radar-ring.r1 { inset: 6%; }
+.radar-ring.r2 { inset: 13%; border-style: dashed; }
+.radar-ring.r3 { inset: 20%; border-color: rgba(211, 175, 99, .4); }
+.radar-sweep {
+  position: absolute; inset: 0; border-radius: 50%; opacity: 0; pointer-events: none;
+  background: conic-gradient(from 0deg, transparent 0deg, transparent 300deg, var(--signal-soft) 330deg, var(--signal-glow) 359deg, transparent 360deg);
+  transition: opacity .4s;
+}
+.radar-core { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 0 22%; text-align: center; }
+.radar-state { font-size: 22px; font-weight: 400; font-variation-settings: 'wdth' 125; line-height: 1.15; }
+.radar-sub { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+
+.radar.is-on { transform: rotateX(0deg); box-shadow: 0 0 0 1px var(--signal-line), 0 0 70px var(--signal-soft), inset 0 0 60px var(--signal-soft); }
+.radar.is-on .radar-sweep { opacity: 1; animation: sweep-rot 2.4s linear infinite; }
+.radar.is-on .radar-sub { color: var(--signal); }
+.radar.is-rx { box-shadow: 0 0 0 2px var(--signal), 0 0 90px var(--signal-glow), inset 0 0 60px var(--signal-soft); }
+.radar.is-rx .radar-sweep { animation-duration: .9s; }
+.radar.pulse .radar-ring.r3 { border-color: var(--signal); box-shadow: 0 0 24px var(--signal-glow); }
+.radar.got { animation: got .9s var(--ease); }
+@keyframes sweep-rot { to { transform: rotate(360deg); } }
+@keyframes got { 0% { box-shadow: 0 0 0 2px var(--brass), 0 0 120px rgba(211, 175, 99, .6); } 100% { box-shadow: 0 0 0 1px var(--signal-line), 0 0 70px var(--signal-soft); } }
+
+.rx-bands { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+.band-chip { font-family: var(--mono); font-size: 12px; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--rule); color: var(--muted); transition: all .3s; }
+.band-chip.is-on { color: var(--signal); border-color: var(--signal-line); background: var(--signal-soft); }
+.band-chip.is-locked { color: var(--graphite); background: var(--signal); border-color: var(--signal); box-shadow: 0 0 16px var(--signal-glow); }
+.rx-spectrum { width: 100%; height: 90px; display: block; border-radius: 10px; border: 1px solid var(--rule-soft); background: var(--graphite-2); }
+.rx-status { font-size: 14px; color: var(--steel-2); text-align: center; min-height: 2.6em; }
+
+/* ---------- Message ---------- */
+.rx-msg { border-color: var(--signal-line); box-shadow: 0 0 50px var(--signal-soft); animation: msg-in .7s var(--ease) both; }
+@keyframes msg-in { from { opacity: 0; transform: translateY(16px) rotateX(18deg); } to { opacity: 1; transform: none; } }
+.rx-plain { margin-top: 10px; font-family: var(--mono); font-size: clamp(20px, 6vw, 28px); line-height: 1.3; color: var(--brass); word-break: break-word; text-shadow: 0 0 22px rgba(211, 175, 99, .25); }
+.rx-check { margin-top: 10px; font-size: 14px; }
+.rx-cipher { margin-top: 8px; font-size: 13px; color: var(--muted); word-break: break-word; }
+.rx-cipher .mono { color: var(--steel-2); }
+
+.rx-history ol { list-style: none; padding: 0; margin-top: 8px; display: grid; gap: 8px; }
+.rx-history li { padding: 10px 12px; border-radius: 10px; border: 1px solid var(--rule-soft); background: var(--plate); display: grid; gap: 2px; }
+.rx-history .h-text { font-family: var(--mono); font-size: 15px; color: var(--steel); word-break: break-word; }
+.rx-history .h-meta { font-size: 12px; color: var(--muted); }
+.rx-hint { font-size: 13px; color: var(--muted); text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .radar.is-on .radar-sweep { animation: none; }
+  .rx-msg, .radar.got { animation: none; }
+}

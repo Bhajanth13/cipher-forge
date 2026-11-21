@@ -23,6 +23,8 @@
   }
 
   let toneMs = 140;
+  let band = 'audible';          // sender's band: 'audible' or 'silent'
+  let rxBand = 'audible';        // band the receiver's spectrum shows
   let player = null;
   let listener = null;
   let listening = false;
@@ -42,18 +44,18 @@
     $('pipe-ct').textContent = clip(cur.ct, 34);
     $('pipe-codes').textContent = clip(cur.p.codes.slice(0, 8).join(' '), 34);
     $('pipe-hex').textContent = clip(cur.p.codes.slice(0, 8).map(SD.hex).join(' '), 34);
-    $('pipe-tones').textContent = cur.p.tones.slice(1, 5).map(function (id) { return SD.freqOf(id) + ' Hz'; }).join(', ') + ' …';
+    $('pipe-tones').textContent = cur.p.tones.slice(1, 5).map(function (id) { return SD.freqOf(id, band) + ' Hz'; }).join(', ') + ' …';
 
     const strip = $('snd-tones');
     const shown = cur.p.tones.slice(0, 48);
     strip.innerHTML = shown.map(function (id, i) {
-      return '<span data-i="' + i + '" title="' + SD.freqOf(id) + ' Hz">' + toneLabel(id) + '</span>';
+      return '<span data-i="' + i + '" title="' + SD.freqOf(id, band) + ' Hz">' + toneLabel(id) + '</span>';
     }).join('') + (cur.p.tones.length > 48 ? '<span class="more">+' + (cur.p.tones.length - 48) + '</span>' : '');
 
     const seconds = ((cur.p.tones.length - 2) * toneMs / 1000 + 2 * Math.max(0.35, toneMs * 3 / 1000)).toFixed(1);
     if (!player) {
       $('snd-status').textContent = cur.p.codes.length + ' characters + 1 checksum = ' + (cur.p.digits.length) + ' digits, ' +
-        cur.p.tones.length + ' tones, about ' + seconds + ' s of sound. Checksum = ' + SD.hex(cur.p.sum) + '.';
+        cur.p.tones.length + ' tones, about ' + seconds + ' s of ' + (band === 'silent' ? 'near-ultrasound (17–19.2 kHz)' : 'sound (1.4–4.65 kHz)') + '. Checksum = ' + SD.hex(cur.p.sum) + '.';
     }
   }
 
@@ -69,11 +71,12 @@
     const chips = $('snd-tones').querySelectorAll('span[data-i]');
     $('snd-play').disabled = true;
     $('snd-stop').disabled = false;
-    $('snd-status').textContent = 'Sending “' + clip(cur.ct, 30) + '” as sound…';
-    emit('cf:txstart', { tones: cur.p.tones });
+    $('snd-status').textContent = 'Sending “' + clip(cur.ct, 30) + '” as ' + (band === 'silent' ? 'silent near-ultrasound' : 'sound') + '…';
+    emit('cf:txstart', { tones: cur.p.tones, band: band });
+    const sendBand = band;
     let lastI = -1;
     player = SD.play(cur.p.tones, toneMs, function (i, frac) {
-      if (i !== lastI) { lastI = i; emit('cf:tx', { i: i, id: cur.p.tones[i], freq: SD.freqOf(cur.p.tones[i]), frac: frac }); }
+      if (i !== lastI) { lastI = i; emit('cf:tx', { i: i, id: cur.p.tones[i], freq: SD.freqOf(cur.p.tones[i], sendBand), frac: frac, band: sendBand }); }
       chips.forEach(function (c) { c.classList.toggle('is-now', +c.dataset.i === i); c.classList.toggle('is-done', +c.dataset.i < i); });
       $('snd-progress').style.width = Math.min(100, frac * 100).toFixed(1) + '%';
     }, function () {
@@ -84,7 +87,7 @@
       $('snd-progress').style.width = '0%';
       chips.forEach(function (c) { c.classList.remove('is-now', 'is-done'); });
       $('snd-status').textContent = 'Sent. ' + (listening ? '' : 'Tip: press “Start listening” on the receiver first.');
-    });
+    }, sendBand);
   }
 
   /* ---------- Receiver ---------- */
@@ -102,7 +105,8 @@
   function startListening() {
     if (!listener) {
       listener = SD.createListener({
-        onStart: function () { resetOut(); $('rcv-status').textContent = 'Start tone heard. Receiving…'; },
+        onStart: function (b) { rxBand = b; resetOut(); $('rcv-status').textContent = (b === 'silent' ? 'Silent start tone heard (17 kHz).' : 'Start tone heard.') + ' Receiving…'; },
+        onLost: function () { $('rcv-status').textContent = 'The message stopped half way. Listening again.'; },
         onTone: function (id) { emit('cf:rx', { id: id }); },
         onDigit: function (d) { $('rcv-hex').textContent = digitsText(d); },
         onFrame: drawSpectrum,
@@ -163,17 +167,17 @@
     g.fillStyle = c.bg; g.fillRect(0, 0, canvas.width, canvas.height);
     drawMarks(g, c, null);
   }
-  const LO = 1200, HI = 4900;
-  function xOf(f) { return (f - LO) / (HI - LO) * canvas.width; }
+  function xOf(f) { const b = SD.BANDS[rxBand]; return (f - b.lo) / (b.hi - b.lo) * canvas.width; }
   function drawMarks(g, c, hitId) {
-    SD.TARGETS.forEach(function (t) {
+    SD.BANDS[rxBand].targets.forEach(function (t) {
       g.fillStyle = t.id === hitId ? c.hit : c.mark;
       const w = t.id === hitId ? 4 : 2;
       g.fillRect(xOf(t.f) - w / 2, 0, w, t.id === hitId ? canvas.height : 8 * (window.devicePixelRatio || 1));
     });
   }
   let lastDraw = 0;
-  function drawSpectrum(bins, binHz, hitId) {
+  function drawSpectrum(bins, binHz, hitId, b) {
+    if (b && b !== rxBand) rxBand = b;
     const now = performance.now();
     if (now - lastDraw < 30) return;
     lastDraw = now;
@@ -182,10 +186,11 @@
     g.fillStyle = c.bg; g.fillRect(0, 0, canvas.width, H);
     drawMarks(g, c, hitId);
     g.fillStyle = c.bar;
-    const lo = Math.floor(LO / binHz), hi = Math.ceil(HI / binHz);
+    const B = SD.BANDS[rxBand];
+    const lo = Math.floor(B.lo / binHz), hi = Math.min(bins.length, Math.ceil(B.hi / binHz));
     const w = Math.max(1, canvas.width / (hi - lo));
     for (let k = lo; k < hi; k++) {
-      const v = Math.max(0, Math.min(1, (bins[k] + 110) / 80));
+      const v = Math.max(0, Math.min(1, (bins[k] + 120) / 90));
       const h = v * (H - 10);
       g.fillRect((k - lo) * w, H - h, Math.ceil(w), h);
     }
@@ -205,6 +210,15 @@
     b.addEventListener('click', function () {
       toneMs = +b.dataset.ms;
       $('snd-speed').querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-checked', String(x === b)); });
+      renderPipe();
+    });
+  });
+  const bandBox = $('snd-band');
+  if (bandBox) bandBox.querySelectorAll('button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      band = b.dataset.band;
+      bandBox.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-checked', String(x === b)); });
+      emit('cf:band', { band: band });
       renderPipe();
     });
   });

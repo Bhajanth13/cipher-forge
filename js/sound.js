@@ -9,29 +9,37 @@
    0–255 (ASCII); hex splits it into two base-16 digits;
    tones gives each digit its own frequency (16 tones = 2⁴).
    A checksum (sum of the codes mod 256) catches errors.
+
+   Two bands carry the same tones:
+     audible  1.4–4.65 kHz   works on almost any device
+     silent   17–19.2 kHz    near-ultrasound: most people can't hear it
    ========================================================= */
 window.CF = window.CF || {};
 
 CF.sound = (function () {
   'use strict';
 
-  /* ---------- The tone plan ---------- */
-  const START = 1400;                 // "a message begins"
-  const BASE = 1800, STEP = 150;      // 16 data tones: 1800, 1950, …, 4050 Hz
-  const REPEAT = 4350;                // "same digit as before"
-  const END = 4650;                   // "the message ends"
-  const DATA = [];
-  for (let i = 0; i < 16; i++) DATA.push(BASE + i * STEP);
+  /* ---------- The tone plans ---------- */
+  function makeBand(name, label, start, base, step, repeat, end, lo, hi, gain) {
+    const data = [];
+    for (let i = 0; i < 16; i++) data.push(base + i * step);
+    const targets = [{ id: 'S', f: start }]
+      .concat(data.map(function (f, i) { return { id: i, f: f }; }))
+      .concat([{ id: 'R', f: repeat }, { id: 'E', f: end }]);
+    return { name: name, label: label, START: start, DATA: data, REPEAT: repeat, END: end, lo: lo, hi: hi, gain: gain, targets: targets };
+  }
 
-  const TARGETS = [{ id: 'S', f: START }]
-    .concat(DATA.map(function (f, i) { return { id: i, f: f }; }))
-    .concat([{ id: 'R', f: REPEAT }, { id: 'E', f: END }]);
+  const BANDS = {
+    audible: makeBand('audible', 'Audible', 1400, 1800, 150, 4350, 4650, 1200, 4900, 0.5),
+    silent: makeBand('silent', 'Silent', 17000, 17250, 110, 19050, 19200, 16800, 19400, 0.9)
+  };
 
-  function freqOf(id) {
-    if (id === 'S') return START;
-    if (id === 'R') return REPEAT;
-    if (id === 'E') return END;
-    return DATA[id];
+  function freqOf(id, band) {
+    const b = BANDS[band] || BANDS.audible;
+    if (id === 'S') return b.START;
+    if (id === 'R') return b.REPEAT;
+    if (id === 'E') return b.END;
+    return b.DATA[id];
   }
 
   /* ---------- Pure maths: text ⇄ codes ⇄ hex digits ⇄ tones ---------- */
@@ -113,8 +121,9 @@ CF.sound = (function () {
     return ctx;
   }
 
-  // Play a tone list. Returns { duration, stop } ; calls onStep(i) as it goes.
-  function play(tones, toneMs, onStep, onDone) {
+  // Play a tone list. Calls onStep(i, fraction) as it goes, onDone at the end.
+  function play(tones, toneMs, onStep, onDone, band) {
+    band = BANDS[band] ? band : 'audible';
     const ac = audio();
     const osc = ac.createOscillator();
     const amp = ac.createGain();
@@ -124,17 +133,18 @@ CF.sound = (function () {
     const t0 = ac.currentTime + 0.08;
     const dur = toneMs / 1000;
     const marker = Math.max(0.35, dur * 3);           // longer start and end markers
+    const level = BANDS[band].gain;
     let t = t0;
     const times = [];
-    tones.forEach(function (id, i) {
+    tones.forEach(function (id) {
       const len = (id === 'S' || id === 'E') ? marker : dur;
-      osc.frequency.setValueAtTime(freqOf(id), t);
+      osc.frequency.setValueAtTime(freqOf(id, band), t);
       times.push(t);
       t += len;
     });
     amp.gain.setValueAtTime(0, t0 - 0.02);
-    amp.gain.linearRampToValueAtTime(0.5, t0);
-    amp.gain.setValueAtTime(0.5, t - 0.02);
+    amp.gain.linearRampToValueAtTime(level, t0);
+    amp.gain.setValueAtTime(level, t - 0.02);
     amp.gain.linearRampToValueAtTime(0, t);
     osc.start(t0 - 0.02);
     osc.stop(t + 0.02);
@@ -156,7 +166,10 @@ CF.sound = (function () {
     };
   }
 
-  /* ---------- Listening (microphone or loopback) ---------- */
+  /* ---------- Listening (microphone or loopback) ----------
+     The listener watches both bands. A start tone locks it to that band
+     until the end tone, so speech in the audible band cannot disturb a
+     silent message and the other way round. */
   function createListener(handlers) {
     const ac = audio();
     const analyser = ac.createAnalyser();
@@ -166,7 +179,7 @@ CF.sound = (function () {
     const binHz = ac.sampleRate / analyser.fftSize;
 
     let source = null, stream = null, timer = 0;
-    let state = 'idle', digits = [], prevDigit = null;
+    let state = 'idle', band = null, shown = 'audible', digits = [], prevDigit = null, lastHeard = 0;
     let cand = undefined, candCount = 0, accepted = undefined;
     const NEED = 3;                       // frames a tone must hold (~45 ms)
 
@@ -176,46 +189,68 @@ CF.sound = (function () {
       for (let k = c - 2; k <= c + 2; k++) if (bins[k] > m) m = bins[k];
       return m;
     }
-    function noiseFloor() {
-      const lo = Math.round(1000 / binHz), hi = Math.round(5000 / binHz);
-      const arr = Array.prototype.slice.call(bins, lo, hi).sort(function (a, b) { return a - b; });
+    function floorOf(b) {
+      const lo = Math.round(b.lo / binHz), hi = Math.min(bins.length - 1, Math.round(b.hi / binHz));
+      const arr = Array.prototype.slice.call(bins, lo, hi).sort(function (x, y) { return x - y; });
       return arr[Math.floor(arr.length / 2)];
     }
+    // The strongest tone in one band, or null if nothing stands out
+    function strongest(b) {
+      const lv = b.targets.map(function (t) { return level(t.f); });
+      let best = 0;
+      for (let i = 1; i < lv.length; i++) if (lv[i] > lv[best]) best = i;
+      const ok = lv[best] > -105 && lv[best] - floorOf(b) > 15;
+      return ok ? b.targets[best].id : null;
+    }
 
-    function accept(id) {
-      if (handlers.onTone) handlers.onTone(id);
+    function accept(id, b) {
+      lastHeard = performance.now();
+      if (handlers.onTone) handlers.onTone(id, b);
       if (state === 'idle') {
-        if (id === 'S') { state = 'rx'; digits = []; prevDigit = null; if (handlers.onStart) handlers.onStart(); }
+        if (id === 'S') {
+          state = 'rx'; band = b; shown = b; digits = []; prevDigit = null;
+          if (handlers.onStart) handlers.onStart(b);
+        }
         return;
       }
       if (id === 'S') return;
       if (id === 'E') {
-        state = 'idle';
-        if (handlers.onMessage) handlers.onMessage(unpack(digits), digits.slice());
+        state = 'idle'; band = null;
+        if (handlers.onMessage) handlers.onMessage(unpack(digits), digits.slice(), b);
         return;
       }
       const d = id === 'R' ? prevDigit : id;
       if (d === null) return;
       digits.push(d);
       prevDigit = d;
-      if (handlers.onDigit) handlers.onDigit(digits.slice());
+      if (handlers.onDigit) handlers.onDigit(digits.slice(), b);
     }
 
     function frame() {
       analyser.getFloatFrequencyData(bins);
-      const levels = TARGETS.map(function (t) { return level(t.f); });
-      let best = 0;
-      for (let i = 1; i < levels.length; i++) if (levels[i] > levels[best]) best = i;
-      const floor = noiseFloor();
-      const strong = levels[best] > -82 && levels[best] - floor > 16;
-      const id = strong ? TARGETS[best].id : null;
-      if (handlers.onFrame) handlers.onFrame(bins, binHz, id);
+      let id = null, b = null;
+      if (state === 'rx') {
+        b = band; id = strongest(BANDS[band]);
+        if (performance.now() - lastHeard > 3000) {      // the message stopped half way
+          state = 'idle'; band = null;
+          if (handlers.onLost) handlers.onLost(digits.slice());
+        }
+      } else {
+        // Idle: look for a start tone in either band
+        ['silent', 'audible'].forEach(function (k) {
+          if (b) return;
+          const s = strongest(BANDS[k]);
+          if (s === 'S') { id = 'S'; b = k; }
+        });
+      }
+      if (handlers.onFrame) handlers.onFrame(bins, binHz, id, b || shown);
 
-      if (id === cand) candCount++;
-      else { cand = id; candCount = 1; }
+      const key = id === null ? null : b + ':' + id;
+      if (key === cand) candCount++;
+      else { cand = key; candCount = 1; }
       if (candCount === NEED) {
-        if (id === null) { accepted = null; return; }
-        if (id !== accepted) { accepted = id; accept(id); }
+        if (key === null) { accepted = null; return; }
+        if (key !== accepted) { accepted = key; accept(id, b); }
       }
     }
 
@@ -223,7 +258,7 @@ CF.sound = (function () {
       // useMic = true: listen through the microphone. false: hear this device's own sender directly.
       start: function (useMic) {
         this.stop();
-        state = 'idle'; accepted = undefined;
+        state = 'idle'; band = null; accepted = undefined;
         if (!useMic) {
           out.connect(analyser);
           source = 'loopback';
@@ -247,13 +282,14 @@ CF.sound = (function () {
         if (source === 'loopback') { try { out.disconnect(analyser); } catch (e) { /* not connected */ } }
         else if (source) source.disconnect();
         if (stream) stream.getTracks().forEach(function (t) { t.stop(); });
-        source = null; stream = null; state = 'idle';
-      }
+        source = null; stream = null; state = 'idle'; band = null;
+      },
+      sampleRate: ac.sampleRate
     };
   }
 
   return {
-    START: START, END: END, REPEAT: REPEAT, DATA: DATA, TARGETS: TARGETS,
+    BANDS: BANDS,
     freqOf: freqOf,
     toCodes: toCodes, fromCodes: fromCodes, checksum: checksum,
     toDigits: toDigits, fromDigits: fromDigits, toTones: toTones,

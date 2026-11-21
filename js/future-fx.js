@@ -255,7 +255,7 @@
       bctx.globalAlpha = 0.35; bctx.setLineDash([3, 7]); bctx.lineWidth = 1;
       bctx.beginPath(); bctx.moveTo(x0, y); bctx.lineTo(x1, y); bctx.stroke(); bctx.setLineDash([]);
     } else {
-      const k = tx.freq / 1800 * 0.12, len = x1 - x0;
+      const k = (tx.freq > 10000 ? tx.freq / 17000 * 0.22 : tx.freq / 1800 * 0.12), len = x1 - x0;
       for (let layer = 0; layer < 2; layer++) {
         bctx.globalAlpha = layer ? 0.35 : 0.95; bctx.lineWidth = layer ? 3 : 1.6;
         bctx.shadowColor = col; bctx.shadowBlur = layer ? 0 : 16;
@@ -277,6 +277,33 @@
     });
     bctx.globalAlpha = 1;
   }
+
+  /* ---------- Phone receiver: QR code with the key ---------- */
+  const qrCanvas = $('phone-qr'), phoneLink = $('phone-link');
+  function receiverUrl() {
+    // Keys only use letters, digits, "/" and "-", which are safe in a link
+    const base = /^https?:$/.test(location.protocol)
+      ? new URL('receive.html', location.href).href
+      : 'https://bhajanth13.github.io/cipher-forge/receive.html';
+    return base + '?key=' + CF.app.keyCode();
+  }
+  function updatePhone() {
+    const url = receiverUrl();
+    phoneLink.href = url;
+    try { CF.qr.draw(qrCanvas, url, { size: innerWidth < 560 ? 170 : 190, dark: '#0A0F16', light: '#F4F7FA' }); } catch (e) { /* too long */ }
+  }
+  document.addEventListener('cf:change', updatePhone);
+  updatePhone();
+
+  /* ---------- Band readouts ---------- */
+  const hudBand = $('hud-band'), bandNote = $('band-note');
+  document.addEventListener('cf:band', function (e) {
+    const silent = e.detail.band === 'silent';
+    hudBand.textContent = silent ? 'SILENT' : 'AUDIBLE';
+    bandNote.textContent = silent
+      ? 'Silent: 17–19.2 kHz near-ultrasound. Most people can’t hear it; some laptops and phones can’t play or pick it up, so switch back if a message doesn’t arrive.'
+      : 'Audible: 1.4–4.65 kHz, works on almost every speaker.';
+  });
 
   /* ---------- Cards flip in, numbers count up ---------- */
   if ('IntersectionObserver' in window) {

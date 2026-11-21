@@ -29,6 +29,7 @@ Each JavaScript file matches a part of the syllabus:
 ```
 index.html          the lab (steps 1 to 7)
 future.html         future enhancement: send it by sound
+receive.html        the phone receiver page
 css/style.css       design and 3D effects
 css/fonts.css       self-hosted fonts (works offline)
 js/sets.js          Module 1: sets and set operations
@@ -45,13 +46,19 @@ js/app.js           steps 1, 2, 3, 5 and 7 on the page
 js/lab2.js          brackets, relations and break-it on the page
 js/lab3.js          send-by-sound on future.html
 js/future.js        the cipher used on future.html (the last one built in the lab)
-js/future-fx.js     future.html's 3D tunnel, waveform, exploded layers, beam and core
+js/future-fx.js     future.html's 3D tunnel, waveform, exploded layers, beam, core and phone QR
+js/receive.js       receive.html, the phone receiver
+js/qr.js            QR code generator (Reed–Solomon over GF(2⁸)), no libraries
 css/future.css      future.html's look (dark and light)
 ```
 
 Plain HTML, CSS and JavaScript, with no libraries or build step.
 
 ## Future enhancement: sending a message by sound
+
+The sender can choose **Audible** (1.4–4.65 kHz) or **Silent** near-ultrasound (17–19.2 kHz, above most people’s hearing). The receiver watches both bands and locks onto whichever one a start tone arrives on.
+
+**Phone receiver:** `receive.html` is a full-screen receiver for a second device. On the Future enhancements page, scan the QR code with a phone: it opens the receiver with the key already loaded (`receive.html?key=…`). Tap the circle, allow the microphone, then send.
 
 1. Open the Future enhancements page on two devices (https://bhajanth13.github.io/cipher-forge/future.html, so the microphone is allowed).
 2. On the sender, build a cipher in the lab (the page remembers it) and press **Copy key**. Give the key to the receiver separately; it is never sent with the message.

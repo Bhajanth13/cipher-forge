@@ -50,6 +50,7 @@
   --shadow: 0 30px 70px rgba(13, 22, 38, 0.14);
 }
 
+.fx { background: var(--graphite); }
 .fx body { background: radial-gradient(1200px 700px at 50% -10%, var(--plate-2), var(--graphite) 70%) fixed; }
 .fx .glyph-field { display: none; }
 .fx-stars { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
@@ -232,6 +233,28 @@
 .core-freq { font-size: 20px; color: var(--steel); text-shadow: 0 0 16px var(--signal-soft); }
 .core-digit { font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
 
+.seg-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.band-note { font-size: 13px; margin-top: -4px; }
+
+/* The phone panel */
+.phone {
+  margin-top: 28px; display: grid; grid-template-columns: auto 1fr; gap: 32px; align-items: center;
+  padding: 26px; border-radius: 14px; border: 1px solid var(--signal-line);
+  background: linear-gradient(120deg, var(--signal-soft), transparent 60%), var(--plate);
+  position: relative; z-index: 1;
+}
+.phone-qr {
+  padding: 12px; border-radius: 12px; background: #F4F7FA; line-height: 0;
+  box-shadow: 0 0 0 1px var(--signal-line), 0 0 50px var(--signal-soft);
+  transform: perspective(900px) rotateY(10deg); transition: transform .6s var(--ease);
+}
+.phone:hover .phone-qr { transform: none; }
+.phone-title { margin-top: 8px; font-size: 26px; font-weight: 400; font-variation-settings: 'wdth' 125; }
+.phone-steps { margin-top: 12px; padding-left: 20px; display: grid; gap: 6px; color: var(--steel-2); font-size: 15px; }
+.phone-note { margin-top: 10px; font-size: 13px; }
+.phone .btn-row { margin-top: 14px; }
+.phone .btn { text-decoration: none; }
+
 /* ---------- Why ---------- */
 .why { position: relative; z-index: 1; max-width: 1320px; margin: 0 auto; padding: 100px clamp(16px, 4vw, 40px) 120px; }
 .why-grid { margin-top: 44px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; perspective: 1400px; }
@@ -263,6 +286,8 @@
   .why-grid { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 900px) {
+  .phone { grid-template-columns: 1fr; justify-items: start; }
+  .phone-qr { transform: none; }
   .journey { height: 420vh; }
   .journey-sticky { grid-template-columns: 1fr; grid-template-rows: auto 1fr; gap: 0; padding-top: 76px; }
   .journey-steps { margin-top: 14px; }

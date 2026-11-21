@@ -57,13 +57,13 @@
       <p class="hud-line hud-a mono">FUTURE ENHANCEMENT 01</p>
       <p class="hud-line hud-b mono">CHANNEL <span id="hud-freq">1800</span> Hz</p>
       <p class="hud-line hud-c mono">KEY <span id="hud-key">——</span></p>
-      <p class="hud-line hud-d mono">LINK OFFLINE · AIR ONLY</p>
+      <p class="hud-line hud-d mono">BAND <span id="hud-band">AUDIBLE</span> · AIR ONLY</p>
     </div>
 
     <div class="fx-hero-copy" id="fx-hero-copy">
       <p class="fx-kicker mono">Future enhancement for Cipher Forge</p>
       <h1 class="fx-title" id="fx-title">Send it<br>by sound</h1>
-      <p class="fx-lead">Your message is encrypted, then carried through the air as tones. Every device in the room can hear it. Only the one holding the key can read it.</p>
+      <p class="fx-lead">Your message is encrypted, then carried through the air as tones, audible or silent ultrasound. Every device in the room can pick it up. Only the one holding the key can read it.</p>
       <div class="fx-cta">
         <a class="btn primary fx-btn" href="#console">Open the console</a>
         <a class="btn ghost fx-btn" href="#journey">See how a message travels</a>
@@ -77,7 +77,7 @@
 <section class="fx-specs" aria-label="The protocol in numbers">
   <div class="spec"><p class="spec-num mono" data-count="16">0</p><p class="spec-label">tones, one per base-16 digit</p></div>
   <div class="spec"><p class="spec-num mono" data-count="2">0</p><p class="spec-label">tones per character (16 × 16 = 256)</p></div>
-  <div class="spec"><p class="spec-num mono"><span data-count="1.8" data-dec="1">0</span>–<span data-count="4.65" data-dec="2">0</span></p><p class="spec-label">kHz, the band the tones use</p></div>
+  <div class="spec"><p class="spec-num mono"><span data-count="17" data-dec="0">0</span>–<span data-count="19.2" data-dec="1">0</span></p><p class="spec-label">kHz in silent mode, above most people’s hearing</p></div>
   <div class="spec"><p class="spec-num mono" data-count="256">0</p><p class="spec-label">the checksum is taken mod 256</p></div>
   <div class="spec"><p class="spec-num mono" data-count="0">0</p><p class="spec-label">internet connections needed</p></div>
 </section>
@@ -134,10 +134,17 @@
         <div class="key-line"><code class="mono key-code" id="snd-key"></code><button type="button" class="btn ghost" id="snd-copy">Copy key</button></div>
         <p class="muted key-hint">The cipher you last built in the lab. <a href="index.html#forge">Change it in the lab</a></p>
       </div>
-      <div class="segmented small" role="radiogroup" aria-label="Tone speed" id="snd-speed">
-        <button type="button" role="radio" aria-checked="true" data-ms="140">Reliable</button>
-        <button type="button" role="radio" aria-checked="false" data-ms="90">Fast</button>
+      <div class="seg-row">
+        <div class="segmented small" role="radiogroup" aria-label="Sound band" id="snd-band">
+          <button type="button" role="radio" aria-checked="true" data-band="audible">Audible</button>
+          <button type="button" role="radio" aria-checked="false" data-band="silent">Silent ultrasound</button>
+        </div>
+        <div class="segmented small" role="radiogroup" aria-label="Tone speed" id="snd-speed">
+          <button type="button" role="radio" aria-checked="true" data-ms="140">Reliable</button>
+          <button type="button" role="radio" aria-checked="false" data-ms="90">Fast</button>
+        </div>
       </div>
+      <p class="muted band-note" id="band-note">Audible: 1.4–4.65 kHz, works on almost every speaker.</p>
       <div class="tone-strip mono" id="snd-tones" aria-label="Tones to be played"></div>
       <div class="send-bar"><span id="snd-progress"></span></div>
       <div class="btn-row">
@@ -175,6 +182,21 @@
       </dl>
     </div>
   </div>
+
+  <div class="phone" id="phone">
+    <div class="phone-qr"><canvas id="phone-qr" aria-label="QR code that opens the receiver page on a phone, with this key"></canvas></div>
+    <div class="phone-copy">
+      <p class="fx-kicker mono">Second device</p>
+      <h3 class="phone-title">Use your phone as the receiver</h3>
+      <ol class="phone-steps">
+        <li>Scan this code with the phone’s camera. The receiver page opens with this key already loaded.</li>
+        <li>On the phone, tap the circle and allow the microphone.</li>
+        <li>Here, press “Encrypt and send as sound”, audible or silent. The phone shows the decrypted message.</li>
+      </ol>
+      <p class="muted phone-note">The code contains the key, so show it only to the person who should read the messages.</p>
+      <div class="btn-row"><a class="btn ghost fx-btn" id="phone-link" href="receive.html" target="_blank" rel="noopener">Open the receiver page</a></div>
+    </div>
+  </div>
 </section>
 
 <!-- ============ WHY IT IS SAFE ============ -->
@@ -185,7 +207,7 @@
     <article class="why-card"><p class="why-num mono">01</p><h3>Everyone can hear it</h3><p>The tones fill the room like a radio broadcast. Hiding the signal is not the goal.</p></article>
     <article class="why-card"><p class="why-num mono">02</p><h3>Only the key reads it</h3><p>Without the key, a listener gets ciphertext. <a href="index.html#break">Break it</a> in the lab shows what they could still try.</p></article>
     <article class="why-card"><p class="why-num mono">03</p><h3>Nothing is lost silently</h3><p>The sum of the character codes mod 256 travels with the message. One misheard tone and the check fails.</p></article>
-    <article class="why-card"><p class="why-num mono">04</p><h3>No network at all</h3><p>No Wi-Fi, no pairing, no server. A speaker and a microphone are the whole channel.</p></article>
+    <article class="why-card"><p class="why-num mono">04</p><h3>Silent if you want</h3><p>No Wi-Fi, no pairing, no server. In silent mode the tones sit at 17–19.2 kHz, above what most people can hear.</p></article>
   </div>
   <p class="why-back"><a class="btn ghost" href="index.html">Back to the lab</a></p>
 </section>
@@ -203,6 +225,7 @@
 <script src="js/blocks.js"></script>
 <script src="js/sound.js"></script>
 <script src="js/future.js"></script>
+<script src="js/qr.js"></script>
 <script src="js/lab3.js"></script>
 <script src="js/fx.js"></script>
 <script src="js/future-fx.js"></script>
