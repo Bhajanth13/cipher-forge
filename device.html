@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="css/fonts.css?v=8">
 <link rel="stylesheet" href="css/style.css?v=10">
 <link rel="stylesheet" href="css/future.css?v=10">
-<link rel="stylesheet" href="css/device.css?v=14">
+<link rel="stylesheet" href="css/device.css?v=17">
 </head>
 <body>
 
@@ -130,35 +130,57 @@
   </figure>
 </section>
 
-<!-- ============ SIGNAL PATH ============ -->
-<section class="path" id="path" aria-labelledby="path-title">
+<!-- ============ THE MESSAGE'S JOURNEY, IN 3D ============ -->
+<section class="steps3" id="path" aria-labelledby="path-title">
   <div class="sec-head">
     <p class="fx-kicker mono">Inside the firmware</p>
     <h2 class="fx-h2" id="path-title">From air to screen</h2>
-    <p class="fx-sub">The same maths as the lab, running on the chip. Receiving undoes the chain in reverse order: <span class="nowrap">(f<sub>k</sub> ∘ … ∘ f<sub>1</sub>)⁻¹ = f<sub>1</sub>⁻¹ ∘ … ∘ f<sub>k</sub>⁻¹</span>.</p>
+    <p class="fx-sub">One message, two units, seven steps. Nothing goes over radio.</p>
   </div>
+  <div class="steps-ui">
+    <ol class="rail" id="jr-rail">
+      <li><button type="button" data-i="0"><span class="rail-n mono">1</span><span class="rail-t">Type</span></button></li>
+      <li><button type="button" data-i="1"><span class="rail-n mono">2</span><span class="rail-t">Encrypt</span></button></li>
+      <li><button type="button" data-i="2"><span class="rail-n mono">3</span><span class="rail-t">Bytes to digits</span></button></li>
+      <li><button type="button" data-i="3"><span class="rail-n mono">4</span><span class="rail-t">Digits to tones</span></button></li>
+      <li><button type="button" data-i="4"><span class="rail-n mono">5</span><span class="rail-t">Through the air</span></button></li>
+      <li><button type="button" data-i="5"><span class="rail-n mono">6</span><span class="rail-t">Detect</span></button></li>
+      <li><button type="button" data-i="6"><span class="rail-n mono">7</span><span class="rail-t">Decrypt and show</span></button></li>
+    </ol>
+    <div class="steps-grid">
+      <div class="steps-stage" id="jr-stage" aria-hidden="true">
+        <div class="scene jr-scene"><div class="cam" id="jr-cam"></div></div>
+        <p class="stage-tag mono st-l">SENDER</p><p class="stage-tag mono st-r">RECEIVER</p>
+      </div>
+      <div class="steps-card" id="jr-card" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
 
-  <div class="lane" aria-label="Receiving">
-    <p class="lane-name mono">Receive</p>
-    <ol class="lane-steps">
-      <li><span class="ls-t">Tones in the air</span><span class="ls-d mono">16.9–18.9 kHz</span></li>
-      <li><span class="ls-t">Dual microphones</span><span class="ls-d mono">2 × ICS-43434, I²S</span></li>
-      <li><span class="ls-t">16 tone detectors</span><span class="ls-d mono">Goertzel, one per digit</span></li>
-      <li><span class="ls-t">Digits to bytes</span><span class="ls-d mono">16 × 16 = 256, sum mod 256</span></li>
-      <li class="key"><span class="ls-t">Decrypt</span><span class="ls-d mono">F⁻¹, key from SE050</span></li>
-      <li><span class="ls-t">E-paper + buzz</span><span class="ls-d mono">plaintext, never stored</span></li>
-    </ol>
+<!-- ============ THE LAB'S SEVEN STEPS, INSIDE THE UNIT ============ -->
+<section class="steps3" id="lab7" aria-labelledby="lab7-title">
+  <div class="sec-head">
+    <p class="fx-kicker mono">The lab, in hardware</p>
+    <h2 class="fx-h2" id="lab7-title">Seven steps, one chip set</h2>
+    <p class="fx-sub">Each step of the Cipher Forge lab has a home inside Whisper. The part that does it lights up.</p>
   </div>
-  <div class="lane send" aria-label="Sending">
-    <p class="lane-name mono">Send</p>
-    <ol class="lane-steps">
-      <li><span class="ls-t">Touch keyboard</span><span class="ls-d mono">on-screen, can be scrambled</span></li>
-      <li class="key"><span class="ls-t">Encrypt</span><span class="ls-d mono">F = f<sub>k</sub> ∘ … ∘ f<sub>1</sub></span></li>
-      <li><span class="ls-t">Bytes to digits</span><span class="ls-d mono">two base-16 digits each</span></li>
-      <li><span class="ls-t">Digits to tones</span><span class="ls-d mono">200 ms per tone</span></li>
-      <li><span class="ls-t">Amplifier</span><span class="ls-d mono">MAX98357A, I²S</span></li>
-      <li><span class="ls-t">Speaker</span><span class="ls-d mono">a few metres, then silence</span></li>
+  <div class="steps-ui">
+    <ol class="rail" id="lb-rail">
+      <li><button type="button" data-i="0"><span class="rail-n mono">1</span><span class="rail-t">Symbols</span></button></li>
+      <li><button type="button" data-i="1"><span class="rail-n mono">2</span><span class="rail-t">Build</span></button></li>
+      <li><button type="button" data-i="2"><span class="rail-n mono">3</span><span class="rail-t">Check</span></button></li>
+      <li><button type="button" data-i="3"><span class="rail-n mono">4</span><span class="rail-t">Relate</span></button></li>
+      <li><button type="button" data-i="4"><span class="rail-n mono">5</span><span class="rail-t">Encrypt</span></button></li>
+      <li><button type="button" data-i="5"><span class="rail-n mono">6</span><span class="rail-t">Break</span></button></li>
+      <li><button type="button" data-i="6"><span class="rail-n mono">7</span><span class="rail-t">Count</span></button></li>
     </ol>
+    <div class="steps-grid">
+      <div class="steps-stage" id="lb-stage" aria-hidden="true">
+        <div class="scene lb-scene"><div class="cam" id="lb-cam"><div class="device" id="lb-device"></div></div></div>
+        <p class="stage-tag mono st-l">X-RAY VIEW</p><p class="stage-tag mono st-r" id="lb-tag">STEP 1 / 7</p>
+      </div>
+      <div class="steps-card lb" id="lb-card" aria-live="polite"></div>
+    </div>
   </div>
 </section>
 
@@ -244,6 +266,7 @@
 </footer>
 
 <script src="js/fx.js?v=8"></script>
-<script src="js/device.js?v=14"></script>
+<script src="js/device.js?v=15"></script>
+<script src="js/device-steps.js?v=17"></script>
 </body>
 </html>

@@ -108,7 +108,7 @@
       spec: [['Glass', 'Sapphire crystal, 0.7 mm'], ['Touch', 'Capacitive ITO film, 10-point'], ['Bond', 'Optically clear adhesive, no air gap'], ['Job', 'Protects the screen; reads every tap']] },
     { name: 'Full-face touch e-paper', mm: '1.2 mm', cls: 'L-disp', z: 47, ex: 1.9,
       html: function () {
-        return slab('panel3', 10, 14, 370, 248, 6, 0, PAPER) + slab('cog', 150, 256, 90, 5, 1.6, 6) + slab('fpc', 160, 262, 70, 16, 0.8, 0);
+        return slab('panel3 p-osk', 10, 14, 370, 248, 6, 0, PAPER) + slab('cog', 150, 256, 90, 5, 1.6, 6) + slab('fpc', 160, 262, 70, 16, 0.8, 0);
       },
       pts: [[120, 60, 6, 'E-paper panel', '3.3″, 360 × 240 px, 130 ppi'], [195, 205, 6, 'On-screen keyboard', 'QWERTY; layout can be scrambled'],
         [195, 258, 7.6, 'Driver chip on glass', 'e-paper controller'], [195, 272, 0.8, 'Display flex', 'to the board']],
@@ -121,7 +121,7 @@
           slab('wall', 0, 0, DW, 6, 55, 0) + slab('wall', 0, 274, DW, 6, 55, 0) +
           slab('wall', 0, 6, 6, 268, 55, 0) + slab('wall', 384, 6, 6, 268, 55, 0) + posts +
           cylinder('wheel', 362, 64, 48, 48, 8, 4, 30) +
-          slab('fp', 388, 176, 6, 46, 10, 26, '<span class="fp-ring"></span>') +
+          slab('fp p-fp', 388, 176, 6, 46, 10, 26, '<span class="fp-ring"></span>') +
           slab('kill', -3, 60, 4, 36, 8, 28) + slab('nub', -6, 64, 4, 12, 6, 29) +
           slab('port', 172, 273, 46, 8, 16, 22);
       },
@@ -133,12 +133,12 @@
     { name: 'Main board', mm: '1.0 mm, 8 layers', cls: 'L-board', z: 33, ex: -0.75,
       html: function () {
         return slab('pcb', 8, 8, 374, 264, 5, 0, TRACES) +
-          slab('chip can shield', 130, 40, 96, 72, 6, 5, '<span class="perf"></span><i>STM32U585</i>') +
-          slab('chip key', 240, 56, 20, 20, 3, 5, 'SE050') + slab('chip', 240, 86, 26, 18, 4, 5, 'W25Q128') +
+          slab('chip can shield p-mcu', 130, 40, 96, 72, 6, 5, '<span class="perf"></span><i>STM32U585</i>') +
+          slab('chip key p-se', 240, 56, 20, 20, 3, 5, 'SE050') + slab('chip p-flash', 240, 86, 26, 18, 4, 5, 'W25Q128') +
           slab('chip', 150, 170, 18, 18, 3, 5, 'PMIC') + slab('chip', 60, 200, 12, 10, 2.5, 5, 'FG', true) +
-          slab('chip', 40, 170, 14, 12, 3, 5, 'CHG', true) + slab('chip', 300, 40, 16, 16, 4, 5, 'AMP') +
-          slab('chip', 300, 200, 16, 16, 4, 5, 'HAP') + slab('chip can', 186, 12, 18, 12, 5, 5, 'MIC') +
-          slab('chip can', 196, 250, 18, 12, 5, 5, 'MIC') + slab('chip can', 232, 112, 14, 8, 3.5, 5, '', true) +
+          slab('chip', 40, 170, 14, 12, 3, 5, 'CHG', true) + slab('chip p-amp', 300, 40, 16, 16, 4, 5, 'AMP') +
+          slab('chip', 300, 200, 16, 16, 4, 5, 'HAP') + slab('chip can p-mic', 186, 12, 18, 12, 5, 5, 'MIC') +
+          slab('chip can p-mic', 196, 250, 18, 12, 5, 5, 'MIC') + slab('chip can', 232, 112, 14, 8, 3.5, 5, '', true) +
           slab('conn', 120, 124, 60, 10, 5, 5) + slab('conn', 260, 124, 34, 10, 5, 5) + slab('conn', 200, 150, 60, 10, 5, 5) +
           slab('conn', 340, 170, 26, 10, 5, 5) + slab('jst', 60, 120, 22, 12, 6, 5) +
           slab('chip can', 130, 244, 46, 26, 14, 5, 'USB-C') + slab('chip under', 40, 40, 12, 8, 2, -2) + passives();
@@ -153,7 +153,7 @@
       html: function () {
         return slab('cell', 20, 90, 250, 170, 25, 7, '<span>LiPo · 503450</span><span><b>3.7 V · 1000 mAh</b><br>3.7 Wh · 2C</span>') +
           slab('pcm', 30, 93, 70, 10, 3, 32) + slab('bflex', 60, 96, 22, 26, 0.8, 32) + slab('tab', 120, 250, 40, 24, 0.6, 7) +
-          slab('spkbox', 280, 16, 90, 62, 15, 8, '<span class="membrane"></span><span class="sport"></span>') +
+          slab('spkbox p-spk', 280, 16, 90, 62, 15, 8, '<span class="membrane"></span><span class="sport"></span>') +
           cylinder('mot', 300, 196, 36, 36, 12, 3, 8) +
           slab('boot', 184, 6, 22, 8, 4, 40, '', true) + slab('boot', 194, 266, 22, 8, 4, 40, '', true);
       },
@@ -208,10 +208,12 @@
       set: function (sep, active, gap) {
         const G = gap || 56;
         let zmin = 0, zmax = 65;
+        const act = Array.isArray(active) ? active : [active];
         layers.forEach(function (l, k) {
-          const z = LAYERS[k].z + sep * LAYERS[k].ex * G + (k === active ? 18 : 0);
+          const on = act.indexOf(k) >= 0;
+          const z = LAYERS[k].z + sep * LAYERS[k].ex * G + (on ? 18 : 0);
           l.style.transform = 'translateZ(' + z.toFixed(1) + 'px)';
-          l.classList.toggle('is-active', k === active);
+          l.classList.toggle('is-active', on);
           if (k === 0) zmax = z + 5;
           if (k === NL - 1) zmin = z - 4;
         });
@@ -220,7 +222,7 @@
           a.style.transform = 'translateZ(' + zmin.toFixed(1) + 'px) rotateX(90deg)';
           a.style.opacity = (sep * 0.9).toFixed(2);
         });
-        el.classList.toggle('is-exploded', active >= 0);
+        el.classList.toggle('is-exploded', act.some(function (a) { return a >= 0; }));
       }
     };
   }
@@ -627,4 +629,6 @@
       history.replaceState(null, '', '#' + id);
     });
   });
+  // Shared with device-steps.js
+  window.WHISPER = { build: build, slab: slab, PAPER: PAPER, LAYERS: LAYERS, LETTERS: LETTERS, ease: ease, clamp: clamp, reduce: reduce, glideTo: glideTo };
 })();

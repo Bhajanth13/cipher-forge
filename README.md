@@ -36,6 +36,7 @@ css/lab-fx.css      the lab's sci-fi look (shares the palette in future.css)
 device.html         Future enhancement 02: Whisper One, a flagship cipher pager concept (full-face touch e-paper, on-screen keyboard), taken apart in 3D
 css/device.css      the Whisper page: 3D slabs, exploded view, cross-section
 js/device.js        builds the device, scroll-driven disassembly, cross-section, battery calculator
+js/device-steps.js  two 7-step 3D walkthroughs: the message from sender to receiver, and the lab's 7 steps inside the unit
 js/lab-fx.js        the lab's star field, decoding title, HUD and slow glide links
 js/sets.js          Module 1: sets and set operations
 js/functions.js     Module 3: one-to-one, onto, bijection, composition, inverse, pigeonhole
