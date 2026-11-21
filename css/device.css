@@ -710,3 +710,92 @@
 @media (max-width: 980px) { .lb-grid { grid-template-columns: 1fr; } .dish-card { grid-template-columns: 100px minmax(0, 1fr); } }
 @media (max-width: 560px) { .nc { grid-template-columns: 1fr; } .lb-row { grid-template-columns: 88px minmax(0, 1fr) auto; } }
 @media (prefers-reduced-motion: reduce) { .dish-cam { animation: none; } .petal span { transition: none; } }
+
+/* =========================================================
+   Far mode in 3D: the petal reflector blooms out of the top edge
+   ========================================================= */
+.bloom { margin-top: 56px; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(300px, 1fr); gap: 22px; align-items: stretch; }
+.bloom-stage { position: relative; min-height: 600px; border-radius: 16px; border: 1px solid var(--signal-line); overflow: hidden;
+  background: radial-gradient(ellipse 70% 60% at 50% 42%, var(--signal-soft), transparent 70%), linear-gradient(170deg, var(--plate-2), var(--plate)); }
+.bloom-scene { perspective: 1900px; perspective-origin: 50% 30%; }
+.bloom-cam { top: 50%; transform: rotateX(-22deg) scale(.9) translateY(-150px); transition: transform 1.4s cubic-bezier(.4, 0, .2, 1) 1.6s; }
+.bloom-stage.open .bloom-cam { transform: rotateX(-15deg) scale(.6) translateY(250px); transition-delay: 0s; }
+.bloom-tag { position: absolute; left: 18px; bottom: 14px; margin: 0; font-size: 11px; letter-spacing: .14em; color: var(--signal); }
+.bloom-side { padding: 24px 26px; border-radius: 16px; border: 1px solid var(--rule); background: linear-gradient(170deg, var(--plate-2), var(--plate)); display: grid; gap: 14px; align-content: start; }
+.bloom-side .fx-kicker { margin: 0; }
+.bloom-title { margin: 0; font-size: clamp(22px, 2.2vw, 30px); font-weight: 500; line-height: 1.15; color: var(--steel); }
+.bloom-p, .bloom-note { margin: 0; font-size: 14.5px; color: var(--steel-2); }
+.bloom-note { min-height: 3.2em; font-size: 13.5px; }
+.bloom-btn { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 13px 18px; border-radius: 999px;
+  border: 1px solid var(--signal); color: var(--signal); background: var(--signal-soft); font-size: 15px; font-weight: 500; transition: background .25s, color .25s, box-shadow .25s; }
+.bloom-btn:hover { box-shadow: 0 0 0 4px var(--signal-soft); }
+.bloom-btn:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; }
+.bloom-btn[aria-pressed="true"] { background: var(--signal); color: var(--graphite); }
+.bb-dot { width: 9px; height: 9px; border-radius: 50%; background: currentColor; box-shadow: 0 0 10px currentColor; }
+.bloom-rays { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.bloom-table { margin-top: 0; }
+.bloom-more { font-size: 13.5px; color: var(--steel-2); border-top: 1px solid var(--rule-soft); padding-top: 10px; }
+.bloom-more summary { cursor: pointer; color: var(--steel); }
+.bloom-more p { margin: 8px 0 0; }
+
+.bl-rig { position: absolute; left: 0; top: 0; transform-style: preserve-3d; transform: rotateY(var(--ry, -32deg)); }
+.bl-rig > *, .bl-bud, .bl-bud > *, .bl-petal, .bl-seg, .bl-col, .bl-rod, .bl-pod, .bl-mast2 { transform-style: preserve-3d; }
+/* body */
+.slab.bl-body { --top: linear-gradient(160deg, var(--ti-a), var(--ti-b) 60%, var(--ti-a)); --edge: var(--ti-edge); --bot: var(--ti-b); }
+.slab.bl-body > .top { box-shadow: inset 0 0 0 1px var(--ti-rim); }
+.slab.bl-body > .e-n { overflow: hidden; }
+.bl-paper { position: absolute; left: 20px; top: 22px; right: 20px; bottom: 28px; border-radius: 3px; background: var(--paper); color: var(--paper-ink); font-family: var(--mono); padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; font-size: 15px; letter-spacing: .08em; }
+.bl-paper b { font-weight: 600; font-size: 13px; letter-spacing: .3em; border-bottom: 2px solid var(--paper-ink); padding-bottom: 8px; }
+.bl-aim { color: var(--paper-dim); }
+.bl-bar { margin-top: auto; height: 14px; border: 2px solid var(--paper-ink); position: relative; }
+.bl-bar i { position: absolute; left: 0; top: 0; bottom: 0; width: 12%; background: var(--paper-ink); transition: width 1.2s; }
+.bl-rig.open .bl-bar i { width: 100%; transition-delay: 1s; }
+.bl-port { position: absolute; top: 18px; width: 30px; height: 28px; border-radius: 3px; background: #05070A; }
+.bl-mic { position: absolute; top: 28px; width: 6px; height: 6px; border-radius: 50%; background: #05070A; }
+.bl-slot { position: absolute; left: 165px; top: 2px; width: 60px; height: 60px; border-radius: 50%; background: radial-gradient(circle, #020304 55%, #2C333B 62%, var(--ti-edge) 70%); }
+/* hub, mast and feed pod */
+.bl-col, .bl-rod, .bl-pod, .bl-mast2, .bl-petal { position: absolute; left: 0; top: 0; }
+.bl-col > i { position: absolute; border-radius: 50%; background: linear-gradient(135deg, var(--ti-a), var(--ti-b)); box-shadow: inset 0 0 0 1px var(--ti-rim); backface-visibility: visible; }
+.bl-col > i.cap { background: radial-gradient(circle at 40% 35%, #D3DAE2, var(--ti-a) 60%, var(--ti-b)); }
+.bl-rod > i { position: absolute; background: linear-gradient(90deg, var(--ti-b), #C9D1DA 45%, var(--ti-b)); backface-visibility: visible; }
+.bl-podc > i { background: linear-gradient(135deg, #2A3038, #15191E); }
+.bl-podc > i.cap { background: radial-gradient(circle at 40% 35%, #48515C, #1C2127); box-shadow: inset 0 0 0 2px var(--signal-line); }
+.bl-podc > i.base { background: radial-gradient(circle, var(--signal) 0 18%, #0E1216 22% 60%, #2A3038 64%); box-shadow: 0 0 18px var(--signal-glow); }
+.bl-tw { position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; border-radius: 50%; background: var(--signal); box-shadow: 0 0 16px 6px var(--signal-glow); transform: translateY(1px) rotateX(90deg); opacity: 0; transition: opacity .5s; }
+.bl-rig.open .bl-tw { opacity: 1; transition-delay: 1.6s; }
+/* petals */
+.bl-seg { position: absolute; left: 0; top: 0; transform: translateX(var(--x)) rotateZ(calc(var(--a0) * -1deg)); }
+.bl-leaf { position: absolute; left: -1px; backface-visibility: visible; transform-origin: 0 50%;
+  transform: rotateX(90deg) scaleY(var(--sf));
+  background: center / 100% 100% no-repeat; }
+.bl-rig.open .bl-seg { transform: translateX(var(--x)) rotateZ(calc(var(--a1) * -1deg)); }
+.bl-rig.open .bl-leaf { transform: rotateX(90deg) scaleY(1); }
+
+/* timing: open = rise, then mast, then petals; fold = petals, then mast, then sink */
+.bl-bud { position: absolute; left: 0; top: 0; transform: translateY(150px); visibility: hidden;
+  transition: transform .7s cubic-bezier(.5, 0, .3, 1) 1.5s, visibility 0s 2.2s; }
+.bl-rig.open .bl-bud { transform: translateY(0); visibility: visible; transition: transform .7s cubic-bezier(.2, .7, .2, 1) 0s, visibility 0s 0s; }
+.bl-pod { transform: translateY(-60px); transition: transform .7s cubic-bezier(.4, 0, .2, 1) .8s; }
+.bl-rig.open .bl-pod { transform: translateY(-200px); transition-delay: .6s; }
+.bl-mast2 { transform: translateY(0); transition: transform .7s cubic-bezier(.4, 0, .2, 1) .8s; }
+.bl-rig.open .bl-mast2 { transform: translateY(-100px); transition-delay: .6s; }
+.bl-seg, .bl-leaf { transition: transform 1.1s cubic-bezier(.5, 0, .3, 1) 0s; }
+.bl-rig.open .bl-seg, .bl-rig.open .bl-leaf { transition: transform 1.4s cubic-bezier(.2, .8, .2, 1) 1.1s; }
+
+/* sound paths */
+.bl-rays { position: absolute; overflow: visible; pointer-events: none; opacity: 0; transition: opacity .4s; }
+.bl-rig.open .bl-rays { opacity: 1; transition: opacity .8s 2.3s; }
+.bl-beam { fill: var(--signal-soft); opacity: .6; }
+.bl-prof { fill: none; stroke: var(--signal-line); stroke-dasharray: 4 6; }
+.bl-ray { fill: none; stroke: var(--signal); stroke-width: 2.4; stroke-dasharray: 14 18; filter: drop-shadow(0 0 4px var(--signal-glow)); animation: blFlow 1.1s linear infinite; }
+.bl-rig.rx .bl-ray { animation-direction: reverse; }
+@keyframes blFlow { to { stroke-dashoffset: -32; } }
+.bl-focus { fill: var(--signal); }
+.bl-ft { font-family: var(--mono); font-size: 18px; fill: var(--signal); }
+
+@media (max-width: 980px) { .bloom { grid-template-columns: 1fr; } .bloom-stage { min-height: 480px; } .bloom-cam { scale: .8; } }
+@media (max-width: 560px) { .bloom-stage { min-height: 400px; } .bloom-cam { scale: .66; } }
+@media (prefers-reduced-motion: reduce) {
+  .bloom-cam, .bl-bud, .bl-pod, .bl-mast2, .bl-seg, .bl-leaf, .bl-rays, .bl-tw, .bl-bar i { transition-duration: 0s !important; transition-delay: 0s !important; }
+  .bl-ray { animation: none; }
+}

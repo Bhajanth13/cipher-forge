@@ -135,7 +135,7 @@
       { t: 'Encrypt', d: 'The processor applies your key F to every letter.', m: 'c = F(m) = "PHHW DW QRRQ"', w: ['STM32U585', 'SE050 key'] },
       { t: 'Bytes to digits', d: 'Each character is one byte, split into two base-16 digits.', m: 'P = 80 = 16 × 5 + 0  →  5, 0', w: ['STM32U585'] },
       { t: 'Digits to tones', d: 'Each digit picks one of 16 ultrasonic tones, played for 200 ms through the piezo horns.', m: 'tone = 20 500 + 100·d Hz', w: ['DRV2700', '4 piezo horns'] },
-      { t: 'Through the air', d: 'Ultrasound crosses the room; no one hears it and nothing goes over radio.', m: '20.5–22.0 kHz · ~65 m line of sight, ~140 m with reflectors', w: ['Air only'] },
+      { t: 'Through the air', d: 'Ultrasound crosses the room; no one hears it and nothing goes over radio.', m: '20.5–22.0 kHz · ~65 m line of sight, ~110 m with the petal reflector', w: ['Air only'] },
       { t: 'Detect', d: 'Four ultrasonic mics are combined toward the sender; 16 detectors listen, a tone counts only above its noise, and Reed–Solomon repairs wrong digits.', m: 'Goertzel × 16 · floor + 9 dB · RS(15, 9)', w: ['SPH0641 × 4', 'STM32U585'] },
       { t: 'Decrypt and show', d: 'Digits rebuild the bytes, the checksum is checked, F⁻¹ restores the text.', m: 'm = F⁻¹(c) · sum mod 256 ✓', w: ['SE050 key', 'E-paper'] }
     ];

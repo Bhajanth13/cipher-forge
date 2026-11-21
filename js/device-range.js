@@ -35,7 +35,8 @@
     phone: { name: 'Phone, Send it by sound', f: 17900, SL: 70, AG: 0, CG: 0, dish: 0, sym: 0, band: '16.9–18.9 kHz' },
     q: { name: 'Cipher Echo, quiet', f: 17900, SL: 80, AG: 10 * log10(4), CG: 0, dish: 0, sym: 0, band: '16.9–18.9 kHz' },
     lr: { name: 'Cipher Echo, long-range', f: 21250, SL: 100, AG: 10 * log10(4), CG: 4, dish: 0, sym: 1, band: '20.5–22.0 kHz' },
-    far: { name: 'Cipher Echo, far', f: 21250, SL: 100, AG: 10 * log10(4), CG: 4, dish: 0.10, sym: 3, band: '20.5–22.0 kHz' }
+    // far: the petal reflector blooms and a feed pod (one tweeter, one mic) sits at its focus
+    far: { name: 'Cipher Echo, far (petal reflector)', f: 21250, SL: 85, AG: 0, CG: 4, dish: 0.10, F: 0.04, sym: 3, band: '20.5–22.0 kHz', pod: true }
   };
   const NEED = 12, REAL = 15, FADE = 6;   // dB: 16-tone detection, real-world losses, fade margin
   function budget(m, o) {
@@ -57,6 +58,8 @@
     lr: budget('lr', STD).range, far: budget('far', STD).range
   };
   const fmt = function (r) { return r >= 20 ? Math.round(r / 5) * 5 : Math.round(r); };
+  // half-power beam width of the dish: ≈ 1.2·λ/D for a dish lit with a tapered feed
+  const BW = function (tC) { return 1.2 * (sound(tC) / MODES.far.f) / MODES.far.dish * 180 / Math.PI; };
 
   /* ---------- Range map: tilted, rescales for each mode ---------- */
   const svg = $('range-svg');
@@ -64,7 +67,7 @@
   const MAP = {
     q: { half: 65, scale: 40, read: 'QUIET · 16.9–18.9 kHz · ~' + fmt(R.q) + ' m indoors · phones running Send it by sound can join' },
     lr: { half: 24, scale: 80, read: 'LONG-RANGE · 20.5–22.0 kHz · 4 horns, 4 mics, error correction · ~' + fmt(R.lr) + ' m line of sight' },
-    far: { half: 10, scale: 160, read: 'FAR · reflectors on both units, 1.6 s tones · ~' + fmt(R.far) + ' m line of sight · 2.5 bits a second raw' }
+    far: { half: BW(20) / 2, scale: 160, read: 'FAR · petal reflector and feed pod on both units, 1.6 s tones · ~' + fmt(R.far) + ' m line of sight · beam ±' + (BW(20) / 2).toFixed(1) + '° · 2.5 bits a second raw' }
   };
   const MARKS = [
     { key: 'phone', t: 'Phone', y: 50 }, { key: 'q', t: 'Quiet', y: -70 },
@@ -258,9 +261,9 @@
       v('f', 'Carrier frequency', 'middle of the ' + M.band + ' band', M.f.toLocaleString('en-IN') + ' Hz') +
       v('c', 'Speed of sound', '331.3·√(1 + t/273.15), t = ' + st.t + ' °C', n1(c) + ' m/s') +
       v('λ', 'Wavelength', 'c ÷ f', n2(lam * 100) + ' cm') +
-      v(Ls, 'Source level at 1 m', (M.SL === 100 ? '4 piezo horns' : M.SL === 80 ? 'horns, quiet mode' : 'phone speaker') + ', design target', M.SL + ' dB SPL') +
-      v(Gr, 'Reflector gain, each end', M.dish ? '10·log₁₀(η·(πD/λ)²), η = ' + ETA + ' assumed, D = ' + (M.dish * 100) + ' cm' : 'no reflector in this mode', n2(b.g) + ' dB') +
-      v(Ga, 'Mic-array gain', mics > 1 ? '10·log₁₀ ' + mics + ', ideal for ' + mics + ' mics' : 'single microphone', n2(M.AG) + ' dB') +
+      v(Ls, 'Source level at 1 m', (M.pod ? 'one tweeter in the feed pod' : M.SL === 100 ? '4 piezo horns' : M.SL === 80 ? 'horns, quiet mode' : 'phone speaker') + ', design estimate', M.SL + ' dB SPL') +
+      v(Gr, 'Reflector gain, each end', M.dish ? '10·log₁₀(η·(πD/λ)²), η = ' + ETA + ' assumed, D = ' + (M.dish * 100) + ' cm, both ends' : 'no reflector in this mode', n2(b.g) + ' dB') +
+      v(Ga, 'Mic-array gain', mics > 1 ? '10·log₁₀ ' + mics + ', ideal for ' + mics + ' mics' : M.pod ? 'one mic in the feed pod' : 'single microphone', n2(M.AG) + ' dB') +
       v('α', 'Air absorption, ISO 9613-1', st.t + ' °C, ' + st.h + ' % humidity, sea-level pressure', a4 + ' dB/m') +
       v('T', 'Tone length', 'each detector listens 1/T Hz wide', b.T + ' s') +
       v(N0, 'Background noise near f', place + ', assumed, dB per Hz', st.n + ' dB') +
@@ -330,5 +333,5 @@
   window.addEventListener('load', function () { fitTile(); });
   if (document.fonts) document.fonts.ready.then(function () { fitTile(); });
 
-  window.CIPHER_ECHO_RANGE = { R: R, alpha: alpha, budget: budget };
+  window.CIPHER_ECHO_RANGE = { R: R, alpha: alpha, budget: budget, sound: sound, dish: dish, ETA: ETA, MODES: MODES, BW: BW, fmt: fmt };
 })();
