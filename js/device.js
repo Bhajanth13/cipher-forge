@@ -262,16 +262,16 @@
     const el = $('dv-title'), word = el.textContent;
     el.setAttribute('aria-label', word);
     if (reduce) return;
-    let f = 0; const total = 34;
-    (function step() {
-      f++;
-      const done = Math.floor((f / total) * word.length);
+    const start = performance.now(), DUR = 900;
+    (function step(now) {
+      const k = Math.min(1, ((now || start) - start) / DUR);
+      const done = Math.floor(k * word.length);
       el.textContent = word.split('').map(function (c, i) {
         if (i < done) return c;
         const r = LETTERS[Math.floor(Math.random() * 26)];
         return c === c.toUpperCase() ? r : r.toLowerCase();
       }).join('');
-      if (f < total) requestAnimationFrame(step); else el.textContent = word;
+      if (k < 1) requestAnimationFrame(step); else el.textContent = word;
     })();
   })();
 

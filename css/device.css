@@ -177,7 +177,7 @@
 }
 .dv-hero .hud { position: absolute; inset: 120px 28px 28px; }
 .dv-hero-copy { position: relative; z-index: 2; padding-left: clamp(0px, 3vw, 40px); }
-.dv-title { text-align: left; }
+.dv-title { text-align: left; font-size: clamp(52px, 8.6vw, 128px); width: max-content; max-width: none; padding-right: .06em; white-space: nowrap; }
 .dv-tag { margin-top: 14px; font-size: clamp(20px, 2vw, 26px); color: var(--steel); font-weight: 400; }
 .dv-hero .fx-lead { margin: 20px 0 0; }
 .dv-hero .fx-cta { justify-content: flex-start; }
