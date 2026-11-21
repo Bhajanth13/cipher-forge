@@ -38,29 +38,20 @@
   const DW = 390, DH = 280;
   const CORNERS = [[16, 16], [374, 16], [16, 264], [374, 264]];
 
-  // Keyboard: 33 keys in four rows
-  const ROWS = [
-    'QWERTYUIOP'.split(''),
-    'ASDFGHJKL⌫'.split(''),
-    ['⇧', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '.', '↵'],
-    ['SYM', 'SPACE', 'SEND']
-  ];
-  const KEYS = [];
-  ROWS.forEach(function (row, r) {
-    const y = 170 + r * 24;
-    if (r < 3) row.forEach(function (k, i) { KEYS.push({ k: k, x: 26 + i * 34, y: y, w: 30, h: 20 }); });
-    else {
-      KEYS.push({ k: 'SYM', x: 26, y: y, w: 64, h: 20 });
-      KEYS.push({ k: 'SPACE', x: 94, y: y, w: 200, h: 20 });
-      KEYS.push({ k: 'SEND', x: 298, y: y, w: 64, h: 20 });
-    }
-  });
+  // On-screen keyboard, drawn on the e-paper
+  const ROWS = ['QWERTYUIOP'.split(''), 'ASDFGHJKL⌫'.split(''), ['⇧', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', '.', '↵'], ['SYM', 'SPACE', 'SEND']];
+  const OSK = '<div class="osk">' + ROWS.map(function (row) {
+    return '<div class="osk-row">' + row.map(function (k) {
+      return '<span class="osk-k' + (k.length > 1 ? ' w-' + k.toLowerCase() : '') + '" data-key="' + k + '">' + (k === 'SPACE' ? '' : k) + '</span>';
+    }).join('') + '</div>';
+  }).join('') + '</div>';
 
   const PAPER = '<div class="paper">' +
-    '<div class="paper-bar"><span>WHISPER · TO K</span><span>KEY ● 17.6 kHz</span></div>' +
+    '<div class="paper-bar"><span>WHISPER · TO K</span><span>KEY ● 17.6 kHz · ▮▮▮▯</span></div>' +
     '<p class="paper-lbl">PLAINTEXT</p><p class="paper-msg"><span class="pm-text">MEET AT NOON</span><span class="caret"></span></p>' +
     '<p class="paper-lbl">CIPHERTEXT · F = shift(3)</p><p class="paper-cip">PHHW DW QRRQ</p>' +
-    '<div class="paper-foot"><span class="pf-state">READY</span><span class="pf-bar"><i></i></span></div></div>';
+    '<div class="paper-foot"><span class="pf-state">READY</span><span class="pf-bar"><i></i></span></div>' + OSK +
+    '<span class="tap"></span></div>';
 
   // Dense board artwork: traces, vias, pads, silkscreen
   const TRACES = (function () {
@@ -98,51 +89,31 @@
   // Ten layers, front to back. z: where the layer sits when closed (px). ex: how far it travels apart (gap units).
   // pts: callouts [x, y, z, name, detail]. spec: the card's table.
   const LAYERS = [
-    { name: 'Titanium bezel', mm: '1.0 mm', cls: 'L-front', z: 60, ex: 4.6,
+    { name: 'Titanium bezel', mm: '1.0 mm', cls: 'L-front', z: 60, ex: 3.7,
       html: function () {
-        return slab('bezel', 0, 0, DW, DH, 5, 0, '<span class="pinhole" style="left:193px;top:271px"></span><span class="engrave e1">WHISPER</span><span class="engrave e2">ONE</span>');
+        return slab('bezel', 0, 0, DW, DH, 5, 0, '<span class="pinhole" style="left:193px;top:263px"></span><span class="engrave e1">WHISPER</span><span class="engrave e2">ONE</span>');
       },
-      pts: [[195, 88, 5, 'Screen window', '49 × 24 mm, flush to the glass'], [195, 15, 5, 'Earpiece slot', 'speaker and top mic behind it'],
-        [28, 216, 5, 'Keyboard opening', '33 keys rise through it'], [195, 273, 5, 'Bottom mic port', 'Ø 0.8 mm, mesh-backed']],
-      text: 'One piece of titanium frames the screen and the keyboard. No logo, no lights.',
-      spec: [['Material', 'Grade 5 titanium'], ['Thickness', '1.0 mm'], ['Finish', 'Bead-blasted, PVD graphite'], ['Job', 'Holds glass and keys; the face of the unit']] },
-    { name: 'Sapphire glass and touch layer', mm: '0.7 + 0.2 mm', cls: 'L-glass', z: 53, ex: 3.7,
+      pts: [[195, 137, 5, 'Screen window', '70 × 46 mm, edge to edge'], [195, 10, 5, 'Earpiece slot', 'speaker and top mic behind it'],
+        [195, 266, 5, 'Bottom mic port', 'Ø 0.8 mm, mesh-backed'], [3, 140, 5, 'Slim bezel', '2 mm titanium sides']],
+      text: 'A thin titanium frame around a screen that fills the face. No logo, no lights.',
+      spec: [['Material', 'Grade 5 titanium'], ['Thickness', '1.0 mm, 2 mm sides'], ['Finish', 'Bead-blasted, PVD graphite'], ['Job', 'Holds the glass; the face of the unit']] },
+    { name: 'Sapphire glass and touch layer', mm: '0.7 + 0.2 mm', cls: 'L-glass', z: 53, ex: 2.8,
       html: function () {
-        return slab('touch', 66, 22, 258, 132, 1, 0) + slab('tfpc', 324, 60, 56, 16, 0.6, 0, '<span class="tchip"></span>') +
-          slab('glass3', 66, 22, 258, 132, 4, 1.2);
+        return slab('touch', 16, 18, 358, 238, 1, 0) + slab('tfpc', 250, 252, 64, 18, 0.6, 0, '<span class="tchip"></span>') +
+          slab('glass3', 16, 18, 358, 238, 4, 1.2);
       },
-      pts: [[110, 50, 5.2, 'Sapphire cover glass', '0.7 mm, scratch-proof, anti-glare'], [290, 140, 1, 'Capacitive touch film', 'ITO grid, works with gloves'],
-        [352, 68, 1, 'Touch controller', 'on its own flex tail']],
-      text: 'Sapphire over a capacitive touch film: tap and swipe on the e-paper as well as typing.',
-      spec: [['Glass', 'Sapphire crystal, 0.7 mm'], ['Touch', 'Capacitive ITO film, 5-point'], ['Bond', 'Optically clear adhesive, no air gap'], ['Job', 'Protects the screen; reads touch']] },
-    { name: 'Touch e-paper display', mm: '1.2 mm', cls: 'L-disp', z: 47, ex: 2.85,
+      pts: [[70, 50, 5.2, 'Sapphire cover glass', '0.7 mm, full face, anti-glare'], [320, 200, 1, 'Capacitive touch film', 'ITO grid, 10-point, works with gloves'],
+        [292, 262, 1, 'Touch controller', 'on its own flex tail']],
+      text: 'Sapphire over a capacitive touch film that covers the whole screen. Every tap on the on-screen keyboard is read here.',
+      spec: [['Glass', 'Sapphire crystal, 0.7 mm'], ['Touch', 'Capacitive ITO film, 10-point'], ['Bond', 'Optically clear adhesive, no air gap'], ['Job', 'Protects the screen; reads every tap']] },
+    { name: 'Full-face touch e-paper', mm: '1.2 mm', cls: 'L-disp', z: 47, ex: 1.9,
       html: function () {
-        return slab('panel3', 47, 18, 296, 146, 6, 0, PAPER) + slab('cog', 165, 158, 60, 5, 1.6, 6) + slab('fpc', 170, 163, 50, 34, 0.8, 0);
+        return slab('panel3', 10, 14, 370, 248, 6, 0, PAPER) + slab('cog', 150, 256, 90, 5, 1.6, 6) + slab('fpc', 160, 262, 70, 16, 0.8, 0);
       },
-      pts: [[150, 70, 6, 'E-paper panel', '2.13″, 250 × 122 px'], [195, 160, 7.6, 'Driver chip on glass', 'SSD1680 controller'],
-        [195, 192, 0.8, 'Display flex', '24 pins to the board']],
-      text: 'A 2.13-inch e-paper panel. No glow, no power to hold the image, readable in full sun.',
-      spec: [['Panel', '2.13″, 250 × 122 px, black and white'], ['Power', '0 mW to hold; partial refresh 0.3 s'], ['Driver', 'SSD1680, chip-on-glass'], ['Job', 'Compose, read, confirm']] },
-    { name: 'Keyboard', mm: '33 keys', cls: 'L-keys', z: 48.5, ex: 2.05,
-      html: function () {
-        return slab('keymat', 22, 166, 346, 100, 2, 0) + KEYS.map(function (k) {
-          return slab('cap' + (k.w > 30 ? ' wide' : '') + (k.k === 'SEND' ? ' send' : ''), k.x, k.y, k.w, k.h, 15, 2, '<b>' + (k.k === 'SPACE' ? '' : k.k) + '</b>', true).replace('class="slab cap', 'data-key="' + k.k + '" class="slab cap');
-        }).join('');
-      },
-      pts: [[43, 180, 17, 'Keycap', 'sculpted polycarbonate, 6 × 4 mm'], [314, 252, 17, 'SEND key', 'encrypt, then transmit'],
-        [194, 252, 17, 'Space bar', 'long-press for numbers'], [366, 262, 2, 'Silicone keymat', 'one piece, sealed']],
-      text: 'A full keyboard, 33 sculpted keys on one sealed silicone mat, quiet enough to type in a meeting.',
-      spec: [['Keys', '33, QWERTY, 6 × 4 mm caps'], ['Mat', 'Silicone rubber, one piece'], ['Travel', '0.3 mm, soft click'], ['Job', 'Type the message']] },
-    { name: 'Dome sheet', mm: '0.3 mm', cls: 'L-domes', z: 47, ex: 1.45,
-      html: function () {
-        return slab('domesheet', 22, 166, 346, 100, 1.4, 0) + KEYS.map(function (k) {
-          return cylinder('dome', k.x + k.w / 2 - 6, k.y + k.h / 2 - 6, 12, 12, 2.2, 2, 1.4);
-        }).join('') + slab('kfpc', 180, 150, 30, 18, 0.6, 0);
-      },
-      pts: [[43, 180, 3.6, 'Metal dome', 'stainless, 160 gf, ×33'], [100, 258, 1.4, 'Polyester sheet', 'holds all domes in place'],
-        [195, 156, 0.6, 'Keyboard flex', 'to the keypad scanner']],
-      text: 'Each key presses a stainless dome that snaps onto contacts below: crisp, silent, rated for millions of presses.',
-      spec: [['Domes', '33 × stainless steel, 160 gf'], ['Sheet', 'Polyester, adhesive-backed'], ['Life', 'Over 1 million presses'], ['Job', 'Turns a press into a contact']] },
+      pts: [[120, 60, 6, 'E-paper panel', '3.3″, 360 × 240 px, 130 ppi'], [195, 205, 6, 'On-screen keyboard', 'QWERTY; layout can be scrambled'],
+        [195, 258, 7.6, 'Driver chip on glass', 'e-paper controller'], [195, 272, 0.8, 'Display flex', 'to the board']],
+      text: 'The whole face is one e-paper screen. The keyboard is drawn on it, so there are no keys to wear out, click or give away what you typed.',
+      spec: [['Panel', '3.3″, 360 × 240 px, black and white'], ['Keyboard', 'On-screen QWERTY, optional scrambled layout'], ['Power', '0 mW to hold; partial refresh 0.3 s'], ['Job', 'Type, read and confirm on one surface']] },
     { name: 'Titanium mid-frame', mm: '55 × 1.2 mm walls', cls: 'L-mid', z: 5, ex: 0.55,
       html: function () {
         const posts = CORNERS.map(function (c) { return cylinder('post', c[0] - 6, c[1] - 6, 12, 12, 28, 4, 0); }).join('');
@@ -164,7 +135,7 @@
         return slab('pcb', 8, 8, 374, 264, 5, 0, TRACES) +
           slab('chip can shield', 130, 40, 96, 72, 6, 5, '<span class="perf"></span><i>STM32U585</i>') +
           slab('chip key', 240, 56, 20, 20, 3, 5, 'SE050') + slab('chip', 240, 86, 26, 18, 4, 5, 'W25Q128') +
-          slab('chip', 150, 170, 18, 18, 3, 5, 'KPD') + slab('chip', 60, 200, 12, 10, 2.5, 5, 'FG', true) +
+          slab('chip', 150, 170, 18, 18, 3, 5, 'PMIC') + slab('chip', 60, 200, 12, 10, 2.5, 5, 'FG', true) +
           slab('chip', 40, 170, 14, 12, 3, 5, 'CHG', true) + slab('chip', 300, 40, 16, 16, 4, 5, 'AMP') +
           slab('chip', 300, 200, 16, 16, 4, 5, 'HAP') + slab('chip can', 186, 12, 18, 12, 5, 5, 'MIC') +
           slab('chip can', 196, 250, 18, 12, 5, 5, 'MIC') + slab('chip can', 232, 112, 14, 8, 3.5, 5, '', true) +
@@ -173,7 +144,7 @@
           slab('chip can', 130, 244, 46, 26, 14, 5, 'USB-C') + slab('chip under', 40, 40, 12, 8, 2, -2) + passives();
       },
       pts: [[178, 76, 11, 'STM32U585 under shield', 'Cortex-M33, 160 MHz, AES in hardware'], [250, 66, 8, 'NXP SE050', 'secure element, holds the key'],
-        [253, 95, 9, 'W25Q128', '16 MB flash, firmware only'], [159, 179, 8, 'TCA8418', 'keypad scanner'],
+        [253, 95, 9, 'W25Q128', '16 MB flash, firmware only'], [159, 179, 8, 'Power IC', 'regulators for every rail'],
         [195, 18, 10, 'Dual ICS-43434', 'mics top and bottom, noise-cancelling'], [308, 48, 9, 'MAX98357A', 'I²S amplifier'],
         [153, 257, 19, 'USB-C', 'charge, load keys; data off when locked'], [46, 44, -2, 'Light sensor (underside)', 'tamper alarm']],
       text: 'Eight layers, parts on one side, the processor under a metal shield. About 70 parts in a card-sized space.',
@@ -231,7 +202,8 @@
       cip: el.querySelector('.paper-cip'),
       state: el.querySelector('.pf-state'),
       bar: el.querySelector('.pf-bar i'),
-      key: function (k) { return el.querySelector('.cap[data-key="' + k + '"]'); },
+      key: function (k) { return el.querySelector('.osk-k[data-key="' + k + '"]'); },
+      tap: el.querySelector('.tap'),
       // sep 0 = closed, 1 = fully apart. active = index of the highlighted layer, or -1
       set: function (sep, active, gap) {
         const G = gap || 56;
@@ -330,11 +302,16 @@
       return t.replace(/[A-Z]/g, function (c) { return LETTERS[(LETTERS.indexOf(c) + 3) % 26]; });
     };
     const wait = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+    // A tap inverts the key on the e-paper and leaves a small touch ring
     function press(k) {
-      const cap = hero.key(k);
-      if (!cap) return;
-      cap.classList.add('down');
-      setTimeout(function () { cap.classList.remove('down'); }, 120);
+      const key = hero.key(k);
+      if (!key) return;
+      key.classList.add('hit');
+      const t = hero.tap;
+      t.style.left = (key.offsetLeft + key.offsetWidth / 2) + 'px';
+      t.style.top = (key.offsetTop + key.offsetHeight / 2) + 'px';
+      t.classList.remove('go'); void t.offsetWidth; t.classList.add('go');
+      setTimeout(function () { key.classList.remove('hit'); }, 140);
     }
     if (reduce) return;
     async function loop() {
@@ -474,7 +451,7 @@
     cam.ax = 58 - 6 * p; cam.az = -36 + 16 * p;
     if (active >= 0) {
       const L = LAYERS[active];
-      tgt.z = L.z + L.ex * gap + 18 + (active === 5 ? 30 : 8);
+      tgt.z = L.z + L.ex * gap + 18 + (active === 3 ? 30 : 8);
       tgt.s = baseScale() * 1.65;
     } else {
       tgt.z = 32 + sep * 0.2 * gap; tgt.s = baseScale();
@@ -516,16 +493,12 @@
     const SX = 16, SY = 28, X0 = 50, Y0 = 40;
     const X = function (mm) { return X0 + mm * SX; }, Y = function (mm) { return Y0 + mm * SY; };
     const rect = function (r) { return '<rect x="' + X(r[0]).toFixed(1) + '" y="' + Y(r[1]).toFixed(1) + '" width="' + (r[2] * SX).toFixed(1) + '" height="' + (r[3] * SY).toFixed(1) + '" rx="' + (r[4] || 0) + '"/>'; };
-    // Slice along the short side: 0 mm = top edge (earpiece), 56 mm = bottom edge (keyboard)
-    const keys = [34, 38.8, 43.6, 48.4].map(function (x) { return [x, -0.4, 4, 2.0, 2]; });
-    const domes = [34, 38.8, 43.6, 48.4].map(function (x) { return [x + 1.2, 1.85, 1.6, 0.3, 1]; });
+    // Slice along the short side: 0 mm = top edge (earpiece), 56 mm = bottom edge
     const PARTS = [
-      { k: 'front', cls: 'p-shell', d: 0, r: [[0, 0, 2.4, 1.0, 1], [3.6, 0, 2.0, 1.0], [29.6, 0, 3.6, 1.0], [53.2, 0, 2.8, 1.0, 1]] },
-      { k: 'glass', cls: 'p-glass', d: 1, r: [[5.0, 0.3, 25.2, 0.7]] },
-      { k: 'glass', cls: 'p-touch', d: 1, r: [[5.0, 1.0, 25.2, 0.2]] },
-      { k: 'disp', cls: 'p-paper', d: 2, r: [[3.6, 1.2, 29.2, 1.2]] },
-      { k: 'keys', cls: 'p-key', d: 3, r: keys.concat([[33.2, 1.6, 20, 0.25]]) },
-      { k: 'keys', cls: 'p-dome', d: 3, r: domes.concat([[33.2, 2.15, 20, 0.2]]) },
+      { k: 'front', cls: 'p-shell', d: 0, r: [[0, 0, 1.6, 1.0, 1], [2.6, 0, 1.8, 1.0], [50.4, 0, 5.6, 1.0, 1]] },
+      { k: 'glass', cls: 'p-glass', d: 1, r: [[4.4, 0.3, 46, 0.7]] },
+      { k: 'glass', cls: 'p-touch', d: 1, r: [[4.4, 1.0, 46, 0.2]] },
+      { k: 'disp', cls: 'p-paper', d: 2, r: [[3.2, 1.2, 49.6, 1.2]] },
       { k: 'mid', cls: 'p-frame', d: 4, r: [[1.2, 2.6, 53.6, 0.8]] },
       { k: 'board', cls: 'p-chip', d: 5, r: [[10, 3.4, 16, 1.0], [27.2, 3.6, 4, 0.8], [30, 3.8, 3, 0.6], [36, 3.7, 3.2, 0.7], [44, 3.6, 3, 0.8], [2.6, 3.5, 3.6, 0.9], [8, 5.4, 2.4, 0.4]] },
       { k: 'board', cls: 'p-chip key', d: 5, r: [[22, 3.8, 3, 0.6]] },
@@ -538,13 +511,12 @@
     ];
     const TAGS = [
       { k: 'front', at: [55.4, 0.5], ly: 36, t: 'Titanium bezel', s: '1.0 mm · windows for screen and keys' },
-      { k: 'glass', at: [30, 0.6], ly: 78, t: 'Sapphire glass and touch film', s: '0.7 mm + 0.2 mm' },
-      { k: 'disp', at: [32.6, 1.8], ly: 120, t: 'Touch e-paper', s: '2.13″ panel · 1.2 mm' },
-      { k: 'keys', at: [52.2, 0.6], ly: 162, t: 'Keycaps, keymat, metal domes', s: 'keys stand 0.4 mm proud' },
-      { k: 'mid', at: [54.4, 3.0], ly: 204, t: 'Mid-frame shelf', s: 'titanium · 0.8 mm' },
-      { k: 'board', at: [54, 4.9], ly: 246, t: 'Main board', s: '8 layers · 1.0 mm · shield over the MCU' },
-      { k: 'cell', at: [51.8, 8.4], ly: 288, t: 'LiPo cell', s: '3.7 V · 1000 mAh · 5.0 mm' },
-      { k: 'spk', at: [15.8, 7.0], ly: 330, t: 'Sealed speaker box', s: '3.0 mm, under the earpiece' },
+      { k: 'glass', at: [50.2, 0.6], ly: 84, t: 'Sapphire glass and touch film', s: '0.7 mm + 0.2 mm, full face' },
+      { k: 'disp', at: [52.6, 1.8], ly: 132, t: 'Full-face touch e-paper', s: '3.3″ panel · 1.2 mm' },
+      { k: 'mid', at: [54.4, 3.0], ly: 180, t: 'Mid-frame shelf', s: 'titanium · 0.8 mm' },
+      { k: 'board', at: [54, 4.9], ly: 228, t: 'Main board', s: '8 layers · 1.0 mm · shield over the MCU' },
+      { k: 'cell', at: [51.8, 8.4], ly: 276, t: 'LiPo cell', s: '3.7 V · 1000 mAh · 5.0 mm' },
+      { k: 'spk', at: [15.8, 7.0], ly: 324, t: 'Sealed speaker box', s: '3.0 mm, under the earpiece' },
       { k: 'foam', at: [54.6, 11.6], ly: 372, t: 'Foam and graphite sheet', s: '0.8 mm' },
       { k: 'back', at: [55.6, 12.5], ly: 414, t: 'Zirconia ceramic back', s: '1.0 mm' }
     ];

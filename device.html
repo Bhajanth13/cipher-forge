@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="css/fonts.css?v=8">
 <link rel="stylesheet" href="css/style.css?v=10">
 <link rel="stylesheet" href="css/future.css?v=10">
-<link rel="stylesheet" href="css/device.css?v=12">
+<link rel="stylesheet" href="css/device.css?v=13">
 </head>
 <body>
 
@@ -63,12 +63,12 @@
     <p class="fx-kicker mono">Future enhancement for Cipher Forge</p>
     <h1 class="fx-title dv-title" id="dv-title">Whisper</h1>
     <p class="dv-tag">A flagship cipher pager for covert work.</p>
-    <p class="fx-lead">Type on a real keyboard or the touch screen, press Send, and your message leaves encrypted as near-silent tones. Whisper has no radio at all: a titanium and ceramic body the size of a credit card, with the key locked in a secure chip.</p>
+    <p class="fx-lead">Type on a full-face touch e-paper screen, tap Send, and your message leaves encrypted as near-silent tones. Whisper has no radio at all: a titanium and ceramic body the size of a credit card, with the key locked in a secure chip.</p>
     <div class="fx-cta">
       <a class="btn primary fx-btn" href="#explode">Take it apart</a>
       <a class="btn ghost fx-btn" href="#section">See the cross-section</a>
     </div>
-    <p class="dv-note mono">Concept design. Not built yet; every part named here is a real, available component.</p>
+    <p class="dv-note mono">Concept design. Not built yet; the chips named here are real, available parts.</p>
   </div>
 
   <div class="dv-hero-stage" aria-hidden="true">
@@ -87,7 +87,7 @@
   <div class="spec"><p class="spec-num mono">0</p><p class="spec-label">radios: no Wi-Fi, Bluetooth or cellular</p></div>
   <div class="spec"><p class="spec-num mono">13<small> mm</small></p><p class="spec-label">thin, 78 × 56 mm face</p></div>
   <div class="spec"><p class="spec-num mono">≈35<small> days</small></p><p class="spec-label">on one charge, listening 1 minute in 10 (estimate)</p></div>
-  <div class="spec"><p class="spec-num mono">33<small> keys</small></p><p class="spec-label">plus a 2.13″ touch e-paper screen</p></div>
+  <div class="spec"><p class="spec-num mono">3.3<small>″</small></p><p class="spec-label">full-face touch e-paper with an on-screen keyboard</p></div>
 </section>
 
 <!-- ============ EXPLODED VIEW ============ -->
@@ -103,12 +103,12 @@
         <p class="exh exh-a mono">EXPLODED VIEW · ISOMETRIC</p>
         <p class="exh exh-b mono" id="exh-layer">ASSEMBLED</p>
         <p class="exh exh-c mono" id="exh-sep">SEPARATION 0%</p>
-        <p class="exh exh-d mono">10 LAYERS · 160+ PARTS · UNITS MM</p>
+        <p class="exh exh-d mono">8 LAYERS · 120+ PARTS · UNITS MM</p>
       </div>
       <div class="scene ex-scene" aria-hidden="true"><div class="cam" id="ex-cam"><div class="device" id="ex-device"></div></div></div>
       <svg class="ex-lines" id="ex-lines" aria-hidden="true"></svg>
       <div class="ex-callouts" id="ex-callouts" aria-hidden="true"></div>
-      <p class="ex-hint mono" id="ex-hint">Scroll to separate the ten layers</p>
+      <p class="ex-hint mono" id="ex-hint">Scroll to separate the eight layers</p>
     </div>
 
     <div class="ex-panel" id="ex-panel">
@@ -123,10 +123,10 @@
   <div class="sec-head">
     <p class="fx-kicker mono">Cross-section</p>
     <h2 class="fx-h2" id="xsec-title">Thirteen millimetres, cut open</h2>
-    <p class="fx-sub">A slice down the middle, from the top edge (earpiece) to the bottom edge (keyboard). Heights are drawn at twice their real scale so the thin layers can be seen. Hover a label to find its part.</p>
+    <p class="fx-sub">A slice down the middle, from the top edge (earpiece) to the bottom edge (bottom mic). Heights are drawn at twice their real scale so the thin layers can be seen. Hover a label to find its part.</p>
   </div>
   <figure class="xsec-wrap">
-    <svg id="xsec" role="img" aria-label="Cross-section of Whisper One: titanium bezel, sapphire glass and touch layer, e-paper, keys and dome sheet, mid-frame, main board, battery, speaker box, ceramic back, 13 millimetres in total"></svg>
+    <svg id="xsec" role="img" aria-label="Cross-section of Whisper One: titanium bezel, sapphire glass and touch layer, full-face e-paper, mid-frame, main board, battery, speaker box, ceramic back, 13 millimetres in total"></svg>
   </figure>
 </section>
 
@@ -152,7 +152,7 @@
   <div class="lane send" aria-label="Sending">
     <p class="lane-name mono">Send</p>
     <ol class="lane-steps">
-      <li><span class="ls-t">Keyboard or touch</span><span class="ls-d mono">33 keys, rotor, screen</span></li>
+      <li><span class="ls-t">Touch keyboard</span><span class="ls-d mono">on-screen, can be scrambled</span></li>
       <li class="key"><span class="ls-t">Encrypt</span><span class="ls-d mono">F = f<sub>k</sub> ∘ … ∘ f<sub>1</sub></span></li>
       <li><span class="ls-t">Bytes to digits</span><span class="ls-d mono">two base-16 digits each</span></li>
       <li><span class="ls-t">Digits to tones</span><span class="ls-d mono">200 ms per tone</span></li>
@@ -171,7 +171,7 @@
   <div class="why-grid">
     <article class="why-card"><h3>No radio at all</h3><p>There is no Wi-Fi, Bluetooth or cellular chip, so a radio scanner finds nothing. Whisper talks only through sound and its USB port.</p></article>
     <article class="why-card"><h3>A near-silent channel</h3><p>Tones between 16.9 and 18.9 kHz are above most adults’ hearing and fade within a few metres, so the message stays in the room.</p></article>
-    <article class="why-card"><h3>Type in silence</h3><p>Soft metal domes under every key: a quiet click you can feel but nobody across the table hears.</p></article>
+    <article class="why-card"><h3>Shoulder-proof typing</h3><p>The keyboard is drawn on the screen: no clicks, and its layout can be scrambled each time so nobody can read your taps.</p></article>
     <article class="why-card"><h3>No glow</h3><p>E-paper reflects light instead of giving it off, and there are no LEDs. In a dark room the unit is invisible.</p></article>
     <article class="why-card"><h3>Fingerprint unlock</h3><p>The power key reads your fingerprint. Until it matches, the secure chip will not release the key.</p></article>
     <article class="why-card"><h3>Mic kill switch</h3><p>A physical slider cuts power to both microphones. No software can turn them back on.</p></article>
@@ -193,10 +193,9 @@
       <tbody>
         <tr><td class="mono">STM32U585</td><td>Processor</td><td>Cortex-M33 at 160 MHz with TrustZone and hardware AES. Runs the tone detectors, the cipher and the screen. No radio.</td></tr>
         <tr><td class="mono">NXP SE050</td><td>Secure element</td><td>Certified tamper-resistant chip that keeps the key and erases it on command.</td></tr>
-        <tr><td class="mono">2.13″ touch e-paper</td><td>Screen</td><td>250 × 122 px with capacitive touch. Holds the image with no power and no light.</td></tr>
+        <tr><td class="mono">3.3″ touch e-paper</td><td>Screen</td><td>Full face, 360 × 240 px with capacitive touch and an on-screen keyboard. Holds the image with no power and no light.</td></tr>
         <tr><td class="mono">Sapphire, 0.7 mm</td><td>Cover glass</td><td>Scratch-proof; bonded to the touch layer with no air gap.</td></tr>
-        <tr><td class="mono">33-key keymat</td><td>Keyboard</td><td>Silicone mat, sculpted caps, stainless metal domes; read by a TCA8418 keypad scanner.</td></tr>
-        <tr><td class="mono">2 × ICS-43434</td><td>Microphones</td><td>Digital I²S mics top and bottom, response to 20 kHz; a hardware switch can cut both.</td></tr>
+                <tr><td class="mono">2 × ICS-43434</td><td>Microphones</td><td>Digital I²S mics top and bottom, response to 20 kHz; a hardware switch can cut both.</td></tr>
         <tr><td class="mono">MAX98357A</td><td>Speaker amplifier</td><td>Drives the sealed speaker box straight from I²S audio.</td></tr>
         <tr><td class="mono">Fingerprint key</td><td>Power and unlock</td><td>Capacitive sensor in the side power key.</td></tr>
         <tr><td class="mono">EVQ-WK series</td><td>Thumb rotor</td><td>Side jog wheel with push switch.</td></tr>
@@ -245,6 +244,6 @@
 </footer>
 
 <script src="js/fx.js?v=8"></script>
-<script src="js/device.js?v=12"></script>
+<script src="js/device.js?v=13"></script>
 </body>
 </html>
