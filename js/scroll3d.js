@@ -53,7 +53,7 @@
   const outCipher = document.getElementById('hero-cipher');
   const outK = document.getElementById('hero-k');
   const plates = Array.prototype.slice.call(document.querySelectorAll('.chapter .plate'));
-  const navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-steps a'));
+  const navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-steps a[href^="#"]'));
   const bar = document.getElementById('progress');
 
   function setRotors(p) {

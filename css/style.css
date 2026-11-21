@@ -619,6 +619,12 @@ table.keys, table.map { width: 100%; border-collapse: collapse; font-size: 15px;
 .rcv-plain { font-size: 18px !important; color: var(--steel); }
 .rcv-plain.is-ok { color: var(--brass); }
 
+.future-page { padding-top: 140px; min-height: calc(100vh - 160px); }
+.back-link { color: var(--brass); text-decoration: none; border-bottom: 1px solid transparent; }
+.back-link:hover { border-color: var(--brass); }
+.key-hint { font-size: 13px; }
+.key-hint a, .note a { color: var(--steel); }
+
 /* ---------- Presentation mode ---------- */
 .tour {
   position: fixed; z-index: 60; right: 24px; bottom: 24px; width: min(420px, calc(100vw - 32px));

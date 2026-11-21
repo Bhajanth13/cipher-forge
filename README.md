@@ -18,7 +18,7 @@ You build a cipher out of small blocks, and the app uses discrete maths to check
 | 6. Break it | Brute-force all shifts on a 3D drum; frequency analysis | Multisets, counting, pigeonhole |
 | 7. Count the keys | Key counts and brute-force time | Sum and product rules, n!, P(n, r), nʳ, C(n, r), combinations with repetition |
 
-Future enhancement: **send it by sound** (see below).
+Future enhancement: **send it by sound**, on its own page (`future.html`, the last item in the nav bar).
 
 Extras: a light/dark switch, and a **Present** button (or press `P`) for a guided walkthrough during the viva. Use the arrow keys to move and `Esc` to finish.
 
@@ -27,7 +27,8 @@ Extras: a light/dark switch, and a **Present** button (or press `P`) for a guide
 Each JavaScript file matches a part of the syllabus:
 
 ```
-index.html          page structure
+index.html          the lab (steps 1 to 7)
+future.html         future enhancement: send it by sound
 css/style.css       design and 3D effects
 css/fonts.css       self-hosted fonts (works offline)
 js/sets.js          Module 1: sets and set operations
@@ -42,15 +43,16 @@ js/fx.js            light/dark switch, 3D letter field, decoding headings, tilt
 js/tour.js          presentation mode
 js/app.js           steps 1, 2, 3, 5 and 7 on the page
 js/lab2.js          brackets, relations and break-it on the page
-js/lab3.js          send-by-sound on the page
+js/lab3.js          send-by-sound on future.html
+js/future.js        the cipher used on future.html (the last one built in the lab)
 ```
 
 Plain HTML, CSS and JavaScript, with no libraries or build step.
 
 ## Future enhancement: sending a message by sound
 
-1. Open the site on two devices (the GitHub Pages link, so the microphone is allowed).
-2. On the sender, build a cipher and press **Copy key**. Give the key to the receiver separately; it is never sent with the message.
+1. Open the Future enhancements page on two devices (https://bhajanth13.github.io/cipher-forge/future.html, so the microphone is allowed).
+2. On the sender, build a cipher in the lab (the page remembers it) and press **Copy key**. Give the key to the receiver separately; it is never sent with the message.
 3. On the receiver, paste the key, press **Use this key**, choose **Microphone** and press **Start listening**.
 4. On the sender, type a message and press **Encrypt and send as sound**. Keep the devices close and the volume up.
 

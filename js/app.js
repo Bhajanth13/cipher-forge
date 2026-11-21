@@ -471,7 +471,10 @@
   }
 
   // Let the other modules (lab2.js, tour.js) know the cipher changed
-  function announce() { document.dispatchEvent(new CustomEvent('cf:change')); }
+  function announce() {
+    try { localStorage.setItem('cf-key', B.keyCode(state.setKey, state.chain)); } catch (e) { /* storage may be blocked */ }
+    document.dispatchEvent(new CustomEvent('cf:change'));
+  }
 
   function renderTabsLabelsOnly() {
     const tabs = $('inspect-tabs').querySelectorAll('.tab');

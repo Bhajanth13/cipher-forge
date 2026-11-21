@@ -48,12 +48,6 @@
     { sel: '#keys', title: 'Step 7: count the keys',
       text: 'Shift: 26 keys. Any substitution: 26! ≈ 4.03 × 10²⁶, about 12.8 billion years at a billion guesses a second.',
       maths: 'Module 4: n!, nʳ, P(n, r) · Module 5: C(n, r)' },
-    { sel: '#pipe', title: 'Future enhancement: send it by sound',
-      text: 'The ciphertext becomes character codes, then base-16 digits, then tones. The receiver applies the inverses in reverse order and decrypts with the shared key.',
-      maths: 'Module 3: send = tones ∘ hex ∘ code ∘ F, receive = its inverse', before: function () { CF.app.loadPreset('Caesar'); } },
-    { sel: '#send .send-split', title: 'Only the key holder can read it',
-      text: 'Anyone can hear the tones, but without the key they only get ciphertext. A checksum (sum mod 256) shows whether every tone arrived.',
-      maths: 'Module 4: 16 × 16 = 256 character codes from two tones' },
     { sel: '#syllabus .map', title: 'Every module has a job in the app',
       text: 'Sets, logic, relations and functions, counting, and combinations: all five modules are used.',
       maths: 'CS1812 Discrete Mathematics and Set Theory' }
