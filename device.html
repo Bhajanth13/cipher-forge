@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="css/fonts.css?v=8">
 <link rel="stylesheet" href="css/style.css?v=10">
 <link rel="stylesheet" href="css/future.css?v=12">
-<link rel="stylesheet" href="css/device.css?v=27">
+<link rel="stylesheet" href="css/device.css?v=29">
 </head>
 <body>
 
@@ -176,13 +176,13 @@
 
   <div class="bloom" id="bloom">
     <div class="bloom-stage" aria-hidden="true">
-      <div class="scene bloom-scene"><div class="cam bloom-cam" id="bloom-cam"></div></div>
+      <canvas id="bloom-canvas" class="bloom-canvas"></canvas>
       <p class="bloom-tag mono" id="bloom-tag">NORMAL · PETALS FOLDED AWAY</p>
     </div>
     <div class="bloom-side">
       <p class="fx-kicker mono">Far mode</p>
       <h3 class="bloom-title">A titanium flower that opens on one press</h3>
-      <p class="bloom-p">In normal use the petals stay folded inside. Choose far mode and a bud rises out of the top edge, the mast lifts a small feed pod to the focus, and eight petals open into a 10 cm dish. One more press folds it all away.</p>
+      <p class="bloom-p">In normal use the petals stay furled inside. Choose far mode and the bud rises out of the top edge, the mast lifts a small feed pod to the focus, and eight petals unfurl, straighten and open into a 10 cm dish. One more press folds it all away. The motion is simulated from a physical model of the sheet, the screw and the springs.</p>
       <button type="button" class="bloom-btn" id="bloom-btn" aria-pressed="false"><span class="bb-dot"></span><span id="bloom-btn-t">Switch to far mode</span></button>
       <div class="bloom-rays" role="group" aria-label="Show sound">
         <span class="lb-l mono">Show sound</span>
@@ -190,9 +190,14 @@
       </div>
       <p class="bloom-note" id="bloom-note">Sending: the tweeter at the focus fires into the dish, and the curve turns the spreading sound into a narrow parallel beam.</p>
       <table class="lb-table mono bloom-table" id="bloom-table"></table>
+      <p class="lb-sec">Does the metal survive it?</p>
+      <table class="lb-table mono bloom-table" id="bloom-physics"></table>
       <details class="bloom-more">
-        <summary>How it folds</summary>
-        <p>The petals are 0.1 mm superelastic nickel–titanium (nitinol), shape-set to the dish curve, so they spring open once clear of the body. A 6 mm gear motor turns a lead screw that pushes the bud 36 mm out of its pocket; at the top a latch lets the spring-loaded mast extend and the petals open on their own. Folding, the screw draws the bud back through a collar that closes the petals around the mast. Each petal folds once at mid-length. <a href="#fit">Where it all fits</a>.</p>
+        <summary>How it folds, step by step</summary>
+        <p><b>The sheet.</b> Each petal is 0.05 mm superelastic nickel–titanium (nitinol), heat-set to the dish curve. It never stretches: every point keeps its distance along and across the petal. Across its width the petal always lies on a circle around the axis, so as it stands up it wraps around the mast, each layer 0.07 mm outside the last, like a furled umbrella or NASA's starshade.</p>
+        <p><b>The crease.</b> Half-way along, each petal has a tape-spring hinge: curved across like a steel tape measure, so it stays straight when open. Flattened, it folds at a 0.7 mm radius and closes into a hairpin, so the outer half lies against the inner half.</p>
+        <p><b>Opening.</b> The gear motor turns the lead screw and the bud rises 36 mm at constant speed with short ramps. At the top a latch frees the spring-loaded mast, then the petals. Rotary dampers make both critically damped, so they settle without bouncing: the petals unwind, the creases straighten and the dish locks open.</p>
+        <p><b>Folding.</b> The mast is pulled down first. A collar at the mouth tilts the petals up, which flattens each crease until the tape spring snaps folded; the petals wrap as they stand up, and the screw draws the bud back in. <a href="#fit">Where it all fits</a>.</p>
       </details>
     </div>
   </div>
@@ -363,7 +368,7 @@
                 <tr><td class="mono">4 × SPH0641LU4H-1</td><td>Ultrasonic mics</td><td>Knowles MEMS mics with response to 80 kHz, one per corner, beamformed; a hardware switch cuts all four.</td></tr>
         <tr><td class="mono">DRV2700</td><td>Piezo driver</td><td>TI high-voltage piezo driver with built-in boost; drives the horns at about 100 V.</td></tr>
         <tr><td class="mono">4 × piezo horn tweeter</td><td>Transmitters</td><td>Horn-loaded, 18–24 kHz, along the top edge.</td></tr>
-        <tr><td class="mono">Petal reflector</td><td>Far mode</td><td>Eight 0.1 mm nickel–titanium (nitinol) petals that bloom into a 10 cm dish, focal length 40 mm. About +22.8 dB at 21 kHz, assuming 50 % efficiency.</td></tr>
+        <tr><td class="mono">Petal reflector</td><td>Far mode</td><td>Eight 0.05 mm nickel–titanium (nitinol) petals with tape-spring creases that open into a 10 cm dish, focal length 40 mm. About +22.8 dB at 21 kHz, assuming 50 % efficiency.</td></tr>
         <tr><td class="mono">Feed pod</td><td>Far-mode transmitter and mic</td><td>One piezo tweeter and one SPH0641 mic on a two-stage telescoping mast, held at the dish focus.</td></tr>
         <tr><td class="mono">6 mm gear motor</td><td>Bloom and fold</td><td>Turns an M2 lead screw (2 mm lead) that pushes the bud 36 mm out of its pocket and draws it back through a collar that closes the petals.</td></tr>
         <tr><td class="mono">Fingerprint key</td><td>Power and unlock</td><td>Capacitive sensor in the side power key.</td></tr>
@@ -417,6 +422,6 @@
 <script src="js/device.js?v=24"></script>
 <script src="js/device-steps.js?v=22"></script>
 <script src="js/device-range.js?v=25"></script>
-<script src="js/device-bloom.js?v=5"></script>
+<script src="js/device-bloom.js?v=9"></script>
 </body>
 </html>
