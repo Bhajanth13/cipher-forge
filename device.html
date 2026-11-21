@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="css/fonts.css?v=8">
 <link rel="stylesheet" href="css/style.css?v=10">
 <link rel="stylesheet" href="css/future.css?v=11">
-<link rel="stylesheet" href="css/device.css?v=20">
+<link rel="stylesheet" href="css/device.css?v=21">
 </head>
 <body>
 
@@ -56,7 +56,7 @@
     <p class="hud-line hud-a mono">FUTURE ENHANCEMENT 02 · CIPHER ECHO</p>
     <p class="hud-line hud-b mono">RF EMISSIONS <span>0</span></p>
     <p class="hud-line hud-c mono">78 × 56 × 13 MM · CONCEPT</p>
-    <p class="hud-line hud-d mono">BANDS 16.9–18.9 · 20.5–22.0 kHz</p>
+    <p class="hud-line hud-d mono">RANGE ≈140 M · FAR MODE</p>
   </div>
 
   <div class="dv-hero-copy">
@@ -86,7 +86,7 @@
 <section class="fx-specs dv-specs" aria-label="Cipher Echo in numbers">
   <div class="spec"><p class="spec-num mono">0</p><p class="spec-label">radios: no Wi-Fi, Bluetooth or cellular</p></div>
   <div class="spec"><p class="spec-num mono">13<small> mm</small></p><p class="spec-label">thin, 78 × 56 mm face</p></div>
-  <div class="spec"><p class="spec-num mono">≈32<small> days</small></p><p class="spec-label">on one charge, listening 1 minute in 10 (estimate)</p></div>
+  <div class="spec"><p class="spec-num mono">≈29<small> days</small></p><p class="spec-label">on one charge, listening 1 minute in 10 (estimate)</p></div>
   <div class="spec"><p class="spec-num mono">3.3<small>″</small></p><p class="spec-label">full-face touch e-paper with an on-screen keyboard</p></div>
 </section>
 
@@ -135,14 +135,15 @@
   <div class="sec-head">
     <p class="fx-kicker mono">Long-range acoustics</p>
     <h2 class="fx-h2" id="range-title">Loud for the receiver, silent for people</h2>
-    <p class="fx-sub">Two piezo horns throw ultrasound across a room; three ultrasonic mics and four layers of noise cancelling pick it out. Ranges are estimates for line of sight indoors.</p>
+    <p class="fx-sub">Four piezo horns, four ultrasonic mics, error correction and, in far mode, fold-out reflectors. Every range below is calculated from the physics of sound in air, with a 15 dB allowance for real-world losses.</p>
   </div>
 
   <div class="range-grid">
     <div class="range-stage" id="range-stage">
       <div class="range-modes" role="group" aria-label="Mode">
-        <button type="button" class="rm" data-mode="lr" aria-pressed="true">Long-range · 20.5–22.0 kHz</button>
-        <button type="button" class="rm" data-mode="q" aria-pressed="false">Quiet · 16.9–18.9 kHz</button>
+        <button type="button" class="rm" data-mode="q" aria-pressed="false">Quiet</button>
+        <button type="button" class="rm" data-mode="lr" aria-pressed="true">Long-range</button>
+        <button type="button" class="rm" data-mode="far" aria-pressed="false">Far · reflectors</button>
       </div>
       <div class="range-scene" aria-hidden="true"><div class="range-plane"><svg id="range-svg" viewBox="0 0 800 440"></svg></div></div>
       <p class="range-read mono" id="range-read" aria-live="polite"></p>
@@ -150,26 +151,66 @@
     <div class="range-hw">
       <article class="hw-card">
         <p class="sc-num mono">Transmit</p>
-        <h3>Piezo horn array</h3>
-        <p>Two horn-loaded piezo tweeters on the top edge, driven by a MAX9788 at up to 14 V peak-to-peak. The horns aim the sound like a torch beam, so more of it reaches the receiver.</p>
-        <p class="hw-spec mono">2 × tweeters · 18–24 kHz · ≈110 dB at 10 cm (estimate)</p>
+        <h3>Four-horn piezo array</h3>
+        <p>Four horn-loaded piezo tweeters along the top edge, driven by a DRV2700 that boosts the battery to about 100 V. Driven together, they add up on-axis like a torch beam.</p>
+        <p class="hw-spec mono">4 × tweeters · 18–24 kHz · ≈100 dB at 1 m (estimate)</p>
       </article>
       <article class="hw-card">
         <p class="sc-num mono">Receive</p>
-        <h3>Ultrasonic mic array</h3>
-        <p>Three Knowles SPH0641LU4H-1 MEMS mics that hear up to 80 kHz, sampled 96 000 times a second. The mic kill switch still cuts all three in hardware.</p>
-        <p class="hw-spec mono">3 × mics · response to 80 kHz · 96 kHz sampling</p>
+        <h3>Four-corner mic array</h3>
+        <p>Four Knowles SPH0641LU4H-1 ultrasonic mics, one in each corner, sampled at 96 kHz. Together they gain 6 dB and tell you which way the sender is.</p>
+        <p class="hw-spec mono">4 × mics · to 80 kHz · +6 dB · direction finding</p>
+      </article>
+      <article class="hw-card dish-card">
+        <div class="dish-stage" aria-hidden="true"><div class="dish-cam" id="dish-cam"></div></div>
+        <div>
+          <p class="sc-num mono">Far mode</p>
+          <h3>Fold-out petal reflector</h3>
+          <p>Eight titanium petals unfold into a 10 cm dish around the top edge, focusing sound both ways.</p>
+          <p class="hw-spec mono">gain = η(πD/λ)² ≈ +23 dB each end</p>
+        </div>
       </article>
     </div>
   </div>
 
-  <h3 class="nc-title">Four layers of noise cancelling</h3>
+  <h3 class="nc-title">Five layers between noise and the message</h3>
   <ol class="nc" id="nc">
     <li class="nc-step" data-s="0"><span class="nc-n mono">1</span><p class="nc-t">What the mics hear</p><svg class="nc-svg" viewBox="0 0 240 120"></svg><p class="nc-d mono">speech, fans, traffic: all below 10 kHz</p></li>
     <li class="nc-step" data-s="1"><span class="nc-n mono">2</span><p class="nc-t">High-pass at 18 kHz</p><svg class="nc-svg" viewBox="0 0 240 120"></svg><p class="nc-d mono">everything people make is removed</p></li>
-    <li class="nc-step" data-s="2"><span class="nc-n mono">3</span><p class="nc-t">Beamforming, 3 mics</p><svg class="nc-svg" viewBox="0 0 240 120"></svg><p class="nc-d mono">+4.8 dB toward the sender (10·log₁₀3)</p></li>
+    <li class="nc-step" data-s="2"><span class="nc-n mono">3</span><p class="nc-t">Beamforming, 4 mics</p><svg class="nc-svg" viewBox="0 0 240 120"></svg><p class="nc-d mono">+6.0 dB toward the sender (10·log₁₀4)</p></li>
     <li class="nc-step" data-s="3"><span class="nc-n mono">4</span><p class="nc-t">Adaptive threshold</p><svg class="nc-svg" viewBox="0 0 240 120"></svg><p class="nc-d mono">a tone counts only 9 dB above its floor</p></li>
+    <li class="nc-step" data-s="4"><span class="nc-n mono">5</span><p class="nc-t">Error correction</p><svg class="nc-svg" viewBox="0 0 240 120"></svg><p class="nc-d mono">RS(15, 9) over GF(16): fixes 3 bad digits in 15</p></li>
   </ol>
+
+  <div class="lb" id="lb">
+    <div class="lb-head">
+      <h3 class="nc-title">How far can it go?</h3>
+      <p class="fx-sub">Change the conditions and the range is worked out live.</p>
+    </div>
+    <div class="lb-grid">
+      <div class="lb-controls">
+        <div class="lb-row"><span class="lb-l mono">Mode</span>
+          <div class="seg-mini" role="group" aria-label="Mode">
+            <button type="button" data-m="phone">Phone</button><button type="button" data-m="q">Quiet</button><button type="button" data-m="lr" aria-pressed="true">Long-range</button><button type="button" data-m="far">Far</button>
+          </div></div>
+        <div class="lb-row"><label class="lb-l mono" for="lb-place">Place</label>
+          <select id="lb-place"><option value="10">Quiet room</option><option value="0" selected>Calm outdoors</option><option value="20">Noisy (rain, insects, machines)</option></select></div>
+        <div class="lb-row"><label class="lb-l mono" for="lb-sym">Tone length</label>
+          <input type="range" id="lb-sym" min="0" max="3" step="1" value="1"><b class="mono" id="lb-sym-o"></b></div>
+        <div class="lb-row"><label class="lb-l mono" for="lb-t">Temperature</label>
+          <input type="range" id="lb-t" min="0" max="40" step="1" value="20"><b class="mono" id="lb-t-o"></b></div>
+        <div class="lb-row"><label class="lb-l mono" for="lb-h">Humidity</label>
+          <input type="range" id="lb-h" min="10" max="90" step="1" value="50"><b class="mono" id="lb-h-o"></b></div>
+        <table class="lb-table mono" id="lb-table"></table>
+      </div>
+      <div class="lb-out">
+        <p class="lb-big"><span class="mono" id="lb-range">—</span><small>maximum range</small></p>
+        <p class="lb-meta mono" id="lb-meta"></p>
+        <svg id="lb-chart" viewBox="0 -6 520 266" role="img" aria-label="Signal-to-noise ratio against distance"></svg>
+        <p class="lb-why" id="lb-why"></p>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ============ THE MESSAGE'S JOURNEY, IN 3D ============ -->
@@ -234,11 +275,11 @@
   </div>
   <div class="why-grid">
     <article class="why-card"><h3>No radio at all</h3><p>There is no Wi-Fi, Bluetooth or cellular chip, so a radio scanner finds nothing. Cipher Echo talks only through sound and its USB port.</p></article>
-    <article class="why-card"><h3>Above human hearing</h3><p>Long-range mode talks at 20.5–22.0 kHz, beyond what any person can hear. Quiet mode, at 16.9–18.9 kHz, also works with phones running Send it by sound.</p></article>
+    <article class="why-card"><h3>Above human hearing</h3><p>Long-range and far modes talk at 20.5–22.0 kHz, beyond what any person can hear, out to about 140 m. Quiet mode, at 16.9–18.9 kHz, also works with phones running Send it by sound.</p></article>
     <article class="why-card"><h3>Shoulder-proof typing</h3><p>The keyboard is drawn on the screen: no clicks, and its layout can be scrambled each time so nobody can read your taps.</p></article>
     <article class="why-card"><h3>No glow</h3><p>E-paper reflects light instead of giving it off, and there are no LEDs. In a dark room the unit is invisible.</p></article>
     <article class="why-card"><h3>Fingerprint unlock</h3><p>The power key reads your fingerprint. Until it matches, the secure chip will not release the key.</p></article>
-    <article class="why-card"><h3>Mic kill switch</h3><p>A physical slider cuts power to all three microphones. No software can turn them back on.</p></article>
+    <article class="why-card"><h3>Mic kill switch</h3><p>A physical slider cuts power to all four microphones. No software can turn them back on.</p></article>
     <article class="why-card"><h3>Silent alerts</h3><p>A short buzz pattern says a message arrived. No sound, no light.</p></article>
     <article class="why-card"><h3>Panic wipe</h3><p>Hold the thumb rotor for five seconds and the secure chip erases the key. Every message sent with it becomes unreadable.</p></article>
     <article class="why-card"><h3>Tamper response</h3><p>Opening the case lets light reach a sensor inside, and the keys are erased before anyone can probe the board.</p></article>
@@ -259,9 +300,10 @@
         <tr><td class="mono">NXP SE050</td><td>Secure element</td><td>Certified tamper-resistant chip that keeps the key and erases it on command.</td></tr>
         <tr><td class="mono">3.3″ touch e-paper</td><td>Screen</td><td>Full face, 360 × 240 px with capacitive touch and an on-screen keyboard. Holds the image with no power and no light.</td></tr>
         <tr><td class="mono">Sapphire, 0.7 mm</td><td>Cover glass</td><td>Scratch-proof; bonded to the touch layer with no air gap.</td></tr>
-                <tr><td class="mono">3 × SPH0641LU4H-1</td><td>Ultrasonic mics</td><td>Knowles MEMS mics with response to 80 kHz, beamformed; a hardware switch can cut all three.</td></tr>
-        <tr><td class="mono">MAX9788</td><td>Piezo driver</td><td>Drives the piezo tweeters at up to 14 V peak-to-peak for long range.</td></tr>
-        <tr><td class="mono">2 × piezo horn tweeter</td><td>Transmitters</td><td>Horn-loaded, 18–24 kHz, aimed out of the top edge.</td></tr>
+                <tr><td class="mono">4 × SPH0641LU4H-1</td><td>Ultrasonic mics</td><td>Knowles MEMS mics with response to 80 kHz, one per corner, beamformed; a hardware switch cuts all four.</td></tr>
+        <tr><td class="mono">DRV2700</td><td>Piezo driver</td><td>TI high-voltage piezo driver with built-in boost; drives the horns at about 100 V.</td></tr>
+        <tr><td class="mono">4 × piezo horn tweeter</td><td>Transmitters</td><td>Horn-loaded, 18–24 kHz, along the top edge.</td></tr>
+        <tr><td class="mono">Petal reflector</td><td>Far-mode accessory</td><td>Eight titanium petals unfold into a 10 cm dish; about +23 dB at 21 kHz.</td></tr>
         <tr><td class="mono">Fingerprint key</td><td>Power and unlock</td><td>Capacitive sensor in the side power key.</td></tr>
         <tr><td class="mono">EVQ-WK series</td><td>Thumb rotor</td><td>Side jog wheel with push switch.</td></tr>
         <tr><td class="mono">DRV2605L</td><td>Haptic driver</td><td>Quiet, sharp buzz patterns on an 8 mm LRA.</td></tr>
@@ -286,16 +328,16 @@
       <thead><tr><th scope="col">Mode</th><th scope="col">Current (estimate)</th></tr></thead>
       <tbody>
         <tr><td>Asleep</td><td class="mono">≈ 0.3 mA</td></tr>
-        <tr><td>Listening (3 mics, 96 kHz)</td><td class="mono">≈ 10.5 mA</td></tr>
+        <tr><td>Listening (4 mics, 96 kHz)</td><td class="mono">≈ 11.5 mA</td></tr>
         <tr><td>Refreshing the screen</td><td class="mono">≈ 4 mA for 2 s</td></tr>
-        <tr><td>Sending, long-range</td><td class="mono">≈ 300 mA, a few seconds</td></tr>
+        <tr><td>Sending, long-range</td><td class="mono">≈ 450 mA in short bursts</td></tr>
       </tbody>
     </table>
     <div class="power-calc panel">
       <label for="duty" class="pc-label">Time spent listening: <b class="mono" id="duty-out">10%</b></label>
       <input type="range" id="duty" min="2" max="100" step="1" value="10">
       <p class="pc-formula mono" id="duty-formula"></p>
-      <p class="pc-life"><span class="mono" id="life-out">32 days</span> on one charge</p>
+      <p class="pc-life"><span class="mono" id="life-out">29 days</span> on one charge</p>
     </div>
   </div>
 </section>
@@ -309,8 +351,8 @@
 </footer>
 
 <script src="js/fx.js?v=8"></script>
-<script src="js/device.js?v=20"></script>
-<script src="js/device-steps.js?v=19"></script>
-<script src="js/device-range.js?v=20"></script>
+<script src="js/device.js?v=21"></script>
+<script src="js/device-steps.js?v=21"></script>
+<script src="js/device-range.js?v=22"></script>
 </body>
 </html>

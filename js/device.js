@@ -118,8 +118,8 @@
       html: function () {
         const posts = CORNERS.map(function (c) { return cylinder('post', c[0] - 6, c[1] - 6, 12, 12, 28, 4, 0); }).join('');
         return slab('frame', 6, 6, 378, 268, 4, 38, '<span class="ribs"></span>') +
-          slab('port', 290, -2, 30, 4, 12, 22) + slab('port', 334, -2, 30, 4, 12, 22) +
-          slab('port', 66, -2, 6, 4, 4, 36) + slab('port', 192, -2, 6, 4, 4, 36) +
+          slab('port', 52, -2, 30, 4, 12, 22) + slab('port', 96, -2, 30, 4, 12, 22) + slab('port', 290, -2, 30, 4, 12, 22) + slab('port', 334, -2, 30, 4, 12, 22) +
+          slab('port', 30, -2, 6, 4, 4, 36) + slab('port', 354, -2, 6, 4, 4, 36) + slab('port', 30, 278, 6, 4, 4, 36) + slab('port', 354, 278, 6, 4, 4, 36) +
           slab('wall', 0, 0, DW, 6, 55, 0) + slab('wall', 0, 274, DW, 6, 55, 0) +
           slab('wall', 0, 6, 6, 268, 55, 0) + slab('wall', 384, 6, 6, 268, 55, 0) + posts +
           cylinder('wheel', 362, 64, 48, 48, 8, 4, 30) +
@@ -128,7 +128,7 @@
           slab('port', 172, 273, 46, 8, 16, 22);
       },
       pts: [[327, -2, 30, 'Horn ports', 'ultrasound leaves the top edge'], [386, 88, 34, 'Thumb rotor', 'Ø 9.6 mm, 26 detents'], [392, 199, 31, 'Fingerprint power key', 'unlocks the key store'],
-        [-5, 70, 32, 'Mic kill switch', 'cuts all three mics in hardware'], [195, 276, 30, 'USB-C port', 'charge and load keys'],
+        [-5, 70, 32, 'Mic kill switch', 'cuts all four mics in hardware'], [195, 276, 30, 'USB-C port', 'charge and load keys'],
         [100, 60, 42, 'Inner shelf', 'stiffening ribs, 0.8 mm']],
       text: 'The skeleton: titanium walls, an inner shelf, and every control on the sides.',
       spec: [['Material', 'Grade 5 titanium, CNC-machined'], ['Walls', '1.2 mm, inner shelf 0.8 mm'], ['Controls', 'Rotor, fingerprint key, mic kill switch'], ['Job', 'Strength; carries all side controls']] },
@@ -138,33 +138,35 @@
           slab('chip can shield p-mcu', 130, 40, 96, 72, 6, 5, '<span class="perf"></span><i>STM32U585</i>') +
           slab('chip key p-se', 240, 56, 20, 20, 3, 5, 'SE050') + slab('chip p-flash', 240, 86, 26, 18, 4, 5, 'W25Q128') +
           slab('chip', 150, 170, 18, 18, 3, 5, 'PMIC') + slab('chip', 60, 200, 12, 10, 2.5, 5, 'FG', true) +
-          slab('chip', 40, 170, 14, 12, 3, 5, 'CHG', true) + slab('chip p-amp', 298, 38, 20, 20, 4, 5, 'PZD') +
-          slab('chip', 300, 200, 16, 16, 4, 5, 'HAP') + slab('chip can p-mic', 186, 12, 18, 12, 5, 5, 'MIC') + slab('chip can p-mic', 60, 12, 18, 12, 5, 5, 'MIC') +
-          slab('chip can p-mic', 196, 250, 18, 12, 5, 5, 'MIC') + slab('chip can', 232, 112, 14, 8, 3.5, 5, '', true) +
+          slab('chip', 40, 170, 14, 12, 3, 5, 'CHG', true) + slab('chip p-amp', 298, 38, 20, 20, 4, 5, 'HV') + slab('chip can', 322, 40, 16, 16, 6, 5, 'L1', true) +
+          slab('chip', 300, 200, 16, 16, 4, 5, 'HAP') + slab('chip can p-mic', 24, 12, 18, 12, 5, 5, 'MIC') + slab('chip can p-mic', 348, 12, 18, 12, 5, 5, 'MIC') +
+          slab('chip can p-mic', 24, 252, 18, 12, 5, 5, 'MIC') + slab('chip can p-mic', 348, 252, 18, 12, 5, 5, 'MIC') + slab('chip can', 232, 112, 14, 8, 3.5, 5, '', true) +
           slab('conn', 120, 124, 60, 10, 5, 5) + slab('conn', 260, 124, 34, 10, 5, 5) + slab('conn', 200, 150, 60, 10, 5, 5) +
           slab('conn', 340, 170, 26, 10, 5, 5) + slab('jst', 60, 120, 22, 12, 6, 5) +
           slab('chip can', 130, 244, 46, 26, 14, 5, 'USB-C') + slab('chip under', 40, 40, 12, 8, 2, -2) + passives();
       },
       pts: [[178, 76, 11, 'STM32U585 under shield', 'Cortex-M33, 160 MHz, AES in hardware'], [250, 66, 8, 'NXP SE050', 'secure element, holds the key'],
         [253, 95, 9, 'W25Q128', '16 MB flash, firmware only'], [159, 179, 8, 'Power IC', 'regulators for every rail'],
-        [195, 18, 10, 'SPH0641 × 3', 'ultrasonic mics to 80 kHz, beamformed'], [308, 48, 9, 'MAX9788', 'piezo driver, up to 14 V p-p'],
+        [33, 18, 10, 'SPH0641 × 4', 'one per corner, to 80 kHz, beamformed'], [308, 48, 9, 'DRV2700', 'boosts to ~100 V for the horns'],
         [153, 257, 19, 'USB-C', 'charge, load keys; data off when locked'], [46, 44, -2, 'Light sensor (underside)', 'tamper alarm']],
       text: 'Eight layers, parts on one side, the processor under a metal shield. About 70 parts in a card-sized space.',
       spec: [['Board', '8-layer HDI, 1.0 mm'], ['Brain', 'STM32U585, TrustZone, hardware AES'], ['Key store', 'NXP SE050, certified secure element'], ['Also', 'BQ25180 charger, MAX17048 gauge, DRV2605L haptics']] },
     { name: 'Power and sound', mm: '5.0 mm', cls: 'L-bay', z: 0, ex: -1.9,
       html: function () {
-        return slab('cell', 20, 90, 250, 170, 25, 7, '<span>LiPo · 503450</span><span><b>3.7 V · 1000 mAh</b><br>3.7 Wh · 2C</span>') +
-          slab('pcm', 30, 93, 70, 10, 3, 32) + slab('bflex', 60, 96, 22, 26, 0.8, 32) + slab('tab', 120, 250, 40, 24, 0.6, 7) +
+        return slab('cell', 70, 90, 250, 170, 25, 7, '<span>LiPo · 503450</span><span><b>3.7 V · 1000 mAh</b><br>3.7 Wh · 2C</span>') +
+          slab('pcm', 80, 93, 70, 10, 3, 32) + slab('bflex', 110, 96, 22, 26, 0.8, 32) + slab('tab', 170, 250, 40, 24, 0.6, 7) +
+          slab('horns p-spk', 40, 6, 94, 70, 15, 8, '<span class="horn h1"></span><span class="horn h2"></span>') +
           slab('horns p-spk', 278, 6, 94, 70, 15, 8, '<span class="horn h1"></span><span class="horn h2"></span>') +
+          cylinder('piezo', 51, 42, 28, 28, 3, 2, 23) + cylinder('piezo', 95, 42, 28, 28, 3, 2, 23) +
           cylinder('piezo', 289, 42, 28, 28, 3, 2, 23) + cylinder('piezo', 333, 42, 28, 28, 3, 2, 23) +
-          cylinder('mot', 300, 196, 36, 36, 12, 3, 8) +
+          cylinder('mot', 18, 196, 36, 36, 12, 3, 8) +
           slab('boot', 184, 6, 22, 8, 4, 40, '', true) + slab('boot', 194, 266, 22, 8, 4, 40, '', true);
       },
-      pts: [[145, 175, 32, 'LiPo cell', '503450, 3.7 V, 1000 mAh'], [65, 98, 35, 'Protection circuit', 'over-charge, over-drain, short'],
-        [325, 16, 23, 'Piezo horn array', '2 horn-loaded tweeters, fire out the top'], [347, 56, 26, 'Piezo disc', 'about 110 dB at 10 cm (estimate)'], [318, 214, 20, 'Vibration motor', '8 mm LRA'],
-        [140, 262, 7.6, 'Pull tab', 'removes the cell without tools']],
-      text: 'A 1000 mAh cell, two horn-loaded piezo tweeters that throw ultrasound across a room, and a motor for silent alerts.',
-      spec: [['Cell', 'LiPo 503450, 3.7 V, 1000 mAh (3.7 Wh)'], ['Transmit', '2 horn-loaded piezo tweeters, 18–24 kHz'], ['Haptics', '8 mm LRA'], ['Mount', 'Stretch-release adhesive, pull tab']] },
+      pts: [[195, 175, 32, 'LiPo cell', '503450, 3.7 V, 1000 mAh'], [115, 98, 35, 'Protection circuit', 'over-charge, over-drain, short'],
+        [87, 16, 23, 'Piezo horn array', '4 horn-loaded tweeters along the top edge'], [347, 56, 26, 'Piezo disc', '≈100 dB at 1 m with all four (estimate)'], [36, 214, 20, 'Vibration motor', '8 mm LRA'],
+        [190, 262, 7.6, 'Pull tab', 'removes the cell without tools']],
+      text: 'A 1000 mAh cell, four horn-loaded piezo tweeters that throw ultrasound tens of metres, and a motor for silent alerts.',
+      spec: [['Cell', 'LiPo 503450, 3.7 V, 1000 mAh (3.7 Wh)'], ['Transmit', '4 horn-loaded piezo tweeters, 18–24 kHz'], ['Haptics', '8 mm LRA'], ['Mount', 'Stretch-release adhesive, pull tab']] },
     { name: 'Ceramic back', mm: '1.0 mm', cls: 'L-back', z: 0, ex: -3.2,
       html: function () {
         const sinks = CORNERS.map(function (c) { return '<span class="sink" style="left:' + (c[0] - 7) + 'px;top:' + (c[1] - 7) + 'px"></span>'; }).join('');
@@ -590,7 +592,7 @@
 
   /* ---------- Battery life ---------- */
   (function () {
-    const CAP = 1000, LISTEN = 10.5, SLEEP = 0.3;
+    const CAP = 1000, LISTEN = 11.5, SLEEP = 0.3;
     const input = $('duty');
     function calc() {
       const d = input.value / 100;

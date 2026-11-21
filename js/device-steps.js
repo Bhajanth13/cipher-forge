@@ -134,9 +134,9 @@
       { t: 'Type', d: 'Tap the message on the on-screen keyboard.', m: 'm = "MEET AT NOON"', w: ['Touch e-paper', 'Touch controller'] },
       { t: 'Encrypt', d: 'The processor applies your key F to every letter.', m: 'c = F(m) = "PHHW DW QRRQ"', w: ['STM32U585', 'SE050 key'] },
       { t: 'Bytes to digits', d: 'Each character is one byte, split into two base-16 digits.', m: 'P = 80 = 16 × 5 + 0  →  5, 0', w: ['STM32U585'] },
-      { t: 'Digits to tones', d: 'Each digit picks one of 16 ultrasonic tones, played for 200 ms through the piezo horns.', m: 'tone = 20 500 + 100·d Hz', w: ['MAX9788', 'Piezo horns'] },
-      { t: 'Through the air', d: 'Ultrasound crosses the room; no one hears it and nothing goes over radio.', m: '20.5–22.0 kHz · up to ~20 m (estimate)', w: ['Air only'] },
-      { t: 'Detect', d: 'Three ultrasonic mics are combined toward the sender; 16 detectors listen, and a tone counts only if it stands above the noise.', m: 'Goertzel × 16 · threshold = floor + 9 dB', w: ['SPH0641 × 3', 'STM32U585'] },
+      { t: 'Digits to tones', d: 'Each digit picks one of 16 ultrasonic tones, played for 200 ms through the piezo horns.', m: 'tone = 20 500 + 100·d Hz', w: ['DRV2700', '4 piezo horns'] },
+      { t: 'Through the air', d: 'Ultrasound crosses the room; no one hears it and nothing goes over radio.', m: '20.5–22.0 kHz · ~65 m line of sight, ~140 m with reflectors', w: ['Air only'] },
+      { t: 'Detect', d: 'Four ultrasonic mics are combined toward the sender; 16 detectors listen, a tone counts only above its noise, and Reed–Solomon repairs wrong digits.', m: 'Goertzel × 16 · floor + 9 dB · RS(15, 9)', w: ['SPH0641 × 4', 'STM32U585'] },
       { t: 'Decrypt and show', d: 'Digits rebuild the bytes, the checksum is checked, F⁻¹ restores the text.', m: 'm = F⁻¹(c) · sum mod 256 ✓', w: ['SE050 key', 'E-paper'] }
     ];
     const SHOW = [[], [0], [1], [2], [3], [4], [5]];  // which floats appear at each step
@@ -236,7 +236,7 @@
   (function () {
     const dev = W.build($('lb-device'));
     $('lb-device').classList.add('xray');
-    const NAMES = { 'p-osk': 'On-screen keyboard', 'p-flash': 'W25Q128 flash', 'p-se': 'SE050 key store', 'p-mcu': 'STM32U585', 'p-mic': 'SPH0641 mic', 'p-amp': 'MAX9788 driver', 'p-spk': 'Piezo horns', 'p-fp': 'Fingerprint key' };
+    const NAMES = { 'p-osk': 'On-screen keyboard', 'p-flash': 'W25Q128 flash', 'p-se': 'SE050 key store', 'p-mcu': 'STM32U585', 'p-mic': 'SPH0641 mic', 'p-amp': 'DRV2700 driver', 'p-spk': 'Piezo horns', 'p-fp': 'Fingerprint key' };
     const tagLayer = document.createElement('div');
     tagLayer.className = 'lb-tags';
     $('lb-stage').appendChild(tagLayer);
@@ -260,13 +260,13 @@
       { t: 'Check', lab: 'F must be one-to-one and onto.', dev: 'The firmware refuses any key that is not a bijection, so every message can be undone.',
         m: 'valid  ⇔  one-to-one ∧ onto', parts: ['STM32U585'], layers: [4], glow: ['p-mcu'] },
       { t: 'Relate', lab: 'See the cipher as a relation: pairs in S × S.', dev: 'The tone table is a relation too. Each heard frequency is related to its nearest tone, giving 16 classes, one per digit.',
-        m: 'f ~ g  ⇔  nearest(f) = nearest(g)  →  16 classes', parts: ['SPH0641 × 3', 'STM32U585'], layers: [4], glow: ['p-mic', 'p-mcu'] },
+        m: 'f ~ g  ⇔  nearest(f) = nearest(g)  →  16 classes', parts: ['SPH0641 × 4', 'STM32U585'], layers: [4], glow: ['p-mic', 'p-mcu'] },
       { t: 'Encrypt', lab: 'Apply F; its inverse undoes it.', dev: 'The processor applies F, splits each byte into two digits and plays them through the speaker.',
-        m: 'c = F(m),   byte = 16·hi + lo', parts: ['STM32U585', 'MAX9788', 'Piezo horns'], layers: [4, 5], glow: ['p-mcu', 'p-amp', 'p-spk'] },
+        m: 'c = F(m),   byte = 16·hi + lo', parts: ['STM32U585', 'DRV2700', 'Piezo horns'], layers: [4, 5], glow: ['p-mcu', 'p-amp', 'p-spk'] },
       { t: 'Break', lab: 'Brute force and letter counts crack a shift cipher.', dev: 'So a field unit wraps F inside AES-256, and the secure element wipes the key after repeated wrong unlocks.',
         m: '26 keys  vs  2²⁵⁶ ≈ 1.2 × 10⁷⁷ keys', parts: ['NXP SE050', 'Fingerprint key'], layers: [4], glow: ['p-se', 'p-fp'] },
-      { t: 'Count', lab: 'Count with the product rule.', dev: 'Each byte needs 2 tones, so n characters need 2n tones plus a 2-tone checksum.',
-        m: 'tones = 2n + 2;   12 chars → 26 tones ≈ 5.2 s', parts: ['STM32U585', 'Piezo horns'], layers: [4, 5], glow: ['p-mcu', 'p-spk'] }
+      { t: 'Count', lab: 'Count with the product rule.', dev: 'Each byte needs 2 digits; for long range, every 9 digits become 15 with error correction. Counting tells you how long a message takes.',
+        m: 'tones = 15·⌈2n / 9⌉;   12 chars → 45 tones ≈ 18 s at 0.4 s', parts: ['STM32U585', 'Piezo horns'], layers: [4, 5], glow: ['p-mcu', 'p-spk'] }
     ];
     const cam = { z: 30, s: 0.5 }, tgt = { z: 30, s: 0.5 };
     let running = false;
