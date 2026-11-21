@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="fx">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Future enhancements: send it by sound · Cipher Forge</title>
-<meta name="description" content="Cipher Forge is an interactive lab for CS1812 Discrete Mathematics and Set Theory: build ciphers from blocks and watch sets, functions, bijections, the pigeonhole principle and counting at work.">
+<meta name="description" content="A future enhancement for Cipher Forge: encrypt a message, carry it through the air as sound, and decrypt it on another device with the shared key.">
 <script>try{var t=localStorage.getItem('cf-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <link rel="stylesheet" href="css/fonts.css">
 <link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/future.css">
 </head>
 <body>
 
-<a class="skip" href="#send">Skip to the content</a>
+<a class="skip" href="#console">Skip to the console</a>
 <div class="glyph-field" id="glyph-field" aria-hidden="true"></div>
+<canvas class="fx-stars" id="fx-stars" aria-hidden="true"></canvas>
 
 <header class="nav" id="nav">
   <a class="brand" href="index.html" aria-label="Cipher Forge, back to the lab">
@@ -37,76 +39,155 @@
       <svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
     </button>
   </div>
+  <div class="nav-progress" aria-hidden="true"><span id="progress"></span></div>
 </header>
 
 <main>
 
-<!-- ============ SEND BY SOUND ============ -->
-<section class="chapter future-page" id="send" aria-labelledby="send-title">
-  <div class="plate">
-    <header class="chapter-head">
-      <p class="step"><a class="back-link" href="index.html">Back to the lab</a> <span class="module">Future enhancement, built on Module 3: a composition of bijections and its inverse</span></p>
-      <h2 id="send-title">Send it by sound</h2>
-      <p class="chapter-lead">An idea for where Cipher Forge goes next, beyond the seven steps. The ciphertext travels through the air as tones. Anyone nearby can hear them, but only a receiver holding the same key can turn them back into the message.</p>
-    </header>
-
-    <div class="pipe" id="pipe">
-      <div class="pipe-stage"><p class="pipe-name">Message</p><p class="mono pipe-val" id="pipe-msg"></p></div>
-      <div class="pipe-stage"><p class="pipe-name">F: your cipher</p><p class="mono pipe-val" id="pipe-ct"></p></div>
-      <div class="pipe-stage"><p class="pipe-name">code: character → 0–255</p><p class="mono pipe-val" id="pipe-codes"></p></div>
-      <div class="pipe-stage"><p class="pipe-name">hex: two base-16 digits</p><p class="mono pipe-val" id="pipe-hex"></p></div>
-      <div class="pipe-stage"><p class="pipe-name">tones: digit → frequency</p><p class="mono pipe-val" id="pipe-tones"></p></div>
+<!-- ============ HERO: fly through the signal tunnel ============ -->
+<section class="fx-hero" id="top" aria-labelledby="fx-title">
+  <div class="fx-hero-sticky">
+    <div class="tunnel-stage" aria-hidden="true">
+      <div class="tunnel" id="tunnel"></div>
     </div>
-    <div class="pipe-formulas">
-      <p class="mono">send = tones ∘ hex ∘ code ∘ F</p>
-      <p class="mono">receive = F⁻¹ ∘ code⁻¹ ∘ hex⁻¹ ∘ tones⁻¹</p>
-      <p class="muted">16 tones carry one base-16 digit each (2⁴ = 16), and two digits make one character code: 16 × 16 = 256, by the product rule.</p>
+    <canvas class="fx-wave" id="fx-wave" aria-hidden="true"></canvas>
+
+    <div class="hud" aria-hidden="true">
+      <span class="hud-corner tl"></span><span class="hud-corner tr"></span><span class="hud-corner bl"></span><span class="hud-corner br"></span>
+      <p class="hud-line hud-a mono">FUTURE ENHANCEMENT 01</p>
+      <p class="hud-line hud-b mono">CHANNEL <span id="hud-freq">1800</span> Hz</p>
+      <p class="hud-line hud-c mono">KEY <span id="hud-key">——</span></p>
+      <p class="hud-line hud-d mono">LINK OFFLINE · AIR ONLY</p>
     </div>
 
-    <div class="split send-split">
-      <div class="panel">
-        <h3>Sender</h3>
-        <label for="snd-msg" class="io-label">Message</label>
-        <textarea id="snd-msg" rows="2" spellcheck="false" maxlength="120">Meet me at the library at noon</textarea>
-        <div class="key-row">
-          <p class="io-label">Shared key (send it separately, never with the message)</p>
-          <div class="key-line"><code class="mono key-code" id="snd-key"></code><button type="button" class="btn ghost" id="snd-copy">Copy key</button></div>
-          <p class="muted key-hint">This is the cipher you last built in the lab. <a href="index.html#forge">Change it in the lab</a></p>
-        </div>
-        <div class="segmented small" role="radiogroup" aria-label="Tone speed" id="snd-speed">
-          <button type="button" role="radio" aria-checked="true" data-ms="140">Reliable</button>
-          <button type="button" role="radio" aria-checked="false" data-ms="90">Fast</button>
-        </div>
-        <div class="tone-strip mono" id="snd-tones" aria-label="Tones to be played"></div>
-        <div class="send-bar"><span id="snd-progress"></span></div>
-        <div class="btn-row">
-          <button type="button" class="btn primary" id="snd-play">Encrypt and send as sound</button>
-          <button type="button" class="btn ghost" id="snd-stop" disabled>Stop</button>
-        </div>
-        <p class="muted send-status" id="snd-status" aria-live="polite"></p>
-      </div>
-
-      <div class="panel">
-        <h3>Receiver</h3>
-        <label for="rcv-key" class="io-label">Key (on a second device, paste the sender’s key here)</label>
-        <div class="key-line"><input type="text" id="rcv-key" class="text-in" spellcheck="false" autocomplete="off"><button type="button" class="btn ghost" id="rcv-apply">Use this key</button></div>
-        <div class="segmented small" role="radiogroup" aria-label="How to listen" id="rcv-mode">
-          <button type="button" role="radio" aria-checked="true" data-mode="loop">This device, no microphone</button>
-          <button type="button" role="radio" aria-checked="false" data-mode="mic">Microphone</button>
-        </div>
-        <button type="button" class="btn" id="rcv-listen">Start listening</button>
-        <canvas id="spectrum" class="spectrum" height="120" aria-label="Live sound spectrum from 1.2 to 4.9 kHz"></canvas>
-        <p class="muted send-status" id="rcv-status" aria-live="polite">Not listening.</p>
-        <dl class="rcv-out">
-          <div><dt>Digits heard</dt><dd class="mono" id="rcv-hex">—</dd></div>
-          <div><dt>Ciphertext</dt><dd class="mono" id="rcv-cipher">—</dd></div>
-          <div><dt>Checksum</dt><dd id="rcv-check">—</dd></div>
-          <div><dt>Decrypted with your key</dt><dd class="mono rcv-plain" id="rcv-plain">—</dd></div>
-        </dl>
+    <div class="fx-hero-copy" id="fx-hero-copy">
+      <p class="fx-kicker mono">Future enhancement for Cipher Forge</p>
+      <h1 class="fx-title" id="fx-title">Send it<br>by sound</h1>
+      <p class="fx-lead">Your message is encrypted, then carried through the air as tones. Every device in the room can hear it. Only the one holding the key can read it.</p>
+      <div class="fx-cta">
+        <a class="btn primary fx-btn" href="#console">Open the console</a>
+        <a class="btn ghost fx-btn" href="#journey">See how a message travels</a>
       </div>
     </div>
-    <p class="note">Someone listening without the key only gets the ciphertext. Step 6 of the lab, <a href="index.html#break">Break it</a>, shows what such an eavesdropper can still try.</p>
+    <p class="fx-scroll mono" aria-hidden="true">Scroll to fly through the signal</p>
   </div>
+</section>
+
+<!-- ============ SPEC STRIP ============ -->
+<section class="fx-specs" aria-label="The protocol in numbers">
+  <div class="spec"><p class="spec-num mono" data-count="16">0</p><p class="spec-label">tones, one per base-16 digit</p></div>
+  <div class="spec"><p class="spec-num mono" data-count="2">0</p><p class="spec-label">tones per character (16 × 16 = 256)</p></div>
+  <div class="spec"><p class="spec-num mono"><span data-count="1.8" data-dec="1">0</span>–<span data-count="4.65" data-dec="2">0</span></p><p class="spec-label">kHz, the band the tones use</p></div>
+  <div class="spec"><p class="spec-num mono" data-count="256">0</p><p class="spec-label">the checksum is taken mod 256</p></div>
+  <div class="spec"><p class="spec-num mono" data-count="0">0</p><p class="spec-label">internet connections needed</p></div>
+</section>
+
+<!-- ============ JOURNEY: exploded 3D view of the pipeline ============ -->
+<section class="journey" id="journey" aria-labelledby="journey-title">
+  <div class="journey-sticky">
+    <div class="journey-copy">
+      <p class="fx-kicker mono">How a message travels</p>
+      <h2 id="journey-title" class="fx-h2">Five layers, one composition</h2>
+      <ol class="journey-steps" id="journey-steps">
+        <li data-i="0"><b>Message.</b> What you type on the sender.</li>
+        <li data-i="1"><b>F, your cipher.</b> Encrypted with the shared key. Unreadable without it.</li>
+        <li data-i="2"><b>code.</b> Each character becomes a number from 0 to 255.</li>
+        <li data-i="3"><b>hex.</b> Each number splits into two base-16 digits.</li>
+        <li data-i="4"><b>tones.</b> Each digit becomes one of 16 frequencies in the air.</li>
+      </ol>
+      <div class="journey-formula">
+        <p class="mono">send = tones ∘ hex ∘ code ∘ F</p>
+        <p class="mono">receive = F⁻¹ ∘ code⁻¹ ∘ hex⁻¹ ∘ tones⁻¹</p>
+        <p class="muted">The receiver undoes each layer, last one first: the inverse of a composition, from Module 3.</p>
+      </div>
+    </div>
+
+    <div class="stack-stage" aria-hidden="false">
+      <div class="stack" id="stack">
+        <div class="layer" data-i="0"><p class="layer-tag mono">01 · Message</p><p class="mono layer-val" id="pipe-msg"></p></div>
+        <div class="layer" data-i="1"><p class="layer-tag mono">02 · F: your cipher</p><p class="mono layer-val" id="pipe-ct"></p></div>
+        <div class="layer" data-i="2"><p class="layer-tag mono">03 · code: character → 0–255</p><p class="mono layer-val" id="pipe-codes"></p></div>
+        <div class="layer" data-i="3"><p class="layer-tag mono">04 · hex: two base-16 digits</p><p class="mono layer-val" id="pipe-hex"></p></div>
+        <div class="layer" data-i="4"><p class="layer-tag mono">05 · tones: digit → frequency</p><p class="mono layer-val" id="pipe-tones"></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONSOLE: sender, core, receiver ============ -->
+<section class="console-sec" id="console" aria-labelledby="console-title">
+  <header class="console-head">
+    <p class="fx-kicker mono">Transmission console</p>
+    <h2 id="console-title" class="fx-h2">Try it for real</h2>
+    <p class="fx-sub">On one device, leave the receiver on “This device”. With two devices, copy the key to the second one and choose “Microphone”.</p>
+  </header>
+
+  <div class="console-grid" id="console-grid">
+    <canvas class="beam" id="beam" aria-hidden="true"></canvas>
+
+    <div class="console sender" id="sender">
+      <div class="console-top"><span class="led" id="tx-led"></span><h3>Sender</h3><span class="console-id mono">TX</span></div>
+      <label for="snd-msg" class="io-label">Message</label>
+      <textarea id="snd-msg" rows="2" spellcheck="false" maxlength="120">Meet me at the library at noon</textarea>
+      <div class="key-row">
+        <p class="io-label">Shared key (give it separately, never with the message)</p>
+        <div class="key-line"><code class="mono key-code" id="snd-key"></code><button type="button" class="btn ghost" id="snd-copy">Copy key</button></div>
+        <p class="muted key-hint">The cipher you last built in the lab. <a href="index.html#forge">Change it in the lab</a></p>
+      </div>
+      <div class="segmented small" role="radiogroup" aria-label="Tone speed" id="snd-speed">
+        <button type="button" role="radio" aria-checked="true" data-ms="140">Reliable</button>
+        <button type="button" role="radio" aria-checked="false" data-ms="90">Fast</button>
+      </div>
+      <div class="tone-strip mono" id="snd-tones" aria-label="Tones to be played"></div>
+      <div class="send-bar"><span id="snd-progress"></span></div>
+      <div class="btn-row">
+        <button type="button" class="btn primary fx-btn" id="snd-play">Encrypt and send as sound</button>
+        <button type="button" class="btn ghost" id="snd-stop" disabled>Stop</button>
+      </div>
+      <p class="muted send-status" id="snd-status" aria-live="polite"></p>
+    </div>
+
+    <div class="core" aria-hidden="true">
+      <div class="core-orb" id="core-orb">
+        <span class="orb-ring r1"></span><span class="orb-ring r2"></span><span class="orb-ring r3"></span>
+        <span class="orb-glow"></span>
+      </div>
+      <p class="core-freq mono" id="core-freq">— Hz</p>
+      <p class="core-digit mono" id="core-digit">idle</p>
+    </div>
+
+    <div class="console receiver" id="receiver">
+      <div class="console-top"><span class="led" id="rx-led"></span><h3>Receiver</h3><span class="console-id mono">RX</span></div>
+      <label for="rcv-key" class="io-label">Key (on a second device, paste the sender’s key here)</label>
+      <div class="key-line"><input type="text" id="rcv-key" class="text-in" spellcheck="false" autocomplete="off"><button type="button" class="btn ghost" id="rcv-apply">Use this key</button></div>
+      <div class="segmented small" role="radiogroup" aria-label="How to listen" id="rcv-mode">
+        <button type="button" role="radio" aria-checked="true" data-mode="loop">This device, no microphone</button>
+        <button type="button" role="radio" aria-checked="false" data-mode="mic">Microphone</button>
+      </div>
+      <button type="button" class="btn fx-btn" id="rcv-listen">Start listening</button>
+      <canvas id="spectrum" class="spectrum" height="120" aria-label="Live sound spectrum from 1.2 to 4.9 kHz"></canvas>
+      <p class="muted send-status" id="rcv-status" aria-live="polite">Not listening.</p>
+      <dl class="rcv-out">
+        <div><dt>Digits heard</dt><dd class="mono" id="rcv-hex">—</dd></div>
+        <div><dt>Ciphertext</dt><dd class="mono" id="rcv-cipher">—</dd></div>
+        <div><dt>Checksum</dt><dd id="rcv-check">—</dd></div>
+        <div><dt>Decrypted with your key</dt><dd class="mono rcv-plain" id="rcv-plain">—</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHY IT IS SAFE ============ -->
+<section class="why" id="why" aria-labelledby="why-title">
+  <p class="fx-kicker mono">Why it works</p>
+  <h2 id="why-title" class="fx-h2">Loud, public, and still private</h2>
+  <div class="why-grid">
+    <article class="why-card"><p class="why-num mono">01</p><h3>Everyone can hear it</h3><p>The tones fill the room like a radio broadcast. Hiding the signal is not the goal.</p></article>
+    <article class="why-card"><p class="why-num mono">02</p><h3>Only the key reads it</h3><p>Without the key, a listener gets ciphertext. <a href="index.html#break">Break it</a> in the lab shows what they could still try.</p></article>
+    <article class="why-card"><p class="why-num mono">03</p><h3>Nothing is lost silently</h3><p>The sum of the character codes mod 256 travels with the message. One misheard tone and the check fails.</p></article>
+    <article class="why-card"><p class="why-num mono">04</p><h3>No network at all</h3><p>No Wi-Fi, no pairing, no server. A speaker and a microphone are the whole channel.</p></article>
+  </div>
+  <p class="why-back"><a class="btn ghost" href="index.html">Back to the lab</a></p>
 </section>
 
 </main>
@@ -124,5 +205,6 @@
 <script src="js/future.js"></script>
 <script src="js/lab3.js"></script>
 <script src="js/fx.js"></script>
+<script src="js/future-fx.js"></script>
 </body>
 </html>

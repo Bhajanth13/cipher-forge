@@ -9,6 +9,8 @@
   const $ = function (id) { return document.getElementById(id); };
   const SD = CF.sound;
 
+  function emit(name, detail) { document.dispatchEvent(new CustomEvent(name, { detail: detail })); }
+
   function esc(s) {
     return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
   }
@@ -36,10 +38,10 @@
   function renderPipe() {
     const msg = $('snd-msg').value;
     const cur = currentPlan();
-    $('pipe-msg').textContent = clip(msg.toUpperCase(), 22);
-    $('pipe-ct').textContent = clip(cur.ct, 22);
-    $('pipe-codes').textContent = clip(cur.p.codes.slice(0, 6).join(' '), 26);
-    $('pipe-hex').textContent = clip(cur.p.codes.slice(0, 6).map(SD.hex).join(' '), 22);
+    $('pipe-msg').textContent = clip(msg.toUpperCase(), 34);
+    $('pipe-ct').textContent = clip(cur.ct, 34);
+    $('pipe-codes').textContent = clip(cur.p.codes.slice(0, 8).join(' '), 34);
+    $('pipe-hex').textContent = clip(cur.p.codes.slice(0, 8).map(SD.hex).join(' '), 34);
     $('pipe-tones').textContent = cur.p.tones.slice(1, 5).map(function (id) { return SD.freqOf(id) + ' Hz'; }).join(', ') + ' …';
 
     const strip = $('snd-tones');
@@ -68,11 +70,15 @@
     $('snd-play').disabled = true;
     $('snd-stop').disabled = false;
     $('snd-status').textContent = 'Sending “' + clip(cur.ct, 30) + '” as sound…';
+    emit('cf:txstart', { tones: cur.p.tones });
+    let lastI = -1;
     player = SD.play(cur.p.tones, toneMs, function (i, frac) {
+      if (i !== lastI) { lastI = i; emit('cf:tx', { i: i, id: cur.p.tones[i], freq: SD.freqOf(cur.p.tones[i]), frac: frac }); }
       chips.forEach(function (c) { c.classList.toggle('is-now', +c.dataset.i === i); c.classList.toggle('is-done', +c.dataset.i < i); });
       $('snd-progress').style.width = Math.min(100, frac * 100).toFixed(1) + '%';
     }, function () {
       player = null;
+      emit('cf:txend', {});
       $('snd-play').disabled = false;
       $('snd-stop').disabled = true;
       $('snd-progress').style.width = '0%';
@@ -97,6 +103,7 @@
     if (!listener) {
       listener = SD.createListener({
         onStart: function () { resetOut(); $('rcv-status').textContent = 'Start tone heard. Receiving…'; },
+        onTone: function (id) { emit('cf:rx', { id: id }); },
         onDigit: function (d) { $('rcv-hex').textContent = digitsText(d); },
         onFrame: drawSpectrum,
         onMessage: function (res, d) {
@@ -110,6 +117,7 @@
           el.textContent = plain === null ? 'This key’s cipher has no inverse, so it cannot decrypt.' : plain;
           el.classList.toggle('is-ok', plain !== null && res.ok);
           $('rcv-status').textContent = 'Message received. Listening for the next one.';
+          emit('cf:rxdone', { ok: res.ok, plain: plain });
         }
       });
     }
@@ -117,6 +125,7 @@
     $('rcv-status').textContent = useMic ? 'Asking for the microphone…' : 'Listening to this device’s own sender.';
     listener.start(useMic).then(function () {
       listening = true;
+      emit('cf:listen', { on: true });
       $('rcv-listen').textContent = 'Stop listening';
       $('rcv-listen').classList.add('primary');
       $('rcv-status').textContent = useMic
@@ -130,6 +139,7 @@
   function stopListening() {
     if (listener) listener.stop();
     listening = false;
+    emit('cf:listen', { on: false });
     $('rcv-listen').textContent = 'Start listening';
     $('rcv-listen').classList.remove('primary');
     $('rcv-status').textContent = 'Not listening.';

@@ -18,7 +18,7 @@ You build a cipher out of small blocks, and the app uses discrete maths to check
 | 6. Break it | Brute-force all shifts on a 3D drum; frequency analysis | Multisets, counting, pigeonhole |
 | 7. Count the keys | Key counts and brute-force time | Sum and product rules, n!, P(n, r), nʳ, C(n, r), combinations with repetition |
 
-Future enhancement: **send it by sound**, on its own page (`future.html`, the last item in the nav bar).
+Future enhancement: **send it by sound**, on its own page (`future.html`, the last item in the nav bar): a 3D signal tunnel, an exploded 3D view of the five layers a message passes through, and a live transmission console whose beam and core follow the real tones.
 
 Extras: a light/dark switch, and a **Present** button (or press `P`) for a guided walkthrough during the viva. Use the arrow keys to move and `Esc` to finish.
 
@@ -45,6 +45,8 @@ js/app.js           steps 1, 2, 3, 5 and 7 on the page
 js/lab2.js          brackets, relations and break-it on the page
 js/lab3.js          send-by-sound on future.html
 js/future.js        the cipher used on future.html (the last one built in the lab)
+js/future-fx.js     future.html's 3D tunnel, waveform, exploded layers, beam and core
+css/future.css      future.html's look (dark and light)
 ```
 
 Plain HTML, CSS and JavaScript, with no libraries or build step.
