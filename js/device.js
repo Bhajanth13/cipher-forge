@@ -47,7 +47,7 @@
   }).join('') + '</div>';
 
   const PAPER = '<div class="paper">' +
-    '<div class="paper-bar"><span>CIPHER ECHO · TO K</span><span>KEY ● 17.6 kHz · ▮▮▮▯</span></div>' +
+    '<div class="paper-bar"><span>CIPHER ECHO · TO K</span><span>KEY ● LR 21.2 kHz · ▮▮▮▯</span></div>' +
     '<p class="paper-lbl">PLAINTEXT</p><p class="paper-msg"><span class="pm-text">MEET AT NOON</span><span class="caret"></span></p>' +
     '<p class="paper-lbl">CIPHERTEXT · F = shift(3)</p><p class="paper-cip">PHHW DW QRRQ</p>' +
     '<div class="paper-foot"><span class="pf-state">READY</span><span class="pf-bar"><i></i></span></div>' + OSK +
@@ -93,7 +93,7 @@
       html: function () {
         return slab('bezel', 0, 0, DW, DH, 5, 0, '<span class="pinhole" style="left:193px;top:263px"></span><span class="engrave e1">CIPHER</span><span class="engrave e2">ECHO</span>');
       },
-      pts: [[195, 137, 5, 'Screen window', '70 × 46 mm, edge to edge'], [195, 10, 5, 'Earpiece slot', 'speaker and top mic behind it'],
+      pts: [[195, 137, 5, 'Screen window', '70 × 46 mm, edge to edge'], [195, 10, 5, 'Top edge', 'horns and mics face this way'],
         [195, 266, 5, 'Bottom mic port', 'Ø 0.8 mm, mesh-backed'], [3, 140, 5, 'Slim bezel', '2 mm titanium sides']],
       text: 'A thin titanium frame around a screen that fills the face. No logo, no lights.',
       spec: [['Material', 'Grade 5 titanium'], ['Thickness', '1.0 mm, 2 mm sides'], ['Finish', 'Bead-blasted, PVD graphite'], ['Job', 'Holds the glass; the face of the unit']] },
@@ -118,6 +118,8 @@
       html: function () {
         const posts = CORNERS.map(function (c) { return cylinder('post', c[0] - 6, c[1] - 6, 12, 12, 28, 4, 0); }).join('');
         return slab('frame', 6, 6, 378, 268, 4, 38, '<span class="ribs"></span>') +
+          slab('port', 290, -2, 30, 4, 12, 22) + slab('port', 334, -2, 30, 4, 12, 22) +
+          slab('port', 66, -2, 6, 4, 4, 36) + slab('port', 192, -2, 6, 4, 4, 36) +
           slab('wall', 0, 0, DW, 6, 55, 0) + slab('wall', 0, 274, DW, 6, 55, 0) +
           slab('wall', 0, 6, 6, 268, 55, 0) + slab('wall', 384, 6, 6, 268, 55, 0) + posts +
           cylinder('wheel', 362, 64, 48, 48, 8, 4, 30) +
@@ -125,8 +127,8 @@
           slab('kill', -3, 60, 4, 36, 8, 28) + slab('nub', -6, 64, 4, 12, 6, 29) +
           slab('port', 172, 273, 46, 8, 16, 22);
       },
-      pts: [[386, 88, 34, 'Thumb rotor', 'Ø 9.6 mm, 26 detents'], [392, 199, 31, 'Fingerprint power key', 'unlocks the key store'],
-        [-5, 70, 32, 'Mic kill switch', 'cuts both mics in hardware'], [195, 276, 30, 'USB-C port', 'charge and load keys'],
+      pts: [[327, -2, 30, 'Horn ports', 'ultrasound leaves the top edge'], [386, 88, 34, 'Thumb rotor', 'Ø 9.6 mm, 26 detents'], [392, 199, 31, 'Fingerprint power key', 'unlocks the key store'],
+        [-5, 70, 32, 'Mic kill switch', 'cuts all three mics in hardware'], [195, 276, 30, 'USB-C port', 'charge and load keys'],
         [100, 60, 42, 'Inner shelf', 'stiffening ribs, 0.8 mm']],
       text: 'The skeleton: titanium walls, an inner shelf, and every control on the sides.',
       spec: [['Material', 'Grade 5 titanium, CNC-machined'], ['Walls', '1.2 mm, inner shelf 0.8 mm'], ['Controls', 'Rotor, fingerprint key, mic kill switch'], ['Job', 'Strength; carries all side controls']] },
@@ -136,8 +138,8 @@
           slab('chip can shield p-mcu', 130, 40, 96, 72, 6, 5, '<span class="perf"></span><i>STM32U585</i>') +
           slab('chip key p-se', 240, 56, 20, 20, 3, 5, 'SE050') + slab('chip p-flash', 240, 86, 26, 18, 4, 5, 'W25Q128') +
           slab('chip', 150, 170, 18, 18, 3, 5, 'PMIC') + slab('chip', 60, 200, 12, 10, 2.5, 5, 'FG', true) +
-          slab('chip', 40, 170, 14, 12, 3, 5, 'CHG', true) + slab('chip p-amp', 300, 40, 16, 16, 4, 5, 'AMP') +
-          slab('chip', 300, 200, 16, 16, 4, 5, 'HAP') + slab('chip can p-mic', 186, 12, 18, 12, 5, 5, 'MIC') +
+          slab('chip', 40, 170, 14, 12, 3, 5, 'CHG', true) + slab('chip p-amp', 298, 38, 20, 20, 4, 5, 'PZD') +
+          slab('chip', 300, 200, 16, 16, 4, 5, 'HAP') + slab('chip can p-mic', 186, 12, 18, 12, 5, 5, 'MIC') + slab('chip can p-mic', 60, 12, 18, 12, 5, 5, 'MIC') +
           slab('chip can p-mic', 196, 250, 18, 12, 5, 5, 'MIC') + slab('chip can', 232, 112, 14, 8, 3.5, 5, '', true) +
           slab('conn', 120, 124, 60, 10, 5, 5) + slab('conn', 260, 124, 34, 10, 5, 5) + slab('conn', 200, 150, 60, 10, 5, 5) +
           slab('conn', 340, 170, 26, 10, 5, 5) + slab('jst', 60, 120, 22, 12, 6, 5) +
@@ -145,7 +147,7 @@
       },
       pts: [[178, 76, 11, 'STM32U585 under shield', 'Cortex-M33, 160 MHz, AES in hardware'], [250, 66, 8, 'NXP SE050', 'secure element, holds the key'],
         [253, 95, 9, 'W25Q128', '16 MB flash, firmware only'], [159, 179, 8, 'Power IC', 'regulators for every rail'],
-        [195, 18, 10, 'Dual ICS-43434', 'mics top and bottom, noise-cancelling'], [308, 48, 9, 'MAX98357A', 'I²S amplifier'],
+        [195, 18, 10, 'SPH0641 × 3', 'ultrasonic mics to 80 kHz, beamformed'], [308, 48, 9, 'MAX9788', 'piezo driver, up to 14 V p-p'],
         [153, 257, 19, 'USB-C', 'charge, load keys; data off when locked'], [46, 44, -2, 'Light sensor (underside)', 'tamper alarm']],
       text: 'Eight layers, parts on one side, the processor under a metal shield. About 70 parts in a card-sized space.',
       spec: [['Board', '8-layer HDI, 1.0 mm'], ['Brain', 'STM32U585, TrustZone, hardware AES'], ['Key store', 'NXP SE050, certified secure element'], ['Also', 'BQ25180 charger, MAX17048 gauge, DRV2605L haptics']] },
@@ -153,15 +155,16 @@
       html: function () {
         return slab('cell', 20, 90, 250, 170, 25, 7, '<span>LiPo · 503450</span><span><b>3.7 V · 1000 mAh</b><br>3.7 Wh · 2C</span>') +
           slab('pcm', 30, 93, 70, 10, 3, 32) + slab('bflex', 60, 96, 22, 26, 0.8, 32) + slab('tab', 120, 250, 40, 24, 0.6, 7) +
-          slab('spkbox p-spk', 280, 16, 90, 62, 15, 8, '<span class="membrane"></span><span class="sport"></span>') +
+          slab('horns p-spk', 278, 6, 94, 70, 15, 8, '<span class="horn h1"></span><span class="horn h2"></span>') +
+          cylinder('piezo', 289, 42, 28, 28, 3, 2, 23) + cylinder('piezo', 333, 42, 28, 28, 3, 2, 23) +
           cylinder('mot', 300, 196, 36, 36, 12, 3, 8) +
           slab('boot', 184, 6, 22, 8, 4, 40, '', true) + slab('boot', 194, 266, 22, 8, 4, 40, '', true);
       },
       pts: [[145, 175, 32, 'LiPo cell', '503450, 3.7 V, 1000 mAh'], [65, 98, 35, 'Protection circuit', 'over-charge, over-drain, short'],
-        [325, 47, 23, 'Sealed speaker box', '11 × 15 mm driver, to 20 kHz'], [318, 214, 20, 'Vibration motor', '8 mm LRA'],
+        [325, 16, 23, 'Piezo horn array', '2 horn-loaded tweeters, fire out the top'], [347, 56, 26, 'Piezo disc', 'about 110 dB at 10 cm (estimate)'], [318, 214, 20, 'Vibration motor', '8 mm LRA'],
         [140, 262, 7.6, 'Pull tab', 'removes the cell without tools']],
-      text: 'A 1000 mAh cell, a sealed speaker box for clean high tones, and a motor for silent alerts.',
-      spec: [['Cell', 'LiPo 503450, 3.7 V, 1000 mAh (3.7 Wh)'], ['Speaker', 'Sealed box, 11 × 15 mm driver'], ['Haptics', '8 mm LRA'], ['Mount', 'Stretch-release adhesive, pull tab']] },
+      text: 'A 1000 mAh cell, two horn-loaded piezo tweeters that throw ultrasound across a room, and a motor for silent alerts.',
+      spec: [['Cell', 'LiPo 503450, 3.7 V, 1000 mAh (3.7 Wh)'], ['Transmit', '2 horn-loaded piezo tweeters, 18–24 kHz'], ['Haptics', '8 mm LRA'], ['Mount', 'Stretch-release adhesive, pull tab']] },
     { name: 'Ceramic back', mm: '1.0 mm', cls: 'L-back', z: 0, ex: -3.2,
       html: function () {
         const sinks = CORNERS.map(function (c) { return '<span class="sink" style="left:' + (c[0] - 7) + 'px;top:' + (c[1] - 7) + 'px"></span>'; }).join('');
@@ -340,7 +343,7 @@
           }).join('');
           await wait(45);
         }
-        hero.state.textContent = 'SENDING · 17.6 kHz';
+        hero.state.textContent = 'SENDING · 21 kHz';
         for (let i = 0; i <= 20; i++) { hero.bar.style.width = (i * 5) + '%'; await wait(70); }
         hero.state.textContent = 'SENT ✓';
         await wait(1600);
@@ -498,7 +501,7 @@
     const SX = 16, SY = 28, X0 = 50, Y0 = 40;
     const X = function (mm) { return X0 + mm * SX; }, Y = function (mm) { return Y0 + mm * SY; };
     const rect = function (r) { return '<rect x="' + X(r[0]).toFixed(1) + '" y="' + Y(r[1]).toFixed(1) + '" width="' + (r[2] * SX).toFixed(1) + '" height="' + (r[3] * SY).toFixed(1) + '" rx="' + (r[4] || 0) + '"/>'; };
-    // Slice along the short side: 0 mm = top edge (earpiece), 56 mm = bottom edge
+    // Slice along the short side: 0 mm = top edge (horn ports), 56 mm = bottom edge
     const PARTS = [
       { k: 'front', cls: 'p-shell', d: 0, r: [[0, 0, 1.6, 1.0, 1], [2.6, 0, 1.8, 1.0], [50.4, 0, 5.6, 1.0, 1]] },
       { k: 'glass', cls: 'p-glass', d: 1, r: [[4.4, 0.3, 46, 0.7]] },
@@ -510,6 +513,7 @@
       { k: 'board', cls: 'p-pcb', d: 5, r: [[1.2, 4.4, 53.6, 1.0]] },
       { k: 'cell', cls: 'p-cell', d: 6, r: [[18, 6.2, 34, 5.0, 6]] },
       { k: 'spk', cls: 'p-spk', d: 6, r: [[4, 6.2, 12, 3.0, 3]] },
+      { k: 'spk', cls: 'p-port', d: 6, r: [[0, 7.2, 1.2, 1.4]] },
       { k: 'foam', cls: 'p-foam', d: 7, r: [[1.2, 11.2, 53.6, 0.8]] },
       { k: 'back', cls: 'p-shell', d: 8, r: [[0, 1.0, 1.2, 11.0], [54.8, 1.0, 1.2, 11.0]] },
       { k: 'back', cls: 'p-ceramic', d: 8, r: [[0, 12.0, 56, 1.0, 2]] }
@@ -521,7 +525,7 @@
       { k: 'mid', at: [54.4, 3.0], ly: 180, t: 'Mid-frame shelf', s: 'titanium · 0.8 mm' },
       { k: 'board', at: [54, 4.9], ly: 228, t: 'Main board', s: '8 layers · 1.0 mm · shield over the MCU' },
       { k: 'cell', at: [51.8, 8.4], ly: 276, t: 'LiPo cell', s: '3.7 V · 1000 mAh · 5.0 mm' },
-      { k: 'spk', at: [15.8, 7.0], ly: 324, t: 'Sealed speaker box', s: '3.0 mm, under the earpiece' },
+      { k: 'spk', at: [15.8, 7.0], ly: 324, t: 'Piezo horn array', s: 'fires out through the top edge' },
       { k: 'foam', at: [54.6, 11.6], ly: 372, t: 'Foam and graphite sheet', s: '0.8 mm' },
       { k: 'back', at: [55.6, 12.5], ly: 414, t: 'Zirconia ceramic back', s: '1.0 mm' }
     ];
@@ -586,7 +590,7 @@
 
   /* ---------- Battery life ---------- */
   (function () {
-    const CAP = 1000, LISTEN = 9.3, SLEEP = 0.3;
+    const CAP = 1000, LISTEN = 10.5, SLEEP = 0.3;
     const input = $('duty');
     function calc() {
       const d = input.value / 100;

@@ -116,12 +116,12 @@
     }).join(''));
     const tones = stand(-215, 0, 150, 'tonebars', DIGITS.map(function (d, i) {
       return '<span style="--h:' + (14 + d * 7) + 'px;--i:' + i + '"><i class="mono">' + d.toString(16).toUpperCase() + '</i></span>';
-    }).join('') + '<p class="mono">tone = 17 250 + 100·d Hz</p>');
+    }).join('') + '<p class="mono">tone = 20 500 + 100·d Hz</p>');
     let rings = '';
     for (let i = 0; i < 6; i++) rings += '<span class="ring" style="--i:' + i + '"></span>';
     const air = document.createElement('div');
     air.className = 'holo air';
-    air.innerHTML = '<div class="air-beam">' + rings + '</div><p class="mono">16.9–18.9 kHz · nothing over radio</p>';
+    air.innerHTML = '<div class="air-beam">' + rings + '</div><p class="mono">20.5–22.0 kHz · above all human hearing</p>';
     over.appendChild(air);
     const airA = pin(-215, -40, 34), airB = pin(215, -40, 34);
     let bins = '';
@@ -134,9 +134,9 @@
       { t: 'Type', d: 'Tap the message on the on-screen keyboard.', m: 'm = "MEET AT NOON"', w: ['Touch e-paper', 'Touch controller'] },
       { t: 'Encrypt', d: 'The processor applies your key F to every letter.', m: 'c = F(m) = "PHHW DW QRRQ"', w: ['STM32U585', 'SE050 key'] },
       { t: 'Bytes to digits', d: 'Each character is one byte, split into two base-16 digits.', m: 'P = 80 = 16 × 5 + 0  →  5, 0', w: ['STM32U585'] },
-      { t: 'Digits to tones', d: 'Each digit picks one of 16 tones, played for 200 ms.', m: 'tone = 17 250 + 100·d Hz', w: ['MAX98357A', 'Speaker box'] },
-      { t: 'Through the air', d: 'Near-silent sound crosses the room. No radio at all.', m: '16.9–18.9 kHz · 5 tones a second', w: ['Air only'] },
-      { t: 'Detect', d: 'Sixteen detectors listen at once; the loudest is the digit.', m: 'Goertzel: one detector per tone', w: ['Dual ICS-43434', 'STM32U585'] },
+      { t: 'Digits to tones', d: 'Each digit picks one of 16 ultrasonic tones, played for 200 ms through the piezo horns.', m: 'tone = 20 500 + 100·d Hz', w: ['MAX9788', 'Piezo horns'] },
+      { t: 'Through the air', d: 'Ultrasound crosses the room; no one hears it and nothing goes over radio.', m: '20.5–22.0 kHz · up to ~20 m (estimate)', w: ['Air only'] },
+      { t: 'Detect', d: 'Three ultrasonic mics are combined toward the sender; 16 detectors listen, and a tone counts only if it stands above the noise.', m: 'Goertzel × 16 · threshold = floor + 9 dB', w: ['SPH0641 × 3', 'STM32U585'] },
       { t: 'Decrypt and show', d: 'Digits rebuild the bytes, the checksum is checked, F⁻¹ restores the text.', m: 'm = F⁻¹(c) · sum mod 256 ✓', w: ['SE050 key', 'E-paper'] }
     ];
     const SHOW = [[], [0], [1], [2], [3], [4], [5]];  // which floats appear at each step
@@ -202,7 +202,7 @@
         setScreen(tx, '', '—', 'TYPING', 0); setScreen(rx, '', '—', 'LISTENING', 0);
         await typeOut(tx, MSG, my);
       } else {
-        setScreen(tx, MSG, i === 1 ? '—' : CIP, i === 1 ? 'ENCRYPTING' : i < 5 ? 'SENDING · 17.6 kHz' : 'SENT ✓', i < 3 ? 0 : i === 3 ? 40 : 100);
+        setScreen(tx, MSG, i === 1 ? '—' : CIP, i === 1 ? 'ENCRYPTING' : i < 5 ? 'SENDING · 21 kHz' : 'SENT ✓', i < 3 ? 0 : i === 3 ? 40 : 100);
         setScreen(rx, '', i >= 5 ? '' : '—', i === 5 ? 'RECEIVING' : i === 6 ? 'CHECKSUM ✓' : 'LISTENING', i === 5 ? 30 : i === 6 ? 100 : 0);
       }
       if (i === 1) { const k = tx.key('SEND'); if (k) k.classList.add('hit'); await wait(200); if (k) k.classList.remove('hit'); await scramble(tx.cip, CIP, my); }
@@ -236,7 +236,7 @@
   (function () {
     const dev = W.build($('lb-device'));
     $('lb-device').classList.add('xray');
-    const NAMES = { 'p-osk': 'On-screen keyboard', 'p-flash': 'W25Q128 flash', 'p-se': 'SE050 key store', 'p-mcu': 'STM32U585', 'p-mic': 'ICS-43434 mic', 'p-amp': 'MAX98357A amp', 'p-spk': 'Speaker box', 'p-fp': 'Fingerprint key' };
+    const NAMES = { 'p-osk': 'On-screen keyboard', 'p-flash': 'W25Q128 flash', 'p-se': 'SE050 key store', 'p-mcu': 'STM32U585', 'p-mic': 'SPH0641 mic', 'p-amp': 'MAX9788 driver', 'p-spk': 'Piezo horns', 'p-fp': 'Fingerprint key' };
     const tagLayer = document.createElement('div');
     tagLayer.className = 'lb-tags';
     $('lb-stage').appendChild(tagLayer);
@@ -260,13 +260,13 @@
       { t: 'Check', lab: 'F must be one-to-one and onto.', dev: 'The firmware refuses any key that is not a bijection, so every message can be undone.',
         m: 'valid  ⇔  one-to-one ∧ onto', parts: ['STM32U585'], layers: [4], glow: ['p-mcu'] },
       { t: 'Relate', lab: 'See the cipher as a relation: pairs in S × S.', dev: 'The tone table is a relation too. Each heard frequency is related to its nearest tone, giving 16 classes, one per digit.',
-        m: 'f ~ g  ⇔  nearest(f) = nearest(g)  →  16 classes', parts: ['Dual ICS-43434', 'STM32U585'], layers: [4], glow: ['p-mic', 'p-mcu'] },
+        m: 'f ~ g  ⇔  nearest(f) = nearest(g)  →  16 classes', parts: ['SPH0641 × 3', 'STM32U585'], layers: [4], glow: ['p-mic', 'p-mcu'] },
       { t: 'Encrypt', lab: 'Apply F; its inverse undoes it.', dev: 'The processor applies F, splits each byte into two digits and plays them through the speaker.',
-        m: 'c = F(m),   byte = 16·hi + lo', parts: ['STM32U585', 'MAX98357A', 'Speaker box'], layers: [4, 5], glow: ['p-mcu', 'p-amp', 'p-spk'] },
+        m: 'c = F(m),   byte = 16·hi + lo', parts: ['STM32U585', 'MAX9788', 'Piezo horns'], layers: [4, 5], glow: ['p-mcu', 'p-amp', 'p-spk'] },
       { t: 'Break', lab: 'Brute force and letter counts crack a shift cipher.', dev: 'So a field unit wraps F inside AES-256, and the secure element wipes the key after repeated wrong unlocks.',
         m: '26 keys  vs  2²⁵⁶ ≈ 1.2 × 10⁷⁷ keys', parts: ['NXP SE050', 'Fingerprint key'], layers: [4], glow: ['p-se', 'p-fp'] },
       { t: 'Count', lab: 'Count with the product rule.', dev: 'Each byte needs 2 tones, so n characters need 2n tones plus a 2-tone checksum.',
-        m: 'tones = 2n + 2;   12 chars → 26 tones ≈ 5.2 s', parts: ['STM32U585', 'Speaker box'], layers: [4, 5], glow: ['p-mcu', 'p-spk'] }
+        m: 'tones = 2n + 2;   12 chars → 26 tones ≈ 5.2 s', parts: ['STM32U585', 'Piezo horns'], layers: [4, 5], glow: ['p-mcu', 'p-spk'] }
     ];
     const cam = { z: 30, s: 0.5 }, tgt = { z: 30, s: 0.5 };
     let running = false;

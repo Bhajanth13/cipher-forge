@@ -36,6 +36,7 @@ css/lab-fx.css      the lab's sci-fi look (shares the palette in future.css)
 device.html         Future enhancement 02: Cipher Echo, a flagship acoustic cipher communicator concept (full-face touch e-paper, on-screen keyboard), taken apart in 3D
 css/device.css      the Cipher Echo page: 3D slabs, exploded view, cross-section
 js/device.js        builds the device, scroll-driven disassembly, cross-section, battery calculator
+js/device-range.js  long-range acoustics: range map for each mode, live noise-cancelling spectra
 js/device-steps.js  two 7-step 3D walkthroughs: the message from sender to receiver, and the lab's 7 steps inside the unit
 js/lab-fx.js        the lab's star field, decoding title, HUD and slow glide links
 js/sets.js          Module 1: sets and set operations
