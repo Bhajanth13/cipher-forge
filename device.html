@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="css/fonts.css?v=8">
 <link rel="stylesheet" href="css/style.css?v=10">
 <link rel="stylesheet" href="css/future.css?v=10">
-<link rel="stylesheet" href="css/device.css?v=10">
+<link rel="stylesheet" href="css/device.css?v=11">
 </head>
 <body>
 
@@ -55,7 +55,7 @@
     <span class="hud-corner tl"></span><span class="hud-corner tr"></span><span class="hud-corner bl"></span><span class="hud-corner br"></span>
     <p class="hud-line hud-a mono">FUTURE ENHANCEMENT 02</p>
     <p class="hud-line hud-b mono">RF EMISSIONS <span>0</span></p>
-    <p class="hud-line hud-c mono">64 × 42 × 12 MM · CONCEPT</p>
+    <p class="hud-line hud-c mono">64 × 42 × 13 MM · CONCEPT</p>
     <p class="hud-line hud-d mono">BAND 16.9–18.9 kHz</p>
   </div>
 
@@ -85,8 +85,8 @@
 <!-- ============ SPEC STRIP ============ -->
 <section class="fx-specs dv-specs" aria-label="Whisper in numbers">
   <div class="spec"><p class="spec-num mono">0</p><p class="spec-label">radios: no Wi-Fi, Bluetooth or cellular</p></div>
-  <div class="spec"><p class="spec-num mono">12<small> mm</small></p><p class="spec-label">thin, 64 × 42 mm face</p></div>
-  <div class="spec"><p class="spec-num mono">≈17<small> days</small></p><p class="spec-label">on one charge, listening 1 minute in 10 (estimate)</p></div>
+  <div class="spec"><p class="spec-num mono">13<small> mm</small></p><p class="spec-label">thin, 64 × 42 mm face</p></div>
+  <div class="spec"><p class="spec-num mono">≈35<small> days</small></p><p class="spec-label">on one charge, listening 1 minute in 10 (estimate)</p></div>
   <div class="spec"><p class="spec-num mono">0<small> mW</small></p><p class="spec-label">to keep a message on the e-paper screen</p></div>
 </section>
 
@@ -94,55 +94,26 @@
 <section class="explode" id="explode" aria-labelledby="explode-title">
   <div class="ex-sticky">
     <div class="ex-head">
-      <p class="fx-kicker mono">Disassembly</p>
+      <p class="fx-kicker mono">Disassembly · exploded view</p>
       <h2 class="fx-h2" id="explode-title">Take it apart</h2>
     </div>
-    <div class="ex-stage" aria-hidden="true">
-      <div class="scene ex-scene"><div class="cam" id="ex-cam"><div class="device" id="ex-device"></div></div></div>
-      <p class="ex-hint mono" id="ex-hint">Scroll to separate the six layers</p>
+    <div class="ex-stage" id="ex-stage">
+      <div class="ex-hud" aria-hidden="true">
+        <span class="hud-corner tl"></span><span class="hud-corner tr"></span><span class="hud-corner bl"></span><span class="hud-corner br"></span>
+        <p class="exh exh-a mono">EXPLODED VIEW · ISOMETRIC</p>
+        <p class="exh exh-b mono" id="exh-layer">ASSEMBLED</p>
+        <p class="exh exh-c mono" id="exh-sep">SEPARATION 0%</p>
+        <p class="exh exh-d mono">8 LAYERS · 31 PARTS · UNITS MM</p>
+      </div>
+      <div class="scene ex-scene" aria-hidden="true"><div class="cam" id="ex-cam"><div class="device" id="ex-device"></div></div></div>
+      <svg class="ex-lines" id="ex-lines" aria-hidden="true"></svg>
+      <div class="ex-callouts" id="ex-callouts" aria-hidden="true"></div>
+      <p class="ex-hint mono" id="ex-hint">Scroll to separate the eight layers</p>
     </div>
 
     <div class="ex-panel" id="ex-panel">
-      <ol class="ex-index" id="ex-index">
-        <li>Front shell</li><li>Display</li><li>Mid-frame and thumb rotor</li><li>Main board</li><li>Power and sound bay</li><li>Back shell</li>
-      </ol>
-
-      <article class="ex-card" data-layer="0">
-        <p class="ex-num mono">Layer 1 of 6 · 1.2 mm</p>
-        <h3>Front shell</h3>
-        <p>Bead-blasted aluminium, anodised matte black. One window for the screen, a pinhole for the microphone, a grid of holes for the speaker. No logo and no lights.</p>
-        <ul class="ex-specs mono"><li>6061 aluminium, 1.2 mm</li><li>Mic port Ø 0.8 mm</li><li>Gasket seal, splash-proof</li></ul>
-      </article>
-      <article class="ex-card" data-layer="1">
-        <p class="ex-num mono">Layer 2 of 6 · 1.4 mm</p>
-        <h3>E-paper display</h3>
-        <p>A 1.54-inch e-paper panel. It keeps the last image with no power at all and gives off no light, so it can’t be seen glowing in a dark room. The message stays readable in sunlight.</p>
-        <ul class="ex-specs mono"><li>1.54″, 200 × 200 px (e.g. GDEY0154D67)</li><li>0 mW to hold an image</li><li>Full refresh about 2 s</li></ul>
-      </article>
-      <article class="ex-card" data-layer="2">
-        <p class="ex-num mono">Layer 3 of 6 · 0.9 mm</p>
-        <h3>Mid-frame and thumb rotor</h3>
-        <p>A stiff frame that holds the screen and carries the thumb rotor, a wheel on the right edge. Roll it to pick letters, just like the lab’s rotors. Press it to select. Hold it for five seconds to wipe the keys.</p>
-        <ul class="ex-specs mono"><li>Side jog encoder with push switch (Panasonic EVQ-WK)</li><li>26 detents = one turn of the alphabet</li><li>Hold 5 s: panic wipe</li></ul>
-      </article>
-      <article class="ex-card" data-layer="3">
-        <p class="ex-num mono">Layer 4 of 6 · 2.6 mm with parts</p>
-        <h3>Main board</h3>
-        <p>The brain, every part on one side of a 4-layer board. The processor listens with 16 tone detectors, rebuilds the bytes, checks the mod-256 checksum and applies F⁻¹ with the key from the secure chip.</p>
-        <ul class="ex-specs mono"><li>RP2040 processor, 2 × Cortex-M0+</li><li>ATECC608B secure element (key)</li><li>ICS-43434 microphone · MAX98357A amp</li><li>DRV2605L haptics · MCP73831 charger</li><li>W25Q16 flash · USB-C</li></ul>
-      </article>
-      <article class="ex-card" data-layer="4">
-        <p class="ex-num mono">Layer 5 of 6 · 4.2 mm</p>
-        <h3>Power and sound bay</h3>
-        <p>A lithium-polymer cell, a micro speaker and a coin vibration motor sit side by side in one tray. The speaker sends the tones; the motor gives a silent buzz when a message arrives.</p>
-        <ul class="ex-specs mono"><li>LiPo 403040, 3.7 V, ~500 mAh</li><li>15 × 11 mm micro speaker, to 20 kHz</li><li>8 mm coin vibration motor (LRA)</li></ul>
-      </article>
-      <article class="ex-card" data-layer="5">
-        <p class="ex-num mono">Layer 6 of 6 · 1.2 mm</p>
-        <h3>Back shell</h3>
-        <p>A machined tray that forms the sides and back, closed by four Torx screws. A light sensor under the board faces into it: if the case is opened, light reaches the sensor and Whisper erases its keys.</p>
-        <ul class="ex-specs mono"><li>6061 aluminium tray</li><li>4 × Torx T3 screws</li><li>Ambient light sensor = tamper alarm</li></ul>
-      </article>
+      <ol class="ex-index" id="ex-index"></ol>
+      <div id="ex-cards"></div>
     </div>
   </div>
 </section>
@@ -151,11 +122,11 @@
 <section class="xsec" id="section" aria-labelledby="xsec-title">
   <div class="sec-head">
     <p class="fx-kicker mono">Cross-section</p>
-    <h2 class="fx-h2" id="xsec-title">Twelve millimetres, cut open</h2>
+    <h2 class="fx-h2" id="xsec-title">Thirteen millimetres, cut open</h2>
     <p class="fx-sub">A slice through the middle of the device, long side left to right. Heights are drawn at twice their real scale so the thin layers can be seen. Hover a label to find its part.</p>
   </div>
   <figure class="xsec-wrap">
-    <svg id="xsec" role="img" aria-label="Cross-section of Whisper: front shell, e-paper, mid-frame with thumb rotor, main board, battery, speaker and motor, back shell, 12 millimetres in total"></svg>
+    <svg id="xsec" role="img" aria-label="Cross-section of Whisper: front shell, e-paper, mid-frame with thumb rotor, main board, battery, speaker, back shell, 13 millimetres in total"></svg>
   </figure>
 </section>
 
@@ -226,7 +197,7 @@
         <tr><td class="mono">DRV2605L</td><td>Haptic driver</td><td>Drives the coin motor with sharp, quiet buzz patterns.</td></tr>
         <tr><td class="mono">MCP73831</td><td>Charger</td><td>Charges the single LiPo cell from USB-C.</td></tr>
         <tr><td class="mono">W25Q16</td><td>2 MB flash</td><td>Holds the firmware only. Messages are never written to it.</td></tr>
-        <tr><td class="mono">LiPo 403040</td><td>Battery</td><td>3.7 V, about 500 mAh, 4 mm thin.</td></tr>
+        <tr><td class="mono">LiPo 503450</td><td>Battery</td><td>3.7 V, 1000 mAh (3.7 Wh), 5 mm thin, with a protection circuit.</td></tr>
       </tbody>
     </table>
   </div>
@@ -253,7 +224,7 @@
       <label for="duty" class="pc-label">Time spent listening: <b class="mono" id="duty-out">10%</b></label>
       <input type="range" id="duty" min="2" max="100" step="1" value="10">
       <p class="pc-formula mono" id="duty-formula"></p>
-      <p class="pc-life"><span class="mono" id="life-out">17 days</span> on one charge</p>
+      <p class="pc-life"><span class="mono" id="life-out">35 days</span> on one charge</p>
     </div>
   </div>
 </section>
@@ -267,6 +238,6 @@
 </footer>
 
 <script src="js/fx.js?v=8"></script>
-<script src="js/device.js?v=10"></script>
+<script src="js/device.js?v=11"></script>
 </body>
 </html>

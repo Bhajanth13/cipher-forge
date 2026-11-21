@@ -46,15 +46,30 @@
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 210' preserveAspectRatio='none'%3E%3Cpath fill-rule='evenodd' d='M0 0H320V210H0Z M22 25H182V185H22Z'/%3E%3C/svg%3E") 0 0 / 100% 100%;
 }
 .L-front .slab.shell > .top { box-shadow: inset 0 0 0 1px var(--shell-rim); }
-.grille { position: absolute; left: 206px; top: 34px; width: 86px; height: 58px; border-radius: 6px;
-  background: radial-gradient(circle, rgba(0, 0, 0, .7) 1.6px, transparent 2.1px) 0 0 / 9px 9px; }
+.grille { position: absolute; left: 262px; top: 26px; width: 44px; height: 56px; border-radius: 6px;
+  background: radial-gradient(circle, rgba(0, 0, 0, .75) 1.7px, transparent 2.2px) 0 0 / 9px 9px; }
 .pinhole { position: absolute; left: 245px; top: 150px; width: 5px; height: 5px; border-radius: 50%; background: #000; box-shadow: 0 0 0 1.5px var(--shell-rim); }
 .engrave { position: absolute; font-family: var(--mono); font-size: 8px; letter-spacing: .32em; color: var(--shell-rim); }
 .engrave.e1 { left: 206px; top: 112px; }
 .engrave.e2 { left: 206px; top: 124px; font-size: 6.5px; opacity: .7; }
-.glass { position: absolute; left: 22px; top: 25px; width: 160px; height: 160px;
-  background: linear-gradient(125deg, rgba(255, 255, 255, .10) 0%, rgba(255, 255, 255, 0) 38%, rgba(255, 255, 255, 0) 70%, rgba(255, 255, 255, .05));
-  transform: translateZ(5px); pointer-events: none; }
+/* Cover glass and gasket */
+.slab.glass3 { --top: linear-gradient(125deg, rgba(190, 230, 255, .22), rgba(190, 230, 255, .05) 40%, rgba(190, 230, 255, .02) 70%, rgba(190, 230, 255, .14)); --edge: rgba(150, 210, 240, .35); --bot: rgba(190, 230, 255, .06); }
+.slab.gasket { --top: transparent; --edge: rgba(40, 46, 54, .9); --bot: transparent; }
+.slab.gasket > .top { box-shadow: inset 0 0 0 4px #2A3038; }
+.slab.cog { --top: #1C2026; --edge: #2A3038; }
+.slab.pcm { --top: #13314A; --edge: #1E4664; }
+.slab.port { --top: #05070A; --edge: #05070A; }
+.slab.seal { --top: repeating-linear-gradient(45deg, #C9CED4 0 3px, #AEB4BB 3px 6px); --edge: #AEB4BB; }
+.slab.chip.under { --top: #2A3038; --edge: #2A3038; }
+.post .disc, .shaft .disc { inset: 0; background: radial-gradient(circle, #0B0E12 0 22%, var(--shell-edge) 26%); box-shadow: inset 0 0 0 1px var(--shell-rim); }
+.shaft .disc { background: #9AA3AD; box-shadow: none; }
+.head .disc { inset: 0; background: #B5BDC6; box-shadow: inset 0 0 0 1px #7E8892; }
+.head .disc.cap { background: radial-gradient(circle, #2A3038 0 22%, #B5BDC6 26%); }
+.post, .shaft, .head { position: absolute; transform-style: preserve-3d; }
+
+/* Assembly axes and callout markers */
+.axis { position: absolute; width: 0; border-left: 1px dashed var(--signal-glow); transform-origin: top; pointer-events: none; transition: opacity .3s; }
+.mk { position: absolute; left: 0; top: 0; width: 2px; height: 2px; margin: -1px 0 0 -1px; pointer-events: none; }
 
 /* Display */
 .L-disp .slab.panel3 { --top: var(--paper); --edge: #2A2F35; --bot: #22262B; }
@@ -70,6 +85,7 @@
 .wheel { position: absolute; left: 286px; top: 72px; width: 66px; height: 66px; transform-style: preserve-3d; }
 .wheel .disc { inset: 0; background: repeating-conic-gradient(from var(--rot, 0deg), #3A4552 0 5deg, #1A2028 5deg 10deg); box-shadow: inset 0 0 0 9px #222A33; }
 .wheel .disc.cap { background: radial-gradient(circle, #2E3845 0 30%, #1B222B 31% 100%); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12), 0 0 0 2px #39444F; }
+
 .dev .is-active .wheel .disc.cap { box-shadow: inset 0 0 0 1px var(--signal-line), 0 0 18px var(--signal-glow); }
 
 /* Board */
@@ -113,9 +129,9 @@
 
 /* Exploded state: the active layer glows, the rest dim */
 /* Dim the faces, not the layer: opacity on a 3D group would flatten it */
-.layer3 .f, .layer3 .disc, .layer3 .glass { transition: opacity .5s; }
-.device.is-exploded .layer3:not(.is-active) .f, .device.is-exploded .layer3:not(.is-active) .disc, .device.is-exploded .layer3:not(.is-active) .glass { opacity: .26; }
-.device .layer3.is-active .slab > .top { box-shadow: inset 0 0 0 1px var(--signal), 0 0 30px var(--signal-glow); }
+.layer3 .f, .layer3 .disc { transition: opacity .5s; }
+.device.is-exploded .layer3:not(.is-active) .f, .device.is-exploded .layer3:not(.is-active) .disc { opacity: .24; }
+.device .layer3.is-active .slab:not(.chip):not(.gasket):not(.seal) > .top { box-shadow: inset 0 0 0 1px var(--signal), 0 0 30px var(--signal-glow); }
 .device .layer3.is-active .slab.chip > .top { box-shadow: inset 0 0 0 1px var(--signal-line); }
 
 /* ---------- Hero ---------- */
@@ -153,7 +169,7 @@
 .spec-num small { font-size: .45em; color: var(--muted); margin-left: 2px; }
 
 /* ---------- Exploded view ---------- */
-.explode { position: relative; z-index: 1; height: 720vh; }
+.explode { position: relative; z-index: 1; height: 1000vh; }
 .ex-sticky {
   position: sticky; top: 0; height: 100vh; min-height: 620px; overflow: hidden;
   display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(300px, 1fr); grid-template-rows: auto 1fr;
@@ -162,16 +178,36 @@
 .ex-head { grid-column: 1 / -1; }
 .ex-head .fx-h2 { margin-top: 8px; font-size: clamp(30px, 3.6vw, 50px); }
 .ex-stage { position: relative; min-height: 0; }
-.ex-scene .device { transform: translateY(40px) scale(.9); }
+.ex-scene .device { transform: translateY(34px) scale(.86); }
+.ex-hud { position: absolute; inset: 6px 0 4px; pointer-events: none; }
+.exh { position: absolute; font-size: 10.5px; letter-spacing: .2em; color: var(--signal); opacity: .75; white-space: nowrap; }
+.exh-a { left: 36px; top: 4px; } .exh-b { right: 36px; top: 4px; color: var(--steel); opacity: .9; }
+.exh-c { left: 36px; bottom: 4px; } .exh-d { right: 36px; bottom: 4px; }
+.ex-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.ex-lines path { fill: none; stroke: var(--signal); stroke-width: 1; opacity: .75; }
+.ex-lines .pin { fill: var(--signal); }
+.ex-lines .ring { fill: none; stroke: var(--signal); stroke-width: 1; opacity: .5; animation: ping 2.4s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+@keyframes ping { 0% { transform: scale(.4); opacity: .8; } 100% { transform: scale(1.5); opacity: 0; } }
+.ex-callouts { position: absolute; inset: 0; pointer-events: none; }
+.co { position: absolute; display: flex; gap: 10px; align-items: flex-start; animation: coIn .45s var(--ease) both; }
+.co.left { flex-direction: row-reverse; text-align: right; }
+.co-n { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 11px; color: var(--graphite); background: var(--signal); box-shadow: 0 0 14px var(--signal-glow); }
+.co-tx { display: grid; gap: 2px; min-width: 0; padding-top: 1px; }
+.co-t { font-size: 14px; color: var(--steel); line-height: 1.2; }
+.co-d { font-size: 11px; color: var(--muted); line-height: 1.35; }
+@keyframes coIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .ex-hint { position: absolute; left: 0; bottom: 6px; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); transition: opacity .4s; }
 .ex-panel { align-self: center; position: relative; }
 .ex-index { list-style: none; padding: 0; display: grid; gap: 2px; counter-reset: ex; }
-.ex-index li { counter-increment: ex; display: flex; gap: 12px; align-items: baseline; padding: 6px 0; color: var(--muted); font-size: 15px; transition: color .3s; }
+.ex-index li { counter-increment: ex; display: flex; gap: 12px; align-items: baseline; padding: 4px 0; color: var(--muted); font-size: 14.5px; transition: color .3s; }
+.ex-index button { all: unset; cursor: pointer; color: inherit; }
+.ex-index button:hover { color: var(--steel); }
+.ex-index button:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; border-radius: 3px; }
 .ex-index li::before { content: counter(ex, decimal-leading-zero); font-family: var(--mono); font-size: 11px; color: var(--muted); width: 22px; }
 .ex-index li.is-active { color: var(--steel); }
 .ex-index li.is-active::before { color: var(--signal); }
 .ex-card {
-  margin-top: 18px; padding: 22px 24px; border-radius: 12px; border: 1px solid var(--signal-line);
+  margin-top: 16px; padding: 20px 22px; border-radius: 12px; border: 1px solid var(--signal-line);
   background: linear-gradient(170deg, var(--plate-2), var(--plate)); box-shadow: 0 0 40px var(--signal-soft);
 }
 .js .ex-card { display: none; }
@@ -179,7 +215,15 @@
 @keyframes cardIn { from { opacity: 0; transform: translateY(10px) rotateX(-8deg); } to { opacity: 1; transform: none; } }
 .ex-num { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--signal); }
 .ex-card h3 { margin-top: 8px; font-size: 24px; font-weight: 500; font-variation-settings: 'wdth' 118; }
-.ex-card p { margin-top: 10px; color: var(--steel-2); font-size: 15px; }
+.ex-card p { margin-top: 10px; color: var(--steel-2); font-size: 14.5px; }
+.ex-bar { margin-top: 10px; height: 2px; background: var(--rule-soft); border-radius: 2px; overflow: hidden; }
+.ex-bar span { display: block; height: 100%; background: linear-gradient(90deg, var(--brass), var(--signal)); }
+.ex-dl { margin-top: 14px; display: grid; border-top: 1px solid var(--rule-soft); }
+.ex-dl div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--rule-soft); }
+.ex-dl dt { font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--signal); padding-top: 2px; }
+.ex-dl dd { margin: 0; font-size: 13.5px; color: var(--steel); }
+.ex-parts { display: none; margin-top: 12px; padding-left: 20px; font-size: 13px; color: var(--steel-2); }
+.ex-parts li { margin-top: 3px; } .ex-parts b { color: var(--steel); font-weight: 500; } .ex-parts .mono { font-size: 11px; color: var(--muted); }
 .ex-specs { margin-top: 14px; padding: 0; list-style: none; display: grid; gap: 5px; font-size: 12.5px; color: var(--steel); }
 .ex-specs li { padding-left: 16px; position: relative; }
 .ex-specs li::before { content: ''; position: absolute; left: 0; top: .6em; width: 7px; height: 1px; background: var(--brass); }
@@ -289,7 +333,9 @@
   .ex-index { display: none; }
   .ex-card { margin-top: 0; padding: 16px 18px; }
   .ex-card p { font-size: 14px; }
-  .ex-specs { display: none; }
+  .ex-card { max-height: 38vh; overflow-y: auto; }
+  .ex-dl, .ex-bar, .ex-hud { display: none; }
+  .ex-parts { display: block; }
   .ex-scene .device { transform: scale(.62); }
   .power-grid { grid-template-columns: 1fr; }
   .lane { grid-template-columns: 1fr; gap: 10px; }
@@ -297,7 +343,7 @@
 @media (max-width: 560px) {
   .lane-steps { grid-template-columns: 1fr 1fr; }
   .covert .why-grid { grid-template-columns: 1fr; }
-  .ex-scene .device { transform: translateY(26px) scale(.5); }
+  .ex-scene .device { transform: translateY(44px) scale(.48); }
   .hero-scene .device { transform: scale(.78); }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -307,3 +353,5 @@
 }
 
 .nowrap { white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) { .ex-lines .ring { animation: none; } .co { animation: none; } }
