@@ -324,6 +324,44 @@
   /* ---------- Nav progress ---------- */
   const bar = $('progress');
 
+  /* ---------- Slow, smooth glide for links within the page ---------- */
+  // The browser's own smooth scroll is quick over long distances; this one
+  // takes 1.7–3 s with a gentle ease, so the tunnel and layers fly past.
+  let glide = 0;
+  function glideTo(y) {
+    cancelAnimationFrame(glide);
+    const from = scrollY, dist = y - from;
+    if (Math.abs(dist) < 2) return;
+    if (reduce) { window.scrollTo(0, y); return; }
+    const dur = clamp(1100 + Math.abs(dist) * 0.45, 1700, 3000);
+    const t0 = performance.now();
+    const html = document.documentElement;
+    const prev = html.style.scrollBehavior;
+    html.style.scrollBehavior = 'auto';                    // steer every frame ourselves
+    function step(now) {
+      const k = clamp((now - t0) / dur, 0, 1);
+      window.scrollTo(0, from + dist * ease(k));
+      if (k < 1) glide = requestAnimationFrame(step);
+      else html.style.scrollBehavior = prev;
+    }
+    glide = requestAnimationFrame(step);
+    // Any wheel, touch or key from the visitor takes over at once
+    const stop = function () {
+      cancelAnimationFrame(glide); html.style.scrollBehavior = prev;
+      ['wheel', 'touchstart', 'keydown'].forEach(function (ev) { removeEventListener(ev, stop); });
+    };
+    ['wheel', 'touchstart', 'keydown'].forEach(function (ev) { addEventListener(ev, stop, { passive: true, once: true }); });
+  }
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      const target = document.getElementById(a.getAttribute('href').slice(1));
+      if (!target) return;
+      e.preventDefault();
+      glideTo(target.getBoundingClientRect().top + scrollY - (target.id === 'console' ? 70 : 0));
+      history.replaceState(null, '', a.getAttribute('href'));
+    });
+  });
+
   /* ---------- One loop for everything ---------- */
   function visible(el) { const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight; }
   function frame(t) {
