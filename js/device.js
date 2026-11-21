@@ -76,7 +76,7 @@
   // Tiny resistors and capacitors around the chips
   function passives() {
     let h = '';
-    const clusters = [[112, 36, 2, 7], [232, 112, 4, 2], [100, 150, 3, 4], [282, 64, 2, 4], [282, 160, 3, 3], [30, 196, 3, 3], [256, 82, 1, 3], [70, 92, 4, 2], [320, 112, 2, 4]];
+    const clusters = [[40, 118, 1, 6], [262, 112, 2, 3], [96, 214, 3, 3], [282, 64, 2, 1], [276, 176, 3, 2], [30, 196, 3, 3], [262, 92, 1, 3], [14, 130, 3, 2], [330, 112, 2, 4]];
     clusters.forEach(function (c, ci) {
       for (let r = 0; r < c[2]; r++) for (let q = 0; q < c[3]; q++) {
         const cap = (r + q + ci) % 3 !== 0;
@@ -117,56 +117,67 @@
     { name: 'Titanium mid-frame', mm: '55 × 1.2 mm walls', cls: 'L-mid', z: 5, ex: 0.55,
       html: function () {
         const posts = CORNERS.map(function (c) { return cylinder('post', c[0] - 6, c[1] - 6, 12, 12, 28, 4, 0); }).join('');
-        return slab('frame', 6, 6, 378, 268, 4, 38, '<span class="ribs"></span>') +
+        return slab('frame cutout', 6, 6, 378, 268, 4, 38, '<span class="ribs"></span>') +
           slab('port', 52, -2, 30, 4, 12, 22) + slab('port', 96, -2, 30, 4, 12, 22) + slab('port', 290, -2, 30, 4, 12, 22) + slab('port', 334, -2, 30, 4, 12, 22) +
           slab('port', 30, -2, 6, 4, 4, 36) + slab('port', 354, -2, 6, 4, 4, 36) + slab('port', 30, 278, 6, 4, 4, 36) + slab('port', 354, 278, 6, 4, 4, 36) +
-          slab('wall', 0, 0, DW, 6, 55, 0) + slab('wall', 0, 274, DW, 6, 55, 0) +
+          slab('wall', 0, 0, 172, 6, 55, 0) + slab('wall', 218, 0, 172, 6, 55, 0) + slab('wall', 172, 0, 46, 6, 4, 0) + slab('wall', 172, 0, 46, 6, 4, 51) +
+          slab('door', 172, -1, 23, 4, 46, 4.5) + slab('door', 195, -1, 23, 4, 46, 4.5) + slab('wall', 0, 274, DW, 6, 55, 0) +
           slab('wall', 0, 6, 6, 268, 55, 0) + slab('wall', 384, 6, 6, 268, 55, 0) + posts +
           cylinder('wheel', 362, 64, 48, 48, 8, 4, 30) +
           slab('fp p-fp', 388, 176, 6, 46, 10, 26, '<span class="fp-ring"></span>') +
           slab('kill', -3, 60, 4, 36, 8, 28) + slab('nub', -6, 64, 4, 12, 6, 29) +
           slab('port', 172, 273, 46, 8, 16, 22);
       },
-      pts: [[327, -2, 30, 'Horn ports', 'ultrasound leaves the top edge'], [386, 88, 34, 'Thumb rotor', 'Ø 9.6 mm, 26 detents'], [392, 199, 31, 'Fingerprint power key', 'unlocks the key store'],
+      pts: [[327, -2, 30, 'Horn ports', 'ultrasound leaves the top edge'], [195, -1, 30, 'Petal doors', 'two sliding doors over the Ø 9.2 mm bloom slot'], [386, 88, 34, 'Thumb rotor', 'Ø 9.6 mm, 26 detents'], [392, 199, 31, 'Fingerprint power key', 'unlocks the key store'],
         [-5, 70, 32, 'Mic kill switch', 'cuts all four mics in hardware'], [195, 276, 30, 'USB-C port', 'charge and load keys'],
-        [100, 60, 42, 'Inner shelf', 'stiffening ribs, 0.8 mm']],
-      text: 'The skeleton: titanium walls, an inner shelf, and every control on the sides.',
+        [70, 160, 42, 'Inner shelf', 'stiffening ribs, 0.8 mm, cut out for the petal pocket']],
+      text: 'The skeleton: titanium walls, an inner shelf cut away for the petal pocket, and every control on the sides. Two doors in the top edge open for the bloom.',
       spec: [['Material', 'Grade 5 titanium, CNC-machined'], ['Walls', '1.2 mm, inner shelf 0.8 mm'], ['Controls', 'Rotor, fingerprint key, mic kill switch'], ['Job', 'Strength; carries all side controls']] },
     { name: 'Main board', mm: '1.0 mm, 8 layers', cls: 'L-board', z: 33, ex: -0.75,
       html: function () {
-        return slab('pcb', 8, 8, 374, 264, 5, 0, TRACES) +
-          slab('chip can shield p-mcu', 130, 40, 96, 72, 6, 5, '<span class="perf"></span><i>STM32U585</i>') +
-          slab('chip key p-se', 240, 56, 20, 20, 3, 5, 'SE050') + slab('chip p-flash', 240, 86, 26, 18, 4, 5, 'W25Q128') +
-          slab('chip', 150, 170, 18, 18, 3, 5, 'PMIC') + slab('chip', 60, 200, 12, 10, 2.5, 5, 'FG', true) +
+        return slab('pcb cutout', 8, 8, 374, 264, 5, 0, TRACES) +
+          slab('pcb-edge', 147, 8, 2, 185, 5, 0, '', true) + slab('pcb-edge', 241, 8, 2, 185, 5, 0, '', true) + slab('pcb-edge', 147, 191, 96, 2, 5, 0, '', true) +
+          slab('chip can shield p-mcu', 36, 40, 96, 72, 6, 5, '<span class="perf"></span><i>STM32U585</i>') +
+          slab('chip key p-se', 262, 64, 20, 20, 3, 5, 'SE050') + slab('chip p-flash', 290, 84, 26, 18, 4, 5, 'W25Q128') +
+          slab('chip', 156, 206, 18, 18, 3, 5, 'PMIC') + slab('chip', 60, 200, 12, 10, 2.5, 5, 'FG', true) +
           slab('chip', 40, 170, 14, 12, 3, 5, 'CHG', true) + slab('chip p-amp', 298, 38, 20, 20, 4, 5, 'HV') + slab('chip can', 322, 40, 16, 16, 6, 5, 'L1', true) +
           slab('chip', 300, 200, 16, 16, 4, 5, 'HAP') + slab('chip can p-mic', 24, 12, 18, 12, 5, 5, 'MIC') + slab('chip can p-mic', 348, 12, 18, 12, 5, 5, 'MIC') +
-          slab('chip can p-mic', 24, 252, 18, 12, 5, 5, 'MIC') + slab('chip can p-mic', 348, 252, 18, 12, 5, 5, 'MIC') + slab('chip can', 232, 112, 14, 8, 3.5, 5, '', true) +
-          slab('conn', 120, 124, 60, 10, 5, 5) + slab('conn', 260, 124, 34, 10, 5, 5) + slab('conn', 200, 150, 60, 10, 5, 5) +
-          slab('conn', 340, 170, 26, 10, 5, 5) + slab('jst', 60, 120, 22, 12, 6, 5) +
+          slab('chip can p-mic', 24, 252, 18, 12, 5, 5, 'MIC') + slab('chip can p-mic', 348, 252, 18, 12, 5, 5, 'MIC') + slab('chip can', 300, 118, 14, 8, 3.5, 5, '', true) +
+          slab('chip p-mdrv', 252, 160, 16, 12, 3, 5, 'MD', true) +
+          slab('conn', 40, 126, 60, 10, 5, 5) + slab('conn', 260, 136, 34, 10, 5, 5) + slab('conn', 190, 206, 44, 10, 5, 5) +
+          slab('conn', 340, 170, 26, 10, 5, 5) + slab('jst', 70, 150, 22, 12, 6, 5) + slab('jst', 300, 150, 22, 12, 6, 5) +
           slab('chip can', 130, 244, 46, 26, 14, 5, 'USB-C') + slab('chip under', 40, 40, 12, 8, 2, -2) + passives();
       },
-      pts: [[178, 76, 11, 'STM32U585 under shield', 'Cortex-M33, 160 MHz, AES in hardware'], [250, 66, 8, 'NXP SE050', 'secure element, holds the key'],
-        [253, 95, 9, 'W25Q128', '16 MB flash, firmware only'], [159, 179, 8, 'Power IC', 'regulators for every rail'],
+      pts: [[84, 76, 11, 'STM32U585 under shield', 'Cortex-M33, 160 MHz, AES in hardware'], [272, 74, 8, 'NXP SE050', 'secure element, holds the key'],
+        [303, 93, 9, 'W25Q128', '16 MB flash, firmware only'], [165, 215, 8, 'Power IC', 'regulators for every rail'],
+        [195, 100, 5, 'Cut-out, 19 × 38.5 mm', 'the petal pocket passes through the board'], [260, 166, 8, 'Motor driver', 'runs the bloom gear motor'],
         [33, 18, 10, 'SPH0641 × 4', 'one per corner, to 80 kHz, beamformed'], [308, 48, 9, 'DRV2700', 'boosts to ~100 V for the horns'],
         [153, 257, 19, 'USB-C', 'charge, load keys; data off when locked'], [46, 44, -2, 'Light sensor (underside)', 'tamper alarm']],
-      text: 'Eight layers, parts on one side, the processor under a metal shield. About 70 parts in a card-sized space.',
-      spec: [['Board', '8-layer HDI, 1.0 mm'], ['Brain', 'STM32U585, TrustZone, hardware AES'], ['Key store', 'NXP SE050, certified secure element'], ['Also', 'BQ25180 charger, MAX17048 gauge, DRV2605L haptics']] },
+      text: 'Eight layers, parts on one side, the processor under a metal shield. The board is U-shaped: a 19 × 38.5 mm cut-out at the top lets the petal pocket pass through.',
+      spec: [['Board', '8-layer HDI, 1.0 mm, U-shaped'], ['Brain', 'STM32U585, TrustZone, hardware AES'], ['Key store', 'NXP SE050, certified secure element'], ['Also', 'BQ25180 charger, MAX17048 gauge, DRV2605L haptics']] },
     { name: 'Power and sound', mm: '5.0 mm', cls: 'L-bay', z: 0, ex: -1.9,
       html: function () {
-        return slab('cell', 70, 90, 250, 170, 25, 7, '<span>LiPo · 503450</span><span><b>3.7 V · 1000 mAh</b><br>3.7 Wh · 2C</span>') +
-          slab('pcm', 80, 93, 70, 10, 3, 32) + slab('bflex', 110, 96, 22, 26, 0.8, 32) + slab('tab', 170, 250, 40, 24, 0.6, 7) +
+        const cellTop = function (n) { return '<span>LiPo · 502538 · ' + n + '</span><span><b>3.7 V · 500 mAh</b><br>1.85 Wh</span>'; };
+        return slab('cell', 12, 80, 125, 190, 25, 7, cellTop('A')) + slab('cell', 251, 80, 125, 190, 25, 7, cellTop('B')) +
+          slab('pcm', 30, 84, 60, 10, 3, 32) + slab('pcm', 268, 84, 60, 10, 3, 32) +
+          slab('tab', 54, 246, 40, 24, 0.6, 32) + slab('tab', 293, 246, 40, 24, 0.6, 32) +
           slab('horns p-spk', 40, 6, 94, 70, 15, 8, '<span class="horn h1"></span><span class="horn h2"></span>') +
           slab('horns p-spk', 278, 6, 94, 70, 15, 8, '<span class="horn h1"></span><span class="horn h2"></span>') +
           cylinder('piezo', 51, 42, 28, 28, 3, 2, 23) + cylinder('piezo', 95, 42, 28, 28, 3, 2, 23) +
           cylinder('piezo', 289, 42, 28, 28, 3, 2, 23) + cylinder('piezo', 333, 42, 28, 28, 3, 2, 23) +
-          cylinder('mot', 18, 196, 36, 36, 12, 3, 8) +
-          slab('boot', 184, 6, 22, 8, 4, 40, '', true) + slab('boot', 194, 266, 22, 8, 4, 40, '', true);
+          slab('pocket p-pocket', 172, 2, 46, 190, 46, 2, '<span class="bud-ghost"></span>') +
+          slab('gmotor', 142, 98, 28, 90, 28, 8, '<span>6 mm</span>') + slab('screw', 222, 6, 14, 184, 14, 16) +
+          slab('gearplate', 142, 188, 96, 8, 30, 6) +
+          cylinder('mot', 177, 204, 36, 36, 12, 3, 8) +
+          slab('boot', 194, 266, 22, 8, 4, 40, '', true);
       },
-      pts: [[195, 175, 32, 'LiPo cell', '503450, 3.7 V, 1000 mAh'], [115, 98, 35, 'Protection circuit', 'over-charge, over-drain, short'],
-        [87, 16, 23, 'Piezo horn array', '4 horn-loaded tweeters along the top edge'], [347, 56, 26, 'Piezo disc', '≈100 dB at 1 m with all four (estimate)'], [36, 214, 20, 'Vibration motor', '8 mm LRA'],
-        [190, 262, 7.6, 'Pull tab', 'removes the cell without tools']],
-      text: 'A 1000 mAh cell, four horn-loaded piezo tweeters that throw ultrasound tens of metres, and a motor for silent alerts.',
-      spec: [['Cell', 'LiPo 503450, 3.7 V, 1000 mAh (3.7 Wh)'], ['Transmit', '4 horn-loaded piezo tweeters, 18–24 kHz'], ['Haptics', '8 mm LRA'], ['Mount', 'Stretch-release adhesive, pull tab']] },
+      pts: [[74, 175, 32, 'Two LiPo cells', '502538 × 2, 500 mAh each, in parallel'], [60, 89, 35, 'Protection circuit', 'one per cell'],
+        [195, 120, 48, 'Petal pocket', 'Ø 9.2 mm tube, 38 mm deep, folded bud inside'], [156, 140, 36, 'Gear motor', '6 mm, drives the lead screw'],
+        [229, 60, 30, 'Lead screw', 'M2, 2 mm lead, 36 mm of travel'],
+        [87, 16, 23, 'Piezo horn array', '4 horn-loaded tweeters along the top edge'], [347, 56, 26, 'Piezo disc', '≈100 dB at 1 m with all four (estimate)'], [195, 222, 20, 'Vibration motor', '8 mm LRA'],
+        [74, 258, 33, 'Pull tabs', 'remove each cell without tools']],
+      text: 'Two cells either side of the petal pocket (1000 mAh together), four horn-loaded piezo tweeters, the bloom motor and lead screw, and a motor for silent alerts.',
+      spec: [['Cells', '2 × LiPo 502538, 500 mAh each (estimate), 1000 mAh together'], ['Bloom', 'Ø 9.2 × 38 mm pocket, 6 mm gear motor, M2 lead screw'], ['Transmit', '4 horn-loaded piezo tweeters, 18–24 kHz'], ['Haptics', '8 mm LRA']] },
     { name: 'Ceramic back', mm: '1.0 mm', cls: 'L-back', z: 0, ex: -3.2,
       html: function () {
         const sinks = CORNERS.map(function (c) { return '<span class="sink" style="left:' + (c[0] - 7) + 'px;top:' + (c[1] - 7) + 'px"></span>'; }).join('');
@@ -504,38 +515,45 @@
     const X = function (mm) { return X0 + mm * SX; }, Y = function (mm) { return Y0 + mm * SY; };
     const rect = function (r) { return '<rect x="' + X(r[0]).toFixed(1) + '" y="' + Y(r[1]).toFixed(1) + '" width="' + (r[2] * SX).toFixed(1) + '" height="' + (r[3] * SY).toFixed(1) + '" rx="' + (r[4] || 0) + '"/>'; };
     // Slice along the short side: 0 mm = top edge (horn ports), 56 mm = bottom edge
+    // 0 mm = top edge (petal doors), 56 mm = bottom edge. The slice runs through the petal pocket;
+    // the two cells and the horns sit either side of it.
     const PARTS = [
       { k: 'front', cls: 'p-shell', d: 0, r: [[0, 0, 1.6, 1.0, 1], [2.6, 0, 1.8, 1.0], [50.4, 0, 5.6, 1.0, 1]] },
       { k: 'glass', cls: 'p-glass', d: 1, r: [[4.4, 0.3, 46, 0.7]] },
       { k: 'glass', cls: 'p-touch', d: 1, r: [[4.4, 1.0, 46, 0.2]] },
       { k: 'disp', cls: 'p-paper', d: 2, r: [[3.2, 1.2, 49.6, 1.2]] },
-      { k: 'mid', cls: 'p-frame', d: 4, r: [[1.2, 2.6, 53.6, 0.8]] },
-      { k: 'board', cls: 'p-chip', d: 5, r: [[10, 3.4, 16, 1.0], [27.2, 3.6, 4, 0.8], [30, 3.8, 3, 0.6], [36, 3.7, 3.2, 0.7], [44, 3.6, 3, 0.8], [2.6, 3.5, 3.6, 0.9], [8, 5.4, 2.4, 0.4]] },
-      { k: 'board', cls: 'p-chip key', d: 5, r: [[22, 3.8, 3, 0.6]] },
-      { k: 'board', cls: 'p-pcb', d: 5, r: [[1.2, 4.4, 53.6, 1.0]] },
-      { k: 'cell', cls: 'p-cell', d: 6, r: [[18, 6.2, 34, 5.0, 6]] },
-      { k: 'spk', cls: 'p-spk', d: 6, r: [[4, 6.2, 12, 3.0, 3]] },
-      { k: 'spk', cls: 'p-port', d: 6, r: [[0, 7.2, 1.2, 1.4]] },
-      { k: 'foam', cls: 'p-foam', d: 7, r: [[1.2, 11.2, 53.6, 0.8]] },
-      { k: 'back', cls: 'p-shell', d: 8, r: [[0, 1.0, 1.2, 11.0], [54.8, 1.0, 1.2, 11.0]] },
+      { k: 'mid', cls: 'p-frame', d: 4, r: [[38.6, 2.6, 16.2, 0.8]] },
+      { k: 'board', cls: 'p-chip', d: 5, r: [[41.2, 3.8, 3.6, 0.6], [45.2, 3.6, 4.4, 0.8], [49.4, 3.5, 4.4, 0.9]] },
+      { k: 'board', cls: 'p-pcb', d: 5, r: [[38.6, 4.4, 16.2, 1.0]] },
+      { k: 'pocket', cls: 'p-pocket', d: 6, r: [[1.2, 2.6, 37, 9.2, 4]] },
+      { k: 'bud', cls: 'p-bud', d: 6, r: [[9.6, 3.0, 25.1, 8.4, 3]] },
+      { k: 'bud', cls: 'p-pod', d: 6, r: [[2.2, 3.05, 7, 8.3, 3], [34.8, 3.2, 3, 8.0, 1]] },
+      { k: 'drive', cls: 'p-gear', d: 6, r: [[38.4, 5.6, 1.6, 6.0]] },
+      { k: 'drive', cls: 'p-mot', d: 6, r: [[40.8, 8.8, 7.2, 2.4, 1]] },
+      { k: 'doors', cls: 'p-door', d: 7, r: [[0, 2.6, 1.2, 9.2]] },
+      { k: 'foam', cls: 'p-foam', d: 7, r: [[38.6, 11.2, 16.2, 0.8]] },
+      { k: 'back', cls: 'p-shell', d: 8, r: [[0, 1.0, 1.2, 1.6], [0, 11.8, 1.2, 0.2], [54.8, 1.0, 1.2, 11.0]] },
       { k: 'back', cls: 'p-ceramic', d: 8, r: [[0, 12.0, 56, 1.0, 2]] }
     ];
     const TAGS = [
-      { k: 'front', at: [55.4, 0.5], ly: 36, t: 'Titanium bezel', s: '1.0 mm · windows for screen and keys' },
-      { k: 'glass', at: [50.2, 0.6], ly: 84, t: 'Sapphire glass and touch film', s: '0.7 mm + 0.2 mm, full face' },
-      { k: 'disp', at: [52.6, 1.8], ly: 132, t: 'Full-face touch e-paper', s: '3.3″ panel · 1.2 mm' },
-      { k: 'mid', at: [54.4, 3.0], ly: 180, t: 'Mid-frame shelf', s: 'titanium · 0.8 mm' },
-      { k: 'board', at: [54, 4.9], ly: 228, t: 'Main board', s: '8 layers · 1.0 mm · shield over the MCU' },
-      { k: 'cell', at: [51.8, 8.4], ly: 276, t: 'LiPo cell', s: '3.7 V · 1000 mAh · 5.0 mm' },
-      { k: 'spk', at: [15.8, 7.0], ly: 324, t: 'Piezo horn array', s: 'fires out through the top edge' },
-      { k: 'foam', at: [54.6, 11.6], ly: 372, t: 'Foam and graphite sheet', s: '0.8 mm' },
-      { k: 'back', at: [55.6, 12.5], ly: 414, t: 'Zirconia ceramic back', s: '1.0 mm' }
+      { k: 'front', at: [55.4, 0.5], ly: 30, t: 'Titanium bezel', s: '1.0 mm · windows for screen and keys' },
+      { k: 'glass', at: [50.2, 0.6], ly: 72, t: 'Sapphire glass and touch film', s: '0.7 mm + 0.2 mm, full face' },
+      { k: 'disp', at: [52.6, 1.8], ly: 114, t: 'Full-face touch e-paper', s: '3.3″ panel · 1.2 mm' },
+      { k: 'mid', at: [54.4, 3.0], ly: 156, t: 'Mid-frame shelf', s: 'titanium · 0.8 mm · stops at the pocket' },
+      { k: 'board', at: [54, 4.9], ly: 198, t: 'Main board (U-shaped)', s: '1.0 mm · cut out where the pocket passes' },
+      { k: 'pocket', at: [37.6, 2.8], ly: 240, t: 'Petal pocket', s: 'Ø 9.2 mm tube in 9.6 mm of room' },
+      { k: 'bud', at: [22, 7.2], ly: 282, t: 'Folded bud', s: 'Ø 8.6 × 35 mm: pod, petals, hub' },
+      { k: 'drive', at: [44.4, 10.0], ly: 324, t: 'Gear plate and vibration motor', s: 'drive for the lead screw · 8 mm LRA' },
+      { k: 'doors', at: [0.6, 7.2], ly: 366, t: 'Petal doors', s: 'slide apart for the bloom' },
+      { k: 'foam', at: [54.6, 11.6], ly: 408, t: 'Foam and graphite sheet', s: '0.8 mm · cut out over the pocket' },
+      { k: 'back', at: [55.6, 12.5], ly: 446, t: 'Zirconia ceramic back', s: '1.0 mm' }
     ];
-    const W = 1300, H = Y(13) + 90, LX = X(56) + 64;
+    const W = 1300, H = Math.max(Y(13) + 90, 486), LX = X(56) + 64;
     let html = '<defs>' +
       '<pattern id="hatch-shell" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" class="hs-bg"/><line x1="0" y1="0" x2="0" y2="7" class="hs-ln"/></pattern>' +
       '<pattern id="hatch-cell" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)"><rect width="10" height="10" class="hc-bg"/><line x1="0" y1="0" x2="0" y2="10" class="hc-ln"/></pattern>' +
       '<pattern id="hatch-foam" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" class="hf-bg"/><circle cx="3" cy="3" r="1" class="hf-dot"/></pattern>' +
+      '<pattern id="hatch-bud" width="5" height="5" patternUnits="userSpaceOnUse"><rect width="5" height="5" fill="#8C949C"/><line x1="0" y1="0" x2="5" y2="0" stroke="#D5DBE0" stroke-width="1.4"/></pattern>' +
       '</defs>';
     PARTS.forEach(function (p) {
       html += '<g class="part ' + p.cls + '" data-k="' + p.k + '" style="--d:' + (p.d * 140 + 200) + 'ms">' + p.r.map(rect).join('') + '</g>';

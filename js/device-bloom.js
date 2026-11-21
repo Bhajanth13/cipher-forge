@@ -6,7 +6,7 @@
    Geometry (design values, shown on the page):
    - dish diameter D = 100 mm, focal length F = 40 mm (f/D = 0.4)
    - paraboloid h(r) = r² / 4F, rim depth D² / 16F = 15.6 mm
-   - eight petals from the hub (r = 4.8 mm) to the rim (r = 50 mm),
+   - eight petals from the hub (r = 4.2 mm) to the rim (r = 50 mm),
      each drawn as four flat segments that follow the curve, with
      one crease at mid-length so the petal folds in half
    - a feed pod (one tweeter, one mic) on a mast at the focus
@@ -20,7 +20,7 @@
   const $ = function (id) { return document.getElementById(id); };
 
   const MM = 5;                       // px per mm
-  const D = 100, F = 40, R0 = 4.8;    // mm
+  const D = 100, F = 40, R0 = 4.2;    // mm (hub Ø 8.4 so the bud fits a Ø 8.8 mm bore)
   const RIM = D / 2;
   const h = function (r) { return r * r / (4 * F); };
   const NP = 8;
@@ -130,11 +130,11 @@
   for (let k = 0; k < NP; k++) petals += petal(k);
   cam.innerHTML = '<div class="bl-rig" id="bl-rig">' + body() +
     '<div class="bl-bud">' +
-      column('bl-hub', R0 * 2 * MM + 6, 4 * MM, 5, 0) +
+      column('bl-hub', R0 * 2 * MM, 3 * MM, 5, 0) +
       rod('bl-mast1', 3 * MM, 22 * MM) +
       column('bl-collar', 4.4 * MM, 1.2 * MM, 2, -22 * MM) +
       '<div class="bl-mast2">' + rod('', 2.2 * MM, 20 * MM) + '</div>' +
-      '<div class="bl-pod">' + column('bl-podc', 12 * MM, 8 * MM, 6, 0) + '<i class="bl-tw"></i></div>' +
+      '<div class="bl-pod">' + column('bl-podc', 8.5 * MM, 7 * MM, 6, 0) + '<i class="bl-tw"></i></div>' +
       petals +
     '</div>' + rays() + '</div>';
 
@@ -152,6 +152,93 @@
   const farLine = 'FAR · 21.2 kHz · ~' + RANGE.fmt(RANGE.R.far) + ' m';
   cam.querySelector('.bl-aim').textContent = 'AIM ±' + (bw / 2).toFixed(1) + '°';
   document.querySelectorAll('[data-r]').forEach(function (e) { e.textContent = RANGE.fmt(RANGE.R[e.getAttribute('data-r')]); });
+
+  /* ---------- Where it fits: the space budget, from the same geometry ---------- */
+  (function () {
+    const plan = $('fit-plan');
+    if (!plan) return;
+    // folded petals: the outer half (r > crease) lies back over the inner half, so at any height
+    // the sheet to wrap is 8 × (w(r) + w(2·crease − r)), the same at every height
+    const crease = EDGES[2], wmm = function (r) { return 2 * Math.PI * r / NP * 1.1; };
+    const sheet = NP * (wmm(10) + wmm(2 * crease - 10));
+    const PITCH = 0.12, MAST = 3, BUD = 8.6, BORE = 8.8, TUBE = 9.2, ROOM = 9.6;
+    const wrapA = sheet * PITCH, mastA = Math.PI * MAST * MAST / 4;
+    const budMin = 2 * Math.sqrt((wrapA + mastA) / Math.PI);
+    const inner = (LEN[0] + LEN[1]) / MM, outer = (LEN[2] + LEN[3]) / MM;
+    const POD = 7, HUB = 3, budLen = POD + Math.max(inner, outer) + HUB;
+    const boardCut = 19.2 * 38.6, boardArea = 74.8 * 52.8;
+    const cellOld = 5 * 34 * 50 / 1000, cellNew = 2 * 5 * 25 * 38 / 1000;
+    const strain = 0.1 / (2 * 2) * 100;
+    const row = function (k, v) { return '<tr><td>' + k + '</td><td>' + v + '</td></tr>'; };
+    const f1 = function (x) { return x.toFixed(1); };
+    $('fit-table').innerHTML =
+      row('Petals', NP + ' × 0.1 mm nitinol, one crease at r = ' + f1(crease) + ' mm') +
+      row('Petal sheet to wrap at any height', 'Σ w(r) + w(' + f1(2 * crease) + ' − r) = ' + f1(sheet) + ' mm') +
+      row('Wrapped at ' + PITCH + ' mm a layer, plus a Ø ' + MAST + ' mm mast', f1(wrapA) + ' + ' + f1(mastA) + ' mm² → bud at least Ø ' + f1(budMin) + ' mm; designed Ø ' + BUD) +
+      row('Bud length: pod + folded petals + hub', POD + ' + ' + f1(Math.max(inner, outer)) + ' + ' + HUB + ' = ' + f1(budLen) + ' mm') +
+      row('Pocket', 'tube Ø ' + BORE + ' inside, Ø ' + TUBE + ' outside, 38 mm deep') +
+      row('Room inside the case at the pocket', ROOM + ' mm (e-paper to back) → ' + f1((ROOM - TUBE) / 2) + ' mm each side') +
+      row('Bloom module footprint', '19.2 × 38.6 mm: tube, M2 lead screw, 6 mm gear motor') +
+      row('Board area given up', f1(boardCut) + ' of ' + f1(boardArea) + ' mm² (' + f1(boardCut / boardArea * 100) + ' %)') +
+      row('Battery volume', '1 × 34 × 50 mm = ' + f1(cellOld) + ' cm³ → 2 × 25 × 38 mm = ' + f1(cellNew) + ' cm³') +
+      row('Bending strain at the crease, 2 mm radius', '0.1 ÷ (2 × 2) = ' + f1(strain) + ' % (nitinol recovers 5–6 %)');
+
+    // floor plan, mm → px at 10 px/mm, origin at the top-left outer corner
+    const S = 10, M = 30;
+    const r = function (cls, x, y, w, hh, rx, n) {
+      return '<rect class="' + cls + '" x="' + (M + x * S) + '" y="' + (M + y * S) + '" width="' + (w * S) + '" height="' + (hh * S) + '" rx="' + (rx || 0) * S + '"/>' +
+        (n ? '<g class="fp-n"><circle cx="' + (M + (x + w / 2) * S) + '" cy="' + (M + (y + hh / 2) * S) + '" r="11"/><text x="' + (M + (x + w / 2) * S) + '" y="' + (M + (y + hh / 2) * S + 4) + '">' + n + '</text></g>' : '');
+    };
+    const c = function (cls, x, y, rr, n) {
+      return '<circle class="' + cls + '" cx="' + (M + x * S) + '" cy="' + (M + y * S) + '" r="' + rr * S + '"/>' +
+        (n ? '<g class="fp-n"><circle cx="' + (M + x * S) + '" cy="' + (M + y * S) + '" r="11"/><text x="' + (M + x * S) + '" y="' + (M + y * S + 4) + '">' + n + '</text></g>' : '');
+    };
+    let g = r('fp-case', 0, 0, 78, 56, 3) + r('fp-in', 1.2, 1.2, 75.6, 53.6, 2);
+    g += r('fp-dash', 29.4, 1.2, 19.2, 37.4) + r('fp-dash mcu', 7.2, 8, 19.2, 14.4);
+    g += r('fp-horn', 8, 1.2, 18.8, 14, 0.6, 3) + r('fp-horn', 55.6, 1.2, 18.8, 14, 0.6, 3);
+    [10.2, 19, 57.8, 66.6].forEach(function (x) { g += r('fp-port', x, 0, 6, 1.2); });
+    g += r('fp-cell', 2.4, 16, 25, 38, 0.8, 4) + r('fp-cell', 50.2, 16, 25, 38, 0.8, 4);
+    g += r('fp-tube', 34.4, 0.4, TUBE, 37.2, 1.2) + r('fp-bud', 34.7, 1.4, BUD, budLen, 1.2, 1);
+    g += r('fp-door', 34.4, 0, TUBE / 2, 1.2) + r('fp-door', 34.4 + TUBE / 2, 0, TUBE / 2, 1.2);
+    g += r('fp-screw', 44.4, 1.2, 2.8, 36.4, 0.4, 2) + r('fp-motor', 28.4, 19.6, 5.6, 18, 1, 5) + r('fp-gear', 28.4, 37.6, 19.2, 1.6);
+    g += c('fp-lra', 39, 44, 3.6, 6) + r('fp-usb', 26, 48.8, 9.2, 5.2, 0.6, 7);
+    [[6.6, 3.6], [71.4, 3.6], [6.6, 51.6], [71.4, 51.6]].forEach(function (m) { g += c('fp-mic', m[0], m[1], 0.9); });
+    // dimensions
+    const dim = function (x1, y1, x2, y2, t, tx, ty, rot) {
+      return '<path class="fp-dim" d="M' + (M + x1 * S) + ' ' + (M + y1 * S) + ' L' + (M + x2 * S) + ' ' + (M + y2 * S) + '"/>' +
+        '<text class="fp-dt" x="' + (M + tx * S) + '" y="' + (M + ty * S) + '"' + (rot ? ' transform="rotate(-90 ' + (M + tx * S) + ' ' + (M + ty * S) + ')"' : '') + ' text-anchor="middle">' + t + '</text>';
+    };
+    g += dim(29.4, -1.4, 48.6, -1.4, 'pocket module 19.2 mm', 39, -2.1);
+    g += dim(0, 57.6, 78, 57.6, '78 mm', 39, 59.6) + dim(79.4, 0, 79.4, 56, '56 mm', 80.9, 28, true);
+    plan.setAttribute('viewBox', '0 0 ' + (2 * M + 84 * S) + ' ' + (2 * M + 62 * S));
+    plan.innerHTML = g;
+    const KEY = [
+      ['Folded bud', 'Ø ' + BUD + ' × ' + f1(budLen) + ' mm in a Ø ' + TUBE + ' mm tube; doors at the top edge'],
+      ['Lead screw', 'M2, 2 mm lead, 36 mm of travel'],
+      ['Horn blocks', '4 piezo tweeters along the top edge'],
+      ['Two cells', '25 × 38 × 5 mm each, 1000 mAh together (estimate)'],
+      ['Gear motor', '6 mm, turns the screw through the gear plate'],
+      ['Vibration motor', '8 mm LRA, moved below the pocket'],
+      ['USB-C', 'unchanged']
+    ];
+    $('fit-key').innerHTML = KEY.map(function (k) { return '<li><b>' + k[0] + '</b><span>' + k[1] + '</span></li>'; }).join('');
+
+    // thickness at the pocket, front to back, drawn at 40 px per mm
+    const K = 40, X0 = 10;
+    const seg = function (cls, a, b, t) {
+      return '<rect class="' + cls + '" x="' + (X0 + a * K) + '" y="26" width="' + ((b - a) * K) + '" height="40"/>' +
+        (t ? '<text class="fs-t" x="' + (X0 + (a + b) / 2 * K) + '" y="86" text-anchor="middle">' + t + '</text>' : '');
+    };
+    let st = seg('fs-glass', 0, 1.2, '') + seg('fs-paper', 1.2, 2.4, '') + seg('fs-room', 2.4, 12, '') + seg('fs-back', 12, 13, '');
+    st += '<rect class="fs-tube" x="' + (X0 + 2.6 * K) + '" y="32" width="' + (TUBE * K) + '" height="28" rx="14"/>' +
+      '<text class="fs-t" x="' + (X0 + 0.6 * K) + '" y="16" text-anchor="middle">glass</text>' +
+      '<text class="fs-t" x="' + (X0 + 1.8 * K) + '" y="16" text-anchor="middle">e-paper</text>' +
+      '<text class="fs-t" x="' + (X0 + 7.2 * K) + '" y="51" text-anchor="middle">tube Ø ' + TUBE + ' in ' + ROOM + ' mm of room</text>' +
+      '<text class="fs-t" x="' + (X0 + 12.5 * K) + '" y="16" text-anchor="middle">back</text>' +
+      '<path class="fp-dim" d="M' + X0 + ' 92 H' + (X0 + 13 * K) + '"/><text class="fp-dt" x="' + (X0 + 6.5 * K) + '" y="110" text-anchor="middle">13.0 mm, front to back</text>';
+    $('fit-stack').setAttribute('viewBox', '0 0 ' + (2 * X0 + 13 * K) + ' 116');
+    $('fit-stack').innerHTML = st;
+  })();
 
   /* ---------- One press: bloom / fold, with the screen narrating ---------- */
   const rig = $('bl-rig'), btn = $('bloom-btn'), stepEl = cam.querySelector('.bl-step'), modeEl = cam.querySelector('.bl-mode');

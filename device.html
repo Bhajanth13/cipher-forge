@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="css/fonts.css?v=8">
 <link rel="stylesheet" href="css/style.css?v=10">
 <link rel="stylesheet" href="css/future.css?v=11">
-<link rel="stylesheet" href="css/device.css?v=25">
+<link rel="stylesheet" href="css/device.css?v=26">
 </head>
 <body>
 
@@ -123,10 +123,10 @@
   <div class="sec-head">
     <p class="fx-kicker mono">Cross-section</p>
     <h2 class="fx-h2" id="xsec-title">Thirteen millimetres, cut open</h2>
-    <p class="fx-sub">A slice down the middle, from the top edge (horn ports) to the bottom edge (bottom mic). Heights are drawn at twice their real scale so the thin layers can be seen. Hover a label to find its part.</p>
+    <p class="fx-sub">A slice down the middle, from the top edge (petal doors) to the bottom edge, straight through the petal pocket. The two cells and the horns sit either side of this slice. Heights are drawn at twice their real scale so the thin layers can be seen. Hover a label to find its part.</p>
   </div>
   <figure class="xsec-wrap">
-    <svg id="xsec" role="img" aria-label="Cross-section of Cipher Echo: titanium bezel, sapphire glass and touch layer, full-face e-paper, mid-frame, main board, battery, piezo horn array, ceramic back, 13 millimetres in total"></svg>
+    <svg id="xsec" role="img" aria-label="Cross-section of Cipher Echo through the petal pocket: titanium bezel, sapphire glass and touch layer, full-face e-paper, mid-frame, main board, petal pocket with the folded bud, petal doors, ceramic back, 13 millimetres in total"></svg>
   </figure>
 </section>
 
@@ -191,11 +191,30 @@
       <p class="bloom-note" id="bloom-note">Sending: the tweeter at the focus fires into the dish, and the curve turns the spreading sound into a narrow parallel beam.</p>
       <table class="lb-table mono bloom-table" id="bloom-table"></table>
       <details class="bloom-more">
-        <summary>How it folds, and what is still unsolved</summary>
-        <p>The petals are 0.1 mm superelastic nickel–titanium (nitinol), shape-set to the dish curve, so they spring open once clear of the body. A 6 mm gear motor and lead screw push the bud out and pull it back through a collar that closes the petals around the mast. Each petal folds once at mid-length.</p>
-        <p>Folded, the bud is about Ø 12 × 26 mm (estimate). It does not fit in the current layout: the battery and processor would have to move down to make a pocket behind the top edge. The take-apart view above still shows the layout without it. This is a concept, not a tested design.</p>
+        <summary>How it folds</summary>
+        <p>The petals are 0.1 mm superelastic nickel–titanium (nitinol), shape-set to the dish curve, so they spring open once clear of the body. A 6 mm gear motor turns a lead screw that pushes the bud 36 mm out of its pocket; at the top a latch lets the spring-loaded mast extend and the petals open on their own. Folding, the screw draws the bud back through a collar that closes the petals around the mast. Each petal folds once at mid-length. <a href="#fit">Where it all fits</a>.</p>
       </details>
     </div>
+  </div>
+
+  <div class="fit" id="fit">
+    <div class="fit-head">
+      <p class="fx-kicker mono">Space budget</p>
+      <h3 class="bloom-title">Where it fits</h3>
+      <p class="bloom-p">The folded bud needs a pocket 9.2 mm across and 38 mm deep, which is almost the full inside height of a 13 mm case. To make room, the board becomes U-shaped and the single battery becomes two cells, one either side. Every number below is worked out from the dish geometry.</p>
+    </div>
+    <div class="fit-grid">
+      <figure class="fit-fig">
+        <svg id="fit-plan" role="img" aria-label="Floor plan of the inside of Cipher Echo, 78 by 56 millimetres, showing the petal pocket in the middle of the top edge, the lead screw and gear motor beside it, the two cells on either side, the horn blocks along the top and the vibration motor below the pocket"></svg>
+        <figcaption>Floor plan, looking through the screen, drawn to scale (78 × 56 mm). Dashed: the board cut-out and the processor, which sit one layer up.</figcaption>
+      </figure>
+      <div class="fit-side">
+        <ol class="fit-key" id="fit-key"></ol>
+        <svg id="fit-stack" role="img" aria-label="Thickness at the pocket: 2.4 millimetres of glass and screen, 9.6 millimetres of room for the 9.2 millimetre tube, 1 millimetre ceramic back"></svg>
+      </div>
+    </div>
+    <table class="lb-table mono fit-table" id="fit-table"></table>
+    <p class="fit-note">Still to prove with a prototype: that the petals survive thousands of folds at the crease, that dust in the slot does not jam them, and that 0.2 mm of clearance holds once real tolerances add up. This is a concept, not a tested design.</p>
   </div>
 
   <h3 class="nc-title">Five layers between noise and the message</h3>
@@ -346,13 +365,13 @@
         <tr><td class="mono">4 × piezo horn tweeter</td><td>Transmitters</td><td>Horn-loaded, 18–24 kHz, along the top edge.</td></tr>
         <tr><td class="mono">Petal reflector</td><td>Far mode</td><td>Eight 0.1 mm nickel–titanium (nitinol) petals that bloom into a 10 cm dish, focal length 40 mm. About +22.8 dB at 21 kHz, assuming 50 % efficiency.</td></tr>
         <tr><td class="mono">Feed pod</td><td>Far-mode transmitter and mic</td><td>One piezo tweeter and one SPH0641 mic on a two-stage telescoping mast, held at the dish focus.</td></tr>
-        <tr><td class="mono">6 mm gear motor</td><td>Bloom and fold</td><td>Drives a lead screw that pushes the bud out and draws it back in through a closing collar.</td></tr>
+        <tr><td class="mono">6 mm gear motor</td><td>Bloom and fold</td><td>Turns an M2 lead screw (2 mm lead) that pushes the bud 36 mm out of its pocket and draws it back through a collar that closes the petals.</td></tr>
         <tr><td class="mono">Fingerprint key</td><td>Power and unlock</td><td>Capacitive sensor in the side power key.</td></tr>
         <tr><td class="mono">EVQ-WK series</td><td>Thumb rotor</td><td>Side jog wheel with push switch.</td></tr>
         <tr><td class="mono">DRV2605L</td><td>Haptic driver</td><td>Quiet, sharp buzz patterns on an 8 mm LRA.</td></tr>
         <tr><td class="mono">BQ25180 + MAX17048</td><td>Charger and gauge</td><td>Charges from USB-C and reports the battery level accurately.</td></tr>
         <tr><td class="mono">W25Q128</td><td>16 MB flash</td><td>Firmware only. Messages are never written to it.</td></tr>
-        <tr><td class="mono">LiPo 503450</td><td>Battery</td><td>3.7 V, 1000 mAh (3.7 Wh), 5 mm thin, pull-tab removable.</td></tr>
+        <tr><td class="mono">2 × LiPo 502538</td><td>Battery</td><td>Two 5 × 25 × 38 mm cells, one either side of the petal pocket, in parallel: 3.7 V, about 500 mAh each (estimate from the energy density of a standard 503450), 1000 mAh together. Pull-tab removable.</td></tr>
         <tr><td class="mono">Ti Grade 5 + ZrO₂</td><td>Body</td><td>Titanium bezel and mid-frame, zirconia ceramic back.</td></tr>
       </tbody>
     </table>
@@ -374,6 +393,7 @@
         <tr><td>Listening (4 mics, 96 kHz)</td><td class="mono">≈ 11.5 mA</td></tr>
         <tr><td>Refreshing the screen</td><td class="mono">≈ 4 mA for 2 s</td></tr>
         <tr><td>Sending, long-range</td><td class="mono">≈ 450 mA in short bursts</td></tr>
+        <tr><td>Blooming or folding (gear motor)</td><td class="mono">≈ 100 mA for about 1 s</td></tr>
       </tbody>
     </table>
     <div class="power-calc panel">
@@ -394,9 +414,9 @@
 </footer>
 
 <script src="js/fx.js?v=8"></script>
-<script src="js/device.js?v=22"></script>
+<script src="js/device.js?v=24"></script>
 <script src="js/device-steps.js?v=22"></script>
 <script src="js/device-range.js?v=25"></script>
-<script src="js/device-bloom.js?v=3"></script>
+<script src="js/device-bloom.js?v=5"></script>
 </body>
 </html>

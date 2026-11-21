@@ -101,6 +101,20 @@
 
 /* Main board */
 .slab.pcb { --top: linear-gradient(150deg, var(--pcb-a), var(--pcb-b)); --edge: var(--pcb-edge); }
+/* the petal pocket passes through the board and the shelf */
+.slab.pcb.cutout > .top, .slab.pcb.cutout > .bot { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 374 264' preserveAspectRatio='none'%3E%3Cpath fill-rule='evenodd' d='M0 0H374V264H0Z M139 0H235V185H139Z'/%3E%3C/svg%3E") 0 0 / 100% 100%; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 374 264' preserveAspectRatio='none'%3E%3Cpath fill-rule='evenodd' d='M0 0H374V264H0Z M139 0H235V185H139Z'/%3E%3C/svg%3E") 0 0 / 100% 100%; }
+.slab.frame.cutout > .top, .slab.frame.cutout > .bot { -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 378 268' preserveAspectRatio='none'%3E%3Cpath fill-rule='evenodd' d='M0 0H378V268H0Z M134 0H238V190H134Z'/%3E%3C/svg%3E") 0 0 / 100% 100%; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 378 268' preserveAspectRatio='none'%3E%3Cpath fill-rule='evenodd' d='M0 0H378V268H0Z M134 0H238V190H134Z'/%3E%3C/svg%3E") 0 0 / 100% 100%; }
+.slab.pcb-edge { --top: var(--pcb-edge); --edge: var(--pcb-edge); }
+.slab.door { --top: linear-gradient(90deg, #4A525B, #8D959E 45%, #5B636C); --edge: #5B636C; }
+.slab.pocket { --top: rgba(170, 182, 196, .16); --edge: rgba(170, 182, 196, .22); --bot: rgba(170, 182, 196, .1); }
+.slab.pocket > .f { box-shadow: inset 0 0 0 1px rgba(210, 220, 232, .45); }
+.bud-ghost { position: absolute; left: 6px; right: 6px; top: 4px; bottom: 14px; border-radius: 16px 16px 6px 6px;
+  background: repeating-linear-gradient(90deg, rgba(220, 226, 232, .55) 0 3px, rgba(120, 130, 140, .55) 3px 6px); box-shadow: 0 0 0 1px rgba(255, 255, 255, .25); }
+.bud-ghost::before { content: ''; position: absolute; left: 4px; right: 4px; top: -2px; height: 30px; border-radius: 8px; background: linear-gradient(180deg, #8B929A, #3F454C); }
+.slab.gmotor { --top: linear-gradient(90deg, #6B737C, #C1C7CD 45%, #6B737C); --edge: #59616A; }
+.slab.gmotor > .top { font-family: var(--mono); font-size: 7px; color: #1A1E23; display: grid; place-items: center; letter-spacing: .1em; }
+.slab.screw { --top: repeating-linear-gradient(180deg, #9AA2AA 0 2px, #4F565E 2px 4px); --edge: #6B737C; }
+.slab.gearplate { --top: linear-gradient(90deg, #3C434A, #7B838B); --edge: #4B525A; }
 .traces { position: absolute; inset: 0; width: 100%; height: 100%; }
 .traces path { fill: none; stroke: var(--trace); stroke-width: 1.1; }
 .traces .via { fill: var(--via); }
@@ -288,6 +302,11 @@
 #xsec .p-key rect { fill: #2D333B; stroke: var(--steel-2); }
 #xsec .p-dome rect { fill: #9BA5B0; stroke: none; }
 #xsec .p-ceramic rect { fill: #1A1D22; stroke: var(--steel-2); }
+#xsec .p-pocket rect { fill: rgba(170, 182, 196, .08); stroke: #B9C1CA; stroke-width: 1.4; }
+#xsec .p-bud rect { fill: url(#hatch-bud); stroke: #C9D0D7; }
+#xsec .p-pod rect { fill: #4B535B; stroke: #9AA2AA; }
+#xsec .p-gear rect { fill: #5C646C; stroke: var(--steel-2); }
+#xsec .p-door rect { fill: #8D959E; stroke: var(--signal); }
 .fx.dev[data-theme="light"] #xsec .p-ceramic rect { fill: #E6E8EB; }
 .fx.dev[data-theme="light"] #xsec .p-key rect { fill: #E1E5EA; }
 #xsec .hatch-line { stroke: var(--rule); stroke-width: 1; }
@@ -761,14 +780,14 @@
 .bl-rig.open .bl-bar i { width: 100%; transition-delay: .4s; }
 .bl-port { position: absolute; top: 18px; width: 30px; height: 28px; border-radius: 3px; background: #05070A; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08); }
 .bl-mic { position: absolute; top: 28px; width: 6px; height: 6px; border-radius: 50%; background: #05070A; }
-.bl-slot { position: absolute; left: 163px; top: 1px; width: 64px; height: 63px; border-radius: 50%; background: radial-gradient(circle, #010203 52%, #1B2026 58%, #59626C 64%, #2E353D 72%, transparent 74%); }
-.bl-door { position: absolute; top: 1px; width: 33px; height: 63px; background: linear-gradient(90deg, #4A525B, #8D959E 45%, #5B636C); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12);
+.bl-slot { position: absolute; left: 172px; top: 9.5px; width: 46px; height: 46px; border-radius: 50%; background: radial-gradient(circle, #010203 52%, #1B2026 58%, #59626C 64%, #2E353D 72%, transparent 74%); }
+.bl-door { position: absolute; top: 8.5px; width: 24px; height: 48px; background: linear-gradient(90deg, #4A525B, #8D959E 45%, #5B636C); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .12);
   transition: transform .35s cubic-bezier(.4, 0, .2, 1) 2.55s; }
-.bl-door.l { left: 162px; border-radius: 32px 0 0 32px; }
-.bl-door.r { left: 195px; border-radius: 0 32px 32px 0; }
+.bl-door.l { left: 171px; border-radius: 24px 0 0 24px; }
+.bl-door.r { left: 195px; border-radius: 0 24px 24px 0; }
 .bl-rig.open .bl-door { transition-delay: 0s; }
-.bl-rig.open .bl-door.l { transform: translateX(-34px); }
-.bl-rig.open .bl-door.r { transform: translateX(34px); }
+.bl-rig.open .bl-door.l { transform: translateX(-26px); }
+.bl-rig.open .bl-door.r { transform: translateX(26px); }
 
 /* ---- machined titanium: hub, mast, feed pod ---- */
 .bl-col > i { position: absolute; border-radius: 50%; backface-visibility: visible;
@@ -803,12 +822,12 @@
 @keyframes blGlint { 45% { --gl: 1.55; } }
 
 /* ---- bud and mast travel ---- */
-.bl-bud { position: absolute; left: 0; top: 0; transform: translateY(150px); visibility: hidden;
+.bl-bud { position: absolute; left: 0; top: 0; transform: translateY(178px); visibility: hidden;
   transition: transform .6s cubic-bezier(.5, 0, .3, 1) 1.95s, visibility 0s 2.55s; }
 .bl-rig.open .bl-bud { transform: translateY(0); visibility: visible; transition: transform .8s cubic-bezier(.25, 1.25, .5, 1) .35s, visibility 0s .3s; }
-.bl-pod { transform: translateY(-60px); transition: transform .6s cubic-bezier(.4, 0, .2, 1) 1.35s; }
+.bl-pod { transform: translateY(-122px); transition: transform .6s cubic-bezier(.4, 0, .2, 1) 1.35s; }
 .bl-rig.open .bl-pod { transform: translateY(-200px); transition: transform .7s cubic-bezier(.25, 1.2, .5, 1) 1s; }
-.bl-mast2 { transform: translateY(0); transition: transform .6s cubic-bezier(.4, 0, .2, 1) 1.35s; }
+.bl-mast2 { transform: translateY(-22px); transition: transform .6s cubic-bezier(.4, 0, .2, 1) 1.35s; }
 .bl-rig.open .bl-mast2 { transform: translateY(-100px); transition: transform .7s cubic-bezier(.25, 1.2, .5, 1) 1s; }
 
 /* ---- sound ---- */
@@ -833,3 +852,51 @@
   .bloom-cam, .bl-bud, .bl-pod, .bl-mast2, .bl-seg, .bl-leaf, .bl-rays, .bl-tw, .bl-bar i, .bl-door { transition-duration: 0s !important; transition-delay: 0s !important; }
   .bl-ray, .bl-waves, .bl-petal, .bl-tw { animation: none !important; }
 }
+
+/* ---- Where it fits ---- */
+.fit { margin-top: 26px; padding: 24px 26px; border-radius: 16px; border: 1px solid var(--rule); background: linear-gradient(170deg, var(--plate-2), var(--plate)); display: grid; gap: 18px; }
+.fit-head { display: grid; gap: 8px; max-width: 760px; }
+.fit-head .fx-kicker { margin: 0; }
+.fit-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr); gap: 24px; align-items: start; }
+.fit-fig { margin: 0; }
+.fit-fig figcaption { margin-top: 8px; font-size: 12.5px; color: var(--muted); }
+#fit-plan, #fit-stack { display: block; width: 100%; height: auto; }
+#fit-plan rect, #fit-plan circle { stroke-width: 1.2; }
+.fp-case { fill: var(--plate); stroke: var(--steel-2); stroke-width: 2 !important; }
+.fp-in { fill: var(--graphite-2, #0E1318); stroke: var(--rule); }
+.fp-dash { fill: none; stroke: var(--signal); stroke-dasharray: 6 5; opacity: .7; }
+.fp-dash.mcu { stroke: var(--brass); }
+.fp-horn { fill: #3A4552; stroke: var(--steel-2); }
+.fp-port { fill: #05070A; stroke: none; }
+.fp-cell { fill: rgba(140, 150, 162, .22); stroke: var(--steel-2); }
+.fp-tube { fill: rgba(170, 182, 196, .12); stroke: #C3CAD2; }
+.fp-bud { fill: rgba(200, 208, 216, .55); stroke: #E1E6EA; }
+.fp-door { fill: #8D959E; stroke: var(--signal); }
+.fp-screw { fill: #8A929A; stroke: #C3CAD2; }
+.fp-motor { fill: #6B737C; stroke: #C3CAD2; }
+.fp-gear { fill: #4E555D; stroke: var(--steel-2); }
+.fp-lra { fill: #3A4552; stroke: var(--steel-2); }
+.fp-usb { fill: #8C96A1; stroke: #5E6874; }
+.fp-mic { fill: var(--signal); stroke: none; }
+.fp-n circle { fill: var(--signal); stroke: var(--graphite); stroke-width: 2; }
+.fp-n text { font-family: var(--mono); font-size: 12px; font-weight: 600; fill: var(--graphite); text-anchor: middle; }
+.fp-dim { stroke: var(--muted); stroke-width: 1; fill: none; }
+.fp-dt { font-family: var(--mono); font-size: 13px; fill: var(--steel-2); }
+.fit-side { display: grid; gap: 18px; }
+.fit-key { margin: 0; padding: 0; list-style: none; counter-reset: k; display: grid; gap: 8px; }
+.fit-key li { counter-increment: k; display: grid; grid-template-columns: 24px minmax(0, 1fr); column-gap: 10px; font-size: 13.5px; }
+.fit-key li::before { content: counter(k); grid-row: 1 / span 2; width: 22px; height: 22px; border-radius: 50%; background: var(--signal); color: var(--graphite); font-family: var(--mono); font-size: 12px; font-weight: 600; display: grid; place-items: center; }
+.fit-key b { font-weight: 500; color: var(--steel); }
+.fit-key span { color: var(--muted); font-size: 12.5px; }
+.fs-glass { fill: var(--signal-soft); stroke: var(--signal-line); }
+.fs-paper { fill: var(--paper); stroke: #8B908A; }
+.fs-room { fill: none; stroke: var(--steel-2); stroke-dasharray: 4 4; }
+.fs-back { fill: #1A1D22; stroke: var(--steel-2); }
+.fx.dev[data-theme="light"] .fs-back { fill: #E6E8EB; }
+.fs-tube { fill: rgba(170, 182, 196, .3); stroke: #C3CAD2; }
+.fs-t { font-family: var(--mono); font-size: 11.5px; fill: var(--steel-2); }
+.fit-table { margin-top: 0; }
+.fit-note { margin: 0; font-size: 13px; color: var(--muted); }
+.fx.dev[data-theme="light"] .fp-in { fill: #F4F6F8; }
+.fx.dev[data-theme="light"] .fp-n text { fill: #fff; }
+@media (max-width: 980px) { .fit-grid { grid-template-columns: 1fr; } }
