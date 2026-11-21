@@ -290,6 +290,7 @@
   }
 
   let lastDiagramKey = '';
+  let pinned = null;   // the symbol whose path is pinned in the arrow diagram: { row, v }
   function renderInspector(animate) {
     const s = set(), n = s.length;
     const tgt = currentTarget();
@@ -414,27 +415,72 @@
       });
     }
 
-    // Hover a symbol in any row to trace every path through it
-    function focusOn(row, v) {
-      const keys = new Set();
+    // Tap a symbol to pin its path (tap again, or tap empty space, to clear); hover previews another
+    const pathEl = $('diagram-path');
+    function keysFor(row, v) {
+      const arrows = new Set(), nodes = new Set(), routes = [];
       paths.forEach(function (p) {
         if (p[row] !== v) return;
-        for (let j = 1; j <= L; j++) keys.add(j + ':' + p[j - 1]);
+        for (let j = 1; j <= L; j++) arrows.add(j + ':' + p[j - 1]);
+        for (let j = 0; j <= L; j++) nodes.add(j + ':' + p[j]);
+        routes.push(p);
       });
-      svg.classList.add('has-focus');
-      svg.querySelectorAll('.arrow').forEach(function (a) { a.classList.toggle('focus', keys.has(a.getAttribute('data-k'))); });
+      return { arrows: arrows, nodes: nodes, routes: routes };
     }
-    function clear() {
+    function show(row, v) {
+      const k = keysFor(row, v);
+      svg.classList.add('has-focus');
+      svg.querySelectorAll('.arrow').forEach(function (a) { a.classList.toggle('focus', k.arrows.has(a.getAttribute('data-k'))); });
+      svg.querySelectorAll('.hit').forEach(function (g) {
+        const key = g.getAttribute('data-row') + ':' + g.getAttribute('data-v');
+        g.classList.toggle('on', k.nodes.has(key));
+        g.classList.toggle('picked', +g.getAttribute('data-row') === row && +g.getAttribute('data-v') === v);
+      });
+      return k;
+    }
+    function clearAll() {
       svg.classList.remove('has-focus');
       svg.querySelectorAll('.arrow.focus').forEach(function (a) { a.classList.remove('focus'); });
+      svg.querySelectorAll('.hit.on, .hit.picked').forEach(function (g) { g.classList.remove('on', 'picked'); });
+    }
+    function describe(k, row) {
+      const names = L === 1 ? [tgt.k === 0 ? 'F' : 'f₁'] : tgt.labels;
+      const lines = k.routes.map(function (p) {
+        let t = s[p[0]];
+        for (let j = 1; j <= L; j++) t += ' —' + names[j - 1] + '→ ' + s[p[j]];
+        return t;
+      });
+      if (!lines.length) return row === 0 ? '' : s[pinned.v] + ' is never reached in this row.';
+      return lines.join('   ·   ');
+    }
+    function restore() {
+      if (pinned && pinned.row <= L && pinned.v < n) {
+        const k = show(pinned.row, pinned.v);
+        pathEl.textContent = 'Pinned: ' + describe(k, pinned.row) + '. Tap it again to clear.';
+      } else {
+        pinned = null;
+        clearAll();
+        pathEl.textContent = 'Tap a symbol to pin its path.';
+      }
+      svg.querySelectorAll('.hit[data-row="0"]').forEach(function (g) {
+        g.setAttribute('aria-pressed', String(!!pinned && pinned.row === 0 && +g.getAttribute('data-v') === pinned.v));
+      });
+    }
+    function toggle(row, v) {
+      pinned = pinned && pinned.row === row && pinned.v === v ? null : { row: row, v: v };
+      restore();
     }
     svg.querySelectorAll('.hit').forEach(function (g) {
       const row = +g.getAttribute('data-row'), v = +g.getAttribute('data-v');
-      g.addEventListener('mouseenter', function () { focusOn(row, v); });
-      g.addEventListener('focus', function () { focusOn(row, v); });
-      g.addEventListener('mouseleave', clear);
-      g.addEventListener('blur', clear);
+      g.addEventListener('click', function (e) { e.stopPropagation(); toggle(row, v); });
+      g.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(row, v); }
+      });
+      g.addEventListener('mouseenter', function () { if (!pinned) show(row, v); });
+      g.addEventListener('mouseleave', function () { if (!pinned) clearAll(); });
     });
+    svg.onclick = function () { if (pinned) { pinned = null; restore(); } };
+    restore();
   }
 
   /* =========================================================

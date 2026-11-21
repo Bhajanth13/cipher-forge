@@ -701,3 +701,12 @@ body.touring .chapter .plate { transform: none !important; opacity: 1 !important
   .block.is-new { animation: none; }
   #diagram .draw { animation: none; stroke-dashoffset: 0; }
 }
+
+/* Arrow diagram: a tapped symbol stays highlighted with its whole path */
+#diagram.has-focus .hit:not(.on) { opacity: .4; }
+#diagram .hit.on .node { stroke: var(--brass); stroke-width: 2; }
+#diagram .hit.picked .node { fill: var(--brass); stroke: var(--brass); }
+#diagram .hit.picked .lbl { fill: var(--graphite); font-weight: 600; }
+#diagram .hit:focus { outline: none; }
+#diagram .hit:focus-visible .node { stroke: var(--signal); stroke-width: 3; }
+.diagram-path { margin: 10px 0 0; min-height: 1.4em; font-size: 13px; color: var(--brass); overflow-wrap: anywhere; }

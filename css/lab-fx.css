@@ -153,3 +153,5 @@
   .halo-ring, .rotor-scan { animation: none !important; }
   .rotor-scan { display: none; }
 }
+.fx.lab #diagram .hit.on .node { stroke: var(--brass); stroke-width: 2; }
+.fx.lab #diagram .hit.picked .node { fill: var(--brass); stroke: var(--brass); }

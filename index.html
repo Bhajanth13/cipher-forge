@@ -7,9 +7,9 @@
 <meta name="description" content="Cipher Forge is an interactive lab for CS1812 Discrete Mathematics and Set Theory: build ciphers from blocks and watch sets, functions, bijections, the pigeonhole principle and counting at work.">
 <script>try{var t=localStorage.getItem('cf-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <link rel="stylesheet" href="css/fonts.css?v=8">
-<link rel="stylesheet" href="css/style.css?v=10">
+<link rel="stylesheet" href="css/style.css?v=11">
 <link rel="stylesheet" href="css/future.css?v=9">
-<link rel="stylesheet" href="css/lab-fx.css?v=10">
+<link rel="stylesheet" href="css/lab-fx.css?v=11">
 </head>
 <body>
 
@@ -195,13 +195,14 @@
     <header class="chapter-head">
       <p class="step">Step 3 of 7 <span class="module">Modules 2 and 3: logic, bijections, pigeonhole</span></p>
       <h2 id="inspect-title">Check that it can be undone</h2>
-      <p class="chapter-lead">A cipher can be decrypted only if its function is a bijection: one-to-one and onto. The arrow diagram shows the function. Pick f₂ ∘ f₁, f₃ ∘ f₂ ∘ f₁ and so on to watch your blocks build F one step at a time; hover a symbol to trace its path.</p>
+      <p class="chapter-lead">A cipher can be decrypted only if its function is a bijection: one-to-one and onto. The arrow diagram shows the function. Pick f₂ ∘ f₁, f₃ ∘ f₂ ∘ f₁ and so on to watch your blocks build F one step at a time; tap a symbol to pin its path.</p>
     </header>
 
     <div class="tabs" role="tablist" aria-label="Function to inspect" id="inspect-tabs"></div>
 
     <figure class="diagram-wrap">
       <svg id="diagram" role="img" aria-labelledby="diagram-cap"></svg>
+      <p id="diagram-path" class="diagram-path mono" aria-live="polite"></p>
       <figcaption id="diagram-cap" class="diagram-cap"></figcaption>
     </figure>
 
@@ -478,7 +479,7 @@
 <script src="js/breaker.js?v=8"></script>
 <script src="js/relations.js?v=8"></script>
 <script src="js/scroll3d.js?v=9"></script>
-<script src="js/app.js?v=10"></script>
+<script src="js/app.js?v=11"></script>
 <script src="js/lab2.js?v=9"></script>
 <script src="js/fx.js?v=9"></script>
 <script src="js/tour.js?v=9"></script>
