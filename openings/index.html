@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cipher Forge · five opening pages to choose from</title>
+<meta name="description" content="Five full-screen, scroll-driven 3D opening pages for Cipher Forge. Open each one and scroll through it.">
+<link rel="stylesheet" href="../css/fonts.css?v=8">
+<link rel="stylesheet" href="op.css?v=1">
+<style>
+  .pick { max-width: 1240px; margin: 0 auto; padding: 70px clamp(18px, 4vw, 40px) 90px; }
+  .pick h1 { margin: 0; font-size: clamp(40px, 5vw, 72px); font-weight: 300; letter-spacing: -.02em; font-variation-settings: 'wdth' 125; }
+  .pick > p { margin: 14px 0 40px; max-width: 46em; color: var(--steel-2); font-size: 18px; line-height: 1.5; }
+  .grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 22px; }
+  .card { display: block; text-decoration: none; color: inherit; border: 1px solid var(--signal-line); border-radius: 16px; overflow: hidden; background: var(--bg-2);
+    transition: transform .4s var(--ease), border-color .3s, box-shadow .3s; }
+  .card:hover, .card:focus-visible { transform: translateY(-4px); border-color: var(--signal); box-shadow: 0 20px 50px -20px rgba(114, 226, 255, .35); outline: none; }
+  .card img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+  .card div { padding: 16px 18px 20px; }
+  .card h2 { margin: 0; font-size: 22px; font-weight: 600; display: flex; align-items: baseline; gap: 10px; }
+  .card h2 b { font-family: var(--mono); font-weight: 500; font-size: 15px; color: var(--brass); }
+  .card p { margin: 8px 0 0; color: var(--steel-2); line-height: 1.5; font-size: 15.5px; }
+  .card .maths { margin-top: 10px; font-family: var(--mono); font-size: 13.5px; color: var(--signal); }
+</style>
+</head>
+<body>
+<main class="pick">
+  <h1>Choose an opening</h1>
+  <p>Five full-screen openings for Cipher Forge. Each is a 3D scene you fly through by scrolling, with the maths on screen worked out live. Open one, scroll all the way down, then use the bar at the bottom to jump to the next.</p>
+  <ol class="grid">
+    <li><a class="card" href="1.html"><img src="thumbs/1.jpg" alt="Looking down a tunnel of glowing alphabet rings"><div><h2><b>01</b>Rotor tunnel</h2><p>Fly down 26 rings of the alphabet. Ring k is shifted k places, and far rings spin loose, then click into place as you reach them.</p><p class="maths">f(x) = (x + k) mod 26</p></div></a></li>
+    <li><a class="card" href="2.html"><img src="thumbs/2.jpg" alt="Two rings of letters joined by curved beams of light"><div><h2><b>02</b>Arrow constellation</h2><p>Two rings of letters joined by beams. f(x) = 2x crashes pairs of letters together; the beams swing to 5x + 8 and every output lights once.</p><p class="maths">not one-to-one → bijection</p></div></a></li>
+    <li><a class="card" href="3.html"><img src="thumbs/3.jpg" alt="The word HELLO about to fly through three glass panels"><div><h2><b>03</b>The forge</h2><p>HELLO flies through three glass blocks, shift(3), multiply(5) and mirror, and the camera chases it. It comes out as BQHHS.</p><p class="maths">F = f₃ ∘ f₂ ∘ f₁</p></div></a></li>
+    <li><a class="card" href="4.html"><img src="thumbs/4.jpg" alt="A glowing grid with one tower in each row and column"><div><h2><b>04</b>Relation city</h2><p>The floor is S × S. Towers rise for each pair (x, f(x)), one per row; then you dive between them and find one per column too.</p><p class="maths">R ⊆ S × S, |R| = 26</p></div></a></li>
+    <li><a class="card" href="5.html"><img src="thumbs/5.jpg" alt="A row of digit drums reading 26 factorial, inside a star warp"><div><h2><b>05</b>Keyspace warp</h2><p>Warp through the keyspace while 27 digit drums roll to the exact value of 26!, then count how long a brute-force attack would take.</p><p class="maths">26! = 403,291,461,126,605,635,584,000,000</p></div></a></li>
+  </ol>
+</main>
+</body>
+</html>
