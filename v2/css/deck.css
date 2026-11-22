@@ -154,3 +154,7 @@ html.deck .deck-in { animation: scene-in 1.1s var(--ease) both; }
 }
 .fx[data-theme="light"] .dc-a .ok { color: #1E7A3A; }
 .fx[data-theme="light"] .db.now.k-build, .fx[data-theme="light"] .dc-kind.k-build { background: #2F8A4A; border-color: #2F8A4A; color: #fff; }
+
+/* No scroll bar in the deck: the page still scrolls with keys, wheel and touch */
+html.deck { scrollbar-width: none; -ms-overflow-style: none; }
+html.deck::-webkit-scrollbar, html.deck body::-webkit-scrollbar { display: none; width: 0; height: 0; }
