@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en" class="fx dev">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Future enhancements: Cipher Echo, an acoustic cipher communicator · Cipher Forge</title>
+<meta name="description" content="A future enhancement for Cipher Forge: Cipher Echo, a pocket cipher communicator with no radio that receives near-silent encrypted tones and decrypts them with a key locked in a secure chip. Concept design, taken apart in 3D.">
+<script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('cf-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<link rel="stylesheet" href="css/fonts.css?v=8">
+<link rel="stylesheet" href="css/style.css?v=10">
+<link rel="stylesheet" href="css/future.css?v=12">
+<link rel="stylesheet" href="css/device.css?v=27">
+</head>
+<body>
+
+<a class="skip" href="#explode">Skip to the exploded view</a>
+<div class="glyph-field" id="glyph-field" aria-hidden="true"></div>
+<canvas class="fx-stars" id="fx-stars" aria-hidden="true"></canvas>
+
+<header class="nav" id="nav">
+  <a class="brand" href="index.html" aria-label="Cipher Forge, back to the lab">
+    <span class="brand-mark" aria-hidden="true"></span>Cipher Forge
+  </a>
+  <nav aria-label="Sections">
+    <ol class="nav-steps">
+      <li><a href="index.html#alphabet">Symbols</a></li>
+      <li><a href="index.html#forge">Build</a></li>
+      <li><a href="index.html#inspect">Check</a></li>
+      <li><a href="index.html#relations">Relate</a></li>
+      <li><a href="index.html#encrypt">Encrypt</a></li>
+      <li><a href="index.html#break">Break</a></li>
+      <li><a href="index.html#attack">Count</a></li>
+      <li><a href="index.html#syllabus">Syllabus</a></li>
+      <li><a href="future.html" class="is-current">Future enhancements</a></li>
+    </ol>
+  </nav>
+  <div class="nav-actions">
+    <button type="button" class="nav-btn icon" id="theme-toggle" aria-label="Switch to light mode">
+      <svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7 7 17M17 7l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+  <div class="nav-progress" aria-hidden="true"><span id="progress"></span></div>
+  <nav class="subnav" aria-label="Future enhancements">
+    <a href="future.html"><span class="mono">01</span> Send it by sound</a>
+    <a href="device.html" aria-current="page"><span class="mono">02</span> Cipher Echo</a>
+  </nav>
+</header>
+
+<main>
+
+<!-- ============ HERO: the device, locked in a targeting frame ============ -->
+<section class="dv-hero" id="top" aria-labelledby="dv-title">
+  <div class="hud" aria-hidden="true">
+    <span class="hud-corner tl"></span><span class="hud-corner tr"></span><span class="hud-corner bl"></span><span class="hud-corner br"></span>
+    <p class="hud-line hud-a mono">FUTURE ENHANCEMENT 02 · CIPHER ECHO</p>
+    <p class="hud-line hud-b mono">RF EMISSIONS <span>0</span></p>
+    <p class="hud-line hud-c mono">78 × 56 × 13 MM · CONCEPT</p>
+    <p class="hud-line hud-d mono">RANGE ≈<span data-r="far">110</span> M · FAR MODE</p>
+  </div>
+
+  <div class="dv-hero-copy">
+    <p class="fx-kicker mono">Future enhancement for Cipher Forge</p>
+    <h1 class="fx-title dv-title" id="dv-title">Cipher<br>Echo</h1>
+    <p class="dv-tag">A flagship acoustic cipher communicator.</p>
+    <p class="fx-lead">Type on a full-face touch e-paper screen, tap Send, and your message leaves encrypted as ultrasound, loud enough to cross a room and pitched above human hearing. Cipher Echo has no radio at all: a titanium and ceramic body the size of a credit card, with the key locked in a secure chip.</p>
+    <div class="fx-cta">
+      <a class="btn primary fx-btn" href="#explode">Take it apart</a>
+      <a class="btn ghost fx-btn" href="#section">See the cross-section</a>
+    </div>
+    <p class="dv-note mono">Concept design. Not built yet; the chips named here are real, available parts.</p>
+  </div>
+
+  <div class="dv-hero-stage" aria-hidden="true">
+    <div class="lock">
+      <span class="lock-c tl"></span><span class="lock-c tr"></span><span class="lock-c bl"></span><span class="lock-c br"></span>
+      <span class="lock-x"></span><span class="lock-y"></span>
+      <p class="lock-tag mono">TARGET · CIPHER ECHO · LIVE</p>
+    </div>
+    <div class="scene hero-scene"><div class="cam" id="hero-cam"><div class="device" id="hero-device"></div></div></div>
+    <div class="dv-shadow"></div>
+  </div>
+</section>
+
+<!-- ============ SPEC STRIP ============ -->
+<section class="fx-specs dv-specs" aria-label="Cipher Echo in numbers">
+  <div class="spec"><p class="spec-num mono">0</p><p class="spec-label">radios: no Wi-Fi, Bluetooth or cellular</p></div>
+  <div class="spec"><p class="spec-num mono">13<small> mm</small></p><p class="spec-label">thin, 78 × 56 mm face</p></div>
+  <div class="spec"><p class="spec-num mono">≈29<small> days</small></p><p class="spec-label">on one charge, listening 2.4 h / 24 h (estimate)</p></div>
+  <div class="spec"><p class="spec-num mono">3.3<small>″</small></p><p class="spec-label">full-face touch e-paper with an on-screen keyboard</p></div>
+</section>
+
+<!-- ============ EXPLODED VIEW ============ -->
+<section class="explode" id="explode" aria-labelledby="explode-title">
+  <div class="ex-sticky">
+    <div class="ex-head">
+      <p class="fx-kicker mono">Disassembly · exploded view</p>
+      <h2 class="fx-h2" id="explode-title">Take it apart</h2>
+    </div>
+    <div class="ex-stage" id="ex-stage">
+      <div class="ex-hud" aria-hidden="true">
+        <span class="hud-corner tl"></span><span class="hud-corner tr"></span><span class="hud-corner bl"></span><span class="hud-corner br"></span>
+        <p class="exh exh-a mono">EXPLODED VIEW · ISOMETRIC</p>
+        <p class="exh exh-b mono" id="exh-layer">ASSEMBLED</p>
+        <p class="exh exh-c mono" id="exh-sep">SEPARATION 0%</p>
+        <p class="exh exh-d mono">8 LAYERS · 120+ PARTS · UNITS MM</p>
+      </div>
+      <div class="scene ex-scene" aria-hidden="true"><div class="cam" id="ex-cam"><div class="device" id="ex-device"></div></div></div>
+      <svg class="ex-lines" id="ex-lines" aria-hidden="true"></svg>
+      <div class="ex-callouts" id="ex-callouts" aria-hidden="true"></div>
+      <p class="ex-hint mono" id="ex-hint">Scroll to separate the eight layers</p>
+    </div>
+
+    <div class="ex-panel" id="ex-panel">
+      <ol class="ex-index" id="ex-index"></ol>
+      <div id="ex-cards"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CROSS-SECTION ============ -->
+<section class="xsec" id="section" aria-labelledby="xsec-title">
+  <div class="sec-head">
+    <p class="fx-kicker mono">Cross-section</p>
+    <h2 class="fx-h2" id="xsec-title">Thirteen millimetres, cut open</h2>
+    <p class="fx-sub">A slice down the middle, from the top edge (petal doors) to the bottom edge, straight through the petal pocket. The two cells and the horns sit either side of this slice. Heights are drawn at twice their real scale so the thin layers can be seen. Hover a label to find its part.</p>
+  </div>
+  <figure class="xsec-wrap">
+    <svg id="xsec" role="img" aria-label="Cross-section of Cipher Echo through the petal pocket: titanium bezel, sapphire glass and touch layer, full-face e-paper, mid-frame, main board, petal pocket with the folded bud, petal doors, ceramic back, 13 millimetres in total"></svg>
+  </figure>
+</section>
+
+<!-- ============ LONG-RANGE ACOUSTICS ============ -->
+<section class="range" id="range" aria-labelledby="range-title">
+  <div class="sec-head">
+    <p class="fx-kicker mono">Long-range acoustics</p>
+    <h2 class="fx-h2" id="range-title">Loud for the receiver, silent for people</h2>
+    <p class="fx-sub">Four piezo horns, four ultrasonic mics, error correction and, in far mode, a titanium-alloy petal reflector that blooms out of the top edge. Every range below is calculated from the physics of sound in air, with a 15 dB allowance for real-world losses.</p>
+  </div>
+
+  <div class="range-grid">
+    <div class="range-stage" id="range-stage">
+      <div class="range-modes" role="group" aria-label="Mode">
+        <button type="button" class="rm" data-mode="q" aria-pressed="false">Quiet</button>
+        <button type="button" class="rm" data-mode="lr" aria-pressed="true">Long-range</button>
+        <button type="button" class="rm" data-mode="far" aria-pressed="false">Far · petal reflector</button>
+      </div>
+      <div class="range-scene" aria-hidden="true"><div class="range-plane"><svg id="range-svg" viewBox="0 0 800 440"></svg></div></div>
+      <p class="range-read mono" id="range-read" aria-live="polite"></p>
+    </div>
+    <div class="range-hw">
+      <article class="hw-card">
+        <p class="sc-num mono">Transmit</p>
+        <h3>Four-horn piezo array</h3>
+        <p>Four horn-loaded piezo tweeters along the top edge, driven by a DRV2700 that boosts the battery to about 100 V. Driven together, they add up on-axis like a torch beam.</p>
+        <p class="hw-spec mono">4 × tweeters · 18–24 kHz · ≈100 dB at 1 m (estimate)</p>
+      </article>
+      <article class="hw-card">
+        <p class="sc-num mono">Receive</p>
+        <h3>Four-corner mic array</h3>
+        <p>Four Knowles SPH0641LU4H-1 ultrasonic mics, one in each corner, sampled at 96 kHz. Together they gain 6 dB and tell you which way the sender is.</p>
+        <p class="hw-spec mono">4 × mics · to 80 kHz · +6 dB · direction finding</p>
+      </article>
+      <article class="hw-card dish-card">
+        <div class="dish-stage" aria-hidden="true"><div class="dish-cam" id="dish-cam"></div></div>
+        <div>
+          <p class="sc-num mono">Far mode</p>
+          <h3>Petal reflector</h3>
+          <p>Eight nickel–titanium petals bloom into a 10 cm dish, with a feed pod at its focus. <a href="#bloom" class="glide">See it open</a>.</p>
+          <p class="hw-spec mono">gain = 10·log₁₀(η(πD/λ)²) ≈ +22.8 dB each end</p>
+        </div>
+      </article>
+    </div>
+  </div>
+
+
+  <div class="bloom" id="bloom">
+    <div class="bloom-stage" aria-hidden="true">
+      <div class="scene bloom-scene"><div class="cam bloom-cam" id="bloom-cam"></div></div>
+      <p class="bloom-tag mono" id="bloom-tag">NORMAL · PETALS FOLDED AWAY</p>
+    </div>
+    <div class="bloom-side">
+      <p class="fx-kicker mono">Far mode</p>
+      <h3 class="bloom-title">A titanium flower that opens on one press</h3>
+      <p class="bloom-p">In normal use the petals stay folded inside. Choose far mode and a bud rises out of the top edge, the mast lifts a small feed pod to the focus, and eight petals open into a 10 cm dish. One more press folds it all away.</p>
+      <button type="button" class="bloom-btn" id="bloom-btn" aria-pressed="false"><span class="bb-dot"></span><span id="bloom-btn-t">Switch to far mode</span></button>
+      <div class="bloom-rays" role="group" aria-label="Show sound">
+        <span class="lb-l mono">Show sound</span>
+        <div class="seg-mini"><button type="button" data-ray="tx" aria-pressed="true">Sending</button><button type="button" data-ray="rx" aria-pressed="false">Listening</button></div>
+      </div>
+      <p class="bloom-note" id="bloom-note">Sending: the tweeter at the focus fires into the dish, and the curve turns the spreading sound into a narrow parallel beam.</p>
+      <table class="lb-table mono bloom-table" id="bloom-table"></table>
+      <details class="bloom-more">
+        <summary>How it folds</summary>
+        <p>The petals are 0.1 mm superelastic nickel–titanium (nitinol), shape-set to the dish curve, so they spring open once clear of the body. A 6 mm gear motor turns a lead screw that pushes the bud 36 mm out of its pocket; at the top a latch lets the spring-loaded mast extend and the petals open on their own. Folding, the screw draws the bud back through a collar that closes the petals around the mast. Each petal folds once at mid-length. <a href="#fit">Where it all fits</a>.</p>
+      </details>
+    </div>
+  </div>
+
+  <div class="fit" id="fit">
+    <div class="fit-head">
+      <p class="fx-kicker mono">Space budget</p>
+      <h3 class="bloom-title">Where it fits</h3>
+      <p class="bloom-p">The folded bud needs a pocket 9.2 mm across and 38 mm deep, which is almost the full inside height of a 13 mm case. To make room, the board becomes U-shaped and the single battery becomes two cells, one either side. Every number below is worked out from the dish geometry.</p>
+    </div>
+    <div class="fit-grid">
+      <figure class="fit-fig">
+        <svg id="fit-plan" role="img" aria-label="Floor plan of the inside of Cipher Echo, 78 by 56 millimetres, showing the petal pocket in the middle of the top edge, the lead screw and gear motor beside it, the two cells on either side, the horn blocks along the top and the vibration motor below the pocket"></svg>
+        <figcaption>Floor plan, looking through the screen, drawn to scale (78 × 56 mm). Dashed: the board cut-out and the processor, which sit one layer up.</figcaption>
+      </figure>
+      <div class="fit-side">
+        <ol class="fit-key" id="fit-key"></ol>
+        <svg id="fit-stack" role="img" aria-label="Thickness at the pocket: 2.4 millimetres of glass and screen, 9.6 millimetres of room for the 9.2 millimetre tube, 1 millimetre ceramic back"></svg>
+      </div>
+    </div>
+    <table class="lb-table mono fit-table" id="fit-table"></table>
+    <p class="fit-note">Still to prove with a prototype: that the petals survive thousands of folds at the crease, that dust in the slot does not jam them, and that 0.2 mm of clearance holds once real tolerances add up. This is a concept, not a tested design.</p>
+  </div>
+
+  <h3 class="nc-title">Five layers between noise and the message</h3>
+  <ol class="nc" id="nc">
+    <li class="nc-step" data-s="0"><span class="nc-n mono">1</span><p class="nc-t">What the mics hear</p><svg class="nc-svg" viewBox="0 0 240 120"></svg><p class="nc-d mono">speech, fans, traffic: all below 10 kHz</p></li>
+    <li class="nc-step" data-s="1"><span class="nc-n mono">2</span><p class="nc-t">High-pass at 18 kHz</p><svg class="nc-svg" viewBox="0 0 240 120"></svg><p class="nc-d mono">everything people make is removed</p></li>
+    <li class="nc-step" data-s="2"><span class="nc-n mono">3</span><p class="nc-t">Beamforming, 4 mics</p><svg class="nc-svg" viewBox="0 0 240 120"></svg><p class="nc-d mono">+6.0 dB toward the sender (10·log₁₀4)</p></li>
+    <li class="nc-step" data-s="3"><span class="nc-n mono">4</span><p class="nc-t">Adaptive threshold</p><svg class="nc-svg" viewBox="0 0 240 120"></svg><p class="nc-d mono">a tone counts only 9 dB above its floor</p></li>
+    <li class="nc-step" data-s="4"><span class="nc-n mono">5</span><p class="nc-t">Error correction</p><svg class="nc-svg" viewBox="0 0 240 120"></svg><p class="nc-d mono">RS(15, 9) over GF(16): fixes 3 bad digits in 15</p></li>
+  </ol>
+
+  <div class="lb" id="lb">
+    <div class="lb-head">
+      <h3 class="nc-title">How far can it go?</h3>
+      <p class="fx-sub">Change the conditions and the range is worked out live.</p>
+    </div>
+    <div class="lb-grid">
+      <div class="lb-controls">
+        <div class="lb-row"><span class="lb-l mono">Mode</span>
+          <div class="seg-mini" role="group" aria-label="Mode">
+            <button type="button" data-m="phone">Phone</button><button type="button" data-m="q">Quiet</button><button type="button" data-m="lr" aria-pressed="true">Long-range</button><button type="button" data-m="far">Far</button>
+          </div></div>
+        <div class="lb-row"><label class="lb-l mono" for="lb-place">Place</label>
+          <select id="lb-place"><option value="10">Quiet room</option><option value="0" selected>Calm outdoors</option><option value="20">Noisy (rain, insects, machines)</option></select></div>
+        <div class="lb-row"><label class="lb-l mono" for="lb-sym">Tone length</label>
+          <input type="range" id="lb-sym" min="0" max="3" step="1" value="1"><b class="mono" id="lb-sym-o"></b></div>
+        <div class="lb-row"><label class="lb-l mono" for="lb-t">Temperature</label>
+          <input type="range" id="lb-t" min="0" max="40" step="1" value="20"><b class="mono" id="lb-t-o"></b></div>
+        <div class="lb-row"><label class="lb-l mono" for="lb-h">Humidity</label>
+          <input type="range" id="lb-h" min="10" max="90" step="1" value="50"><b class="mono" id="lb-h-o"></b></div>
+        <table class="lb-table mono" id="lb-table"></table>
+      </div>
+      <div class="lb-tile" id="lb-tile">
+        <div class="lb-inner">
+          <div class="lb-out lb-face lb-front">
+            <button type="button" class="lb-flip-btn" aria-expanded="false" aria-controls="lb-back"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8a6 6 0 0 1 10.4-4M14 8a6 6 0 0 1-10.4 4M12.4 1v3h-3M3.6 15v-3h3"/></svg>Show the maths</button>
+            <p class="lb-big"><span class="mono" id="lb-range">—</span><small>maximum range</small></p>
+            <p class="lb-meta mono" id="lb-meta"></p>
+            <svg id="lb-chart" viewBox="0 -6 520 266" role="img" aria-label="Signal-to-noise ratio against distance"></svg>
+            <p class="lb-why" id="lb-why"></p>
+            <p class="lb-hint">Tap the tile to see how this number is worked out.</p>
+          </div>
+          <div class="lb-out lb-face lb-back" id="lb-back" aria-hidden="true" inert>
+            <div class="lb-back-head">
+              <h4 class="lb-back-title">How <span class="mono" id="lb-back-r">—</span> is worked out</h4>
+              <button type="button" class="lb-flip-btn"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 8a6 6 0 0 1 10.4-4M14 8a6 6 0 0 1-10.4 4M12.4 1v3h-3M3.6 15v-3h3"/></svg>Back to the graph</button>
+            </div>
+            <p class="lb-sec">The variables</p>
+            <dl class="lb-vars" id="lb-vars"></dl>
+            <p class="lb-sec">The working</p>
+            <ol class="lb-work mono" id="lb-work"></ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE MESSAGE'S JOURNEY, IN 3D ============ -->
+<section class="steps3" id="path" aria-labelledby="path-title">
+  <div class="sec-head">
+    <p class="fx-kicker mono">Inside the firmware</p>
+    <h2 class="fx-h2" id="path-title">From air to screen</h2>
+    <p class="fx-sub">One message, two units, seven steps. Nothing goes over radio.</p>
+  </div>
+  <div class="steps-ui">
+    <ol class="rail" id="jr-rail">
+      <li><button type="button" data-i="0"><span class="rail-n mono">1</span><span class="rail-t">Type</span></button></li>
+      <li><button type="button" data-i="1"><span class="rail-n mono">2</span><span class="rail-t">Encrypt</span></button></li>
+      <li><button type="button" data-i="2"><span class="rail-n mono">3</span><span class="rail-t">Bytes to digits</span></button></li>
+      <li><button type="button" data-i="3"><span class="rail-n mono">4</span><span class="rail-t">Digits to tones</span></button></li>
+      <li><button type="button" data-i="4"><span class="rail-n mono">5</span><span class="rail-t">Through the air</span></button></li>
+      <li><button type="button" data-i="5"><span class="rail-n mono">6</span><span class="rail-t">Detect</span></button></li>
+      <li><button type="button" data-i="6"><span class="rail-n mono">7</span><span class="rail-t">Decrypt and show</span></button></li>
+    </ol>
+    <div class="steps-grid">
+      <div class="steps-stage" id="jr-stage" aria-hidden="true">
+        <div class="scene jr-scene"><div class="cam" id="jr-cam"></div></div>
+        <p class="stage-tag mono st-l">SENDER</p><p class="stage-tag mono st-r">RECEIVER</p>
+      </div>
+      <div class="steps-card" id="jr-card" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ THE LAB'S SEVEN STEPS, INSIDE THE UNIT ============ -->
+<section class="steps3" id="lab7" aria-labelledby="lab7-title">
+  <div class="sec-head">
+    <p class="fx-kicker mono">The lab, in hardware</p>
+    <h2 class="fx-h2" id="lab7-title">Seven steps, one chip set</h2>
+    <p class="fx-sub">Each step of the Cipher Forge lab has a home inside Cipher Echo. The part that does it lights up.</p>
+  </div>
+  <div class="steps-ui">
+    <ol class="rail" id="lb-rail">
+      <li><button type="button" data-i="0"><span class="rail-n mono">1</span><span class="rail-t">Symbols</span></button></li>
+      <li><button type="button" data-i="1"><span class="rail-n mono">2</span><span class="rail-t">Build</span></button></li>
+      <li><button type="button" data-i="2"><span class="rail-n mono">3</span><span class="rail-t">Check</span></button></li>
+      <li><button type="button" data-i="3"><span class="rail-n mono">4</span><span class="rail-t">Relate</span></button></li>
+      <li><button type="button" data-i="4"><span class="rail-n mono">5</span><span class="rail-t">Encrypt</span></button></li>
+      <li><button type="button" data-i="5"><span class="rail-n mono">6</span><span class="rail-t">Break</span></button></li>
+      <li><button type="button" data-i="6"><span class="rail-n mono">7</span><span class="rail-t">Count</span></button></li>
+    </ol>
+    <div class="steps-grid">
+      <div class="steps-stage" id="lb-stage" aria-hidden="true">
+        <div class="scene lb-scene"><div class="cam" id="lb-cam"><div class="device" id="lb-device"></div></div></div>
+        <p class="stage-tag mono st-l">X-RAY VIEW</p><p class="stage-tag mono st-r" id="lb-tag">STEP 1 / 7</p>
+      </div>
+      <div class="steps-card lb" id="lb-card" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COVERT FEATURES ============ -->
+<section class="why covert" id="covert" aria-labelledby="covert-title">
+  <div class="sec-head">
+    <p class="fx-kicker mono">Field protocol</p>
+    <h2 class="fx-h2" id="covert-title">Built to go unnoticed</h2>
+  </div>
+  <div class="why-grid">
+    <article class="why-card"><h3>No radio at all</h3><p>There is no Wi-Fi, Bluetooth or cellular chip, so a radio scanner finds nothing. Cipher Echo talks only through sound and its USB port.</p></article>
+    <article class="why-card"><h3>Above human hearing</h3><p>Long-range and far modes talk at 20.5–22.0 kHz, beyond what any person can hear, out to about <span data-r="far">110</span> m in far mode. Quiet mode, at 16.9–18.9 kHz, also works with phones running Send it by sound.</p></article>
+    <article class="why-card"><h3>Shoulder-proof typing</h3><p>The keyboard is drawn on the screen: no clicks, and its layout can be scrambled each time so nobody can read your taps.</p></article>
+    <article class="why-card"><h3>No glow</h3><p>E-paper reflects light instead of giving it off, and there are no LEDs. In a dark room the unit is invisible.</p></article>
+    <article class="why-card"><h3>Fingerprint unlock</h3><p>The power key reads your fingerprint. Until it matches, the secure chip will not release the key.</p></article>
+    <article class="why-card"><h3>Mic kill switch</h3><p>A physical slider cuts power to all four microphones. No software can turn them back on.</p></article>
+    <article class="why-card"><h3>Silent alerts</h3><p>A short buzz pattern says a message arrived. No sound, no light.</p></article>
+    <article class="why-card"><h3>Panic wipe</h3><p>Hold the thumb rotor for five seconds and the secure chip erases the key. Every message sent with it becomes unreadable.</p></article>
+    <article class="why-card"><h3>Tamper response</h3><p>Opening the case lets light reach a sensor inside, and the keys are erased before anyone can probe the board.</p></article>
+  </div>
+</section>
+
+<!-- ============ PARTS LIST ============ -->
+<section class="parts" id="parts" aria-labelledby="parts-title">
+  <div class="sec-head">
+    <p class="fx-kicker mono">Bill of materials</p>
+    <h2 class="fx-h2" id="parts-title">What’s inside</h2>
+  </div>
+  <div class="parts-wrap">
+    <table class="parts-table">
+      <thead><tr><th scope="col">Part</th><th scope="col">Job</th><th scope="col">Why this one</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">STM32U585</td><td>Processor</td><td>Cortex-M33 at 160 MHz with TrustZone and hardware AES. Runs the tone detectors, the cipher and the screen. No radio.</td></tr>
+        <tr><td class="mono">NXP SE050</td><td>Secure element</td><td>Certified tamper-resistant chip that keeps the key and erases it on command.</td></tr>
+        <tr><td class="mono">3.3″ touch e-paper</td><td>Screen</td><td>Full face, 360 × 240 px with capacitive touch and an on-screen keyboard. Holds the image with no power and no light.</td></tr>
+        <tr><td class="mono">Sapphire, 0.7 mm</td><td>Cover glass</td><td>Scratch-proof; bonded to the touch layer with no air gap.</td></tr>
+                <tr><td class="mono">4 × SPH0641LU4H-1</td><td>Ultrasonic mics</td><td>Knowles MEMS mics with response to 80 kHz, one per corner, beamformed; a hardware switch cuts all four.</td></tr>
+        <tr><td class="mono">DRV2700</td><td>Piezo driver</td><td>TI high-voltage piezo driver with built-in boost; drives the horns at about 100 V.</td></tr>
+        <tr><td class="mono">4 × piezo horn tweeter</td><td>Transmitters</td><td>Horn-loaded, 18–24 kHz, along the top edge.</td></tr>
+        <tr><td class="mono">Petal reflector</td><td>Far mode</td><td>Eight 0.1 mm nickel–titanium (nitinol) petals that bloom into a 10 cm dish, focal length 40 mm. About +22.8 dB at 21 kHz, assuming 50 % efficiency.</td></tr>
+        <tr><td class="mono">Feed pod</td><td>Far-mode transmitter and mic</td><td>One piezo tweeter and one SPH0641 mic on a two-stage telescoping mast, held at the dish focus.</td></tr>
+        <tr><td class="mono">6 mm gear motor</td><td>Bloom and fold</td><td>Turns an M2 lead screw (2 mm lead) that pushes the bud 36 mm out of its pocket and draws it back through a collar that closes the petals.</td></tr>
+        <tr><td class="mono">Fingerprint key</td><td>Power and unlock</td><td>Capacitive sensor in the side power key.</td></tr>
+        <tr><td class="mono">EVQ-WK series</td><td>Thumb rotor</td><td>Side jog wheel with push switch.</td></tr>
+        <tr><td class="mono">DRV2605L</td><td>Haptic driver</td><td>Quiet, sharp buzz patterns on an 8 mm LRA.</td></tr>
+        <tr><td class="mono">BQ25180 + MAX17048</td><td>Charger and gauge</td><td>Charges from USB-C and reports the battery level accurately.</td></tr>
+        <tr><td class="mono">W25Q128</td><td>16 MB flash</td><td>Firmware only. Messages are never written to it.</td></tr>
+        <tr><td class="mono">2 × LiPo 502538</td><td>Battery</td><td>Two 5 × 25 × 38 mm cells, one either side of the petal pocket, in parallel: 3.7 V, about 500 mAh each (estimate from the energy density of a standard 503450), 1000 mAh together. Pull-tab removable.</td></tr>
+        <tr><td class="mono">Ti Grade 5 + ZrO₂</td><td>Body</td><td>Titanium bezel and mid-frame, zirconia ceramic back.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ POWER BUDGET ============ -->
+<section class="power" id="power" aria-labelledby="power-title">
+  <div class="sec-head">
+    <p class="fx-kicker mono">Power budget</p>
+    <h2 class="fx-h2" id="power-title">How long it lasts</h2>
+    <p class="fx-sub">Cipher Echo sleeps most of the time and wakes to listen. Battery life is the capacity divided by the average current. The currents are estimates from typical datasheet values.</p>
+  </div>
+  <div class="power-grid">
+    <table class="parts-table power-table">
+      <thead><tr><th scope="col">Mode</th><th scope="col">Current (estimate)</th></tr></thead>
+      <tbody>
+        <tr><td>Asleep</td><td class="mono">≈ 0.3 mA</td></tr>
+        <tr><td>Listening (4 mics, 96 kHz)</td><td class="mono">≈ 11.5 mA</td></tr>
+        <tr><td>Refreshing the screen</td><td class="mono">≈ 4 mA for 2 s</td></tr>
+        <tr><td>Sending, long-range</td><td class="mono">≈ 450 mA in short bursts</td></tr>
+        <tr><td>Blooming or folding (gear motor)</td><td class="mono">≈ 100 mA for about 1 s</td></tr>
+      </tbody>
+    </table>
+    <div class="power-calc panel">
+      <label for="duty" class="pc-label">Time spent listening: <b class="mono" id="duty-out">2.4 h / 24 h</b></label>
+      <input type="range" id="duty" min="0.5" max="24" step="0.1" value="2.4" aria-valuetext="2.4 hours a day">
+      <p class="pc-formula mono" id="duty-formula"></p>
+      <p class="pc-life"><span class="mono" id="life-out">29 days</span> on one charge</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <p class="footer-title">Cipher Forge</p>
+  <p>A CS1812 Discrete Mathematics and Set Theory project (CIE-3B) by Bhajanth V, B.Tech CSE, RV University, Mysuru.</p>
+  <p class="muted"><a href="future.html">Send it by sound</a> · <a href="index.html">Back to the lab</a></p>
+</footer>
+
+<script src="js/fx.js?v=8"></script>
+<script src="js/device.js?v=24"></script>
+<script src="js/device-steps.js?v=22"></script>
+<script src="js/device-range.js?v=25"></script>
+<script src="js/device-bloom.js?v=5"></script>
+</body>
+</html>

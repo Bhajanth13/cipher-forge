@@ -1,0 +1,159 @@
+/* =========================================================
+   Cipher Forge — lab-fx.css
+   The lab page in the same signal-chamber look as the Future
+   enhancements page: deep space, a cold cyan signal colour,
+   the brass of the key, holographic panels.
+   Loaded after style.css and future.css (which sets the palette
+   on .fx for dark and light).
+   ========================================================= */
+
+.fx.lab {
+  --glyph: rgba(114, 226, 255, 0.5);
+  --face-a: #13212E;
+  --face-b: #0A121B;
+  --face-edge: rgba(114, 226, 255, 0.26);
+  --face-seam: rgba(114, 226, 255, 0.10);
+  --axle-a: rgba(114, 226, 255, 0.15);
+  --axle-b: rgba(114, 226, 255, 0.45);
+}
+.fx.lab[data-theme="light"] {
+  --glyph: rgba(7, 94, 122, 0.55);
+  --face-a: #FFFFFF;
+  --face-b: #E3EAF2;
+  --face-edge: rgba(7, 94, 122, 0.42);
+  --face-seam: #C3CEDA;
+  --axle-a: rgba(7, 94, 122, 0.18);
+  --axle-b: rgba(7, 94, 122, 0.5);
+}
+
+/* The drifting letters come back on the lab page, tinted like the signal */
+.fx.lab .glyph-field { display: block; }
+
+/* ---------- Hero ---------- */
+.fx.lab .hero-sticky { position: sticky; }
+.fx.lab .hero .hud { z-index: 3; }
+.fx.lab .hero .hud-line span { color: var(--brass); }
+.fx.lab .display {
+  margin-top: 16px;
+  font-size: clamp(60px, 8.8vw, 136px); line-height: 0.9; font-weight: 250; letter-spacing: -0.03em;
+  background: linear-gradient(180deg, var(--steel) 35%, var(--signal) 140%);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 30px var(--signal-soft));
+}
+.fx.lab .hero-lead { color: var(--steel-2); }
+.fx.lab .hero-readout .mono { text-shadow: 0 0 18px var(--signal-soft); }
+.fx.lab .hero-readout .brass { text-shadow: 0 0 20px rgba(211, 175, 99, .35); }
+.fx.lab .hero-arrow { background: var(--signal-line); }
+.fx.lab .hero-arrow::after { border-left-color: var(--signal-line); }
+.fx.lab .hero-cta { justify-content: flex-start; margin-top: 30px; }
+.fx.lab .hero-cta .btn { text-decoration: none; padding: 11px 18px; }
+.fx.lab .hero-hint { margin-top: 30px; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
+.fx.lab .hero-hint::before { background: linear-gradient(var(--signal), transparent); }
+
+/* The holographic drum */
+.fx.lab .rotor-stage {
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 24%, #000 76%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 24%, #000 76%, transparent 100%);
+}
+.fx.lab .rotor-fade { display: none; }
+.fx.lab .rotor-face { color: var(--steel-2); text-shadow: 0 0 8px var(--signal-soft); }
+.fx.lab .rotor-face.is-front { color: var(--signal); text-shadow: 0 0 16px var(--signal-glow); }
+.fx.lab .rotor-window {
+  border: 1.5px solid var(--brass); border-radius: 6px;
+  box-shadow: 0 0 0 1px rgba(211, 175, 99, .25), 0 0 46px rgba(211, 175, 99, .22), inset 0 0 30px rgba(211, 175, 99, .10);
+}
+.fx.lab .rotor-axle { box-shadow: 0 0 18px var(--signal-soft); }
+
+/* Orbit rings and glow behind the drum */
+.halo { position: absolute; left: 56%; top: 50%; width: 0; height: 0; transform-style: preserve-3d; pointer-events: none; }
+.halo-ring { position: absolute; border-radius: 50%; border: 1px solid var(--signal-line); }
+.halo-ring.h1 { width: 640px; height: 640px; left: -320px; top: -320px; animation: haloA 26s linear infinite; }
+.halo-ring.h2 { width: 520px; height: 520px; left: -260px; top: -260px; border-color: rgba(211, 175, 99, .30); border-style: dashed; animation: haloB 34s linear infinite; }
+.halo-ring.h3 { width: 760px; height: 760px; left: -380px; top: -380px; opacity: .6; animation: haloC 44s linear infinite; }
+.halo-glow { position: absolute; width: 560px; height: 560px; left: -280px; top: -280px; border-radius: 50%; background: radial-gradient(circle, var(--signal-soft) 0%, transparent 62%); }
+@keyframes haloA { from { transform: rotateX(72deg) rotateZ(0); } to { transform: rotateX(72deg) rotateZ(360deg); } }
+@keyframes haloB { from { transform: rotateY(68deg) rotateZ(0); } to { transform: rotateY(68deg) rotateZ(-360deg); } }
+@keyframes haloC { from { transform: rotateX(18deg) rotateY(28deg) rotateZ(0); } to { transform: rotateX(18deg) rotateY(28deg) rotateZ(360deg); } }
+
+/* A slow scan line passing over the drum */
+.rotor-scan {
+  position: absolute; left: 10%; right: 0; height: 140px; top: -140px; pointer-events: none;
+  background: linear-gradient(180deg, transparent, var(--signal-soft), transparent);
+  animation: scan 6.5s ease-in-out infinite;
+}
+@keyframes scan { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { transform: translateY(820px); opacity: 0; } }
+
+/* ---------- Chapters ---------- */
+.fx.lab .step { font-family: var(--mono); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--signal); }
+.fx.lab .module { color: var(--muted); letter-spacing: .12em; }
+.fx.lab .chapter h2 { font-weight: 300; font-variation-settings: 'wdth' 125; letter-spacing: -0.02em; }
+.fx.lab .chapter-lead { color: var(--steel-2); }
+.fx.lab h3 { font-weight: 500; font-variation-settings: 'wdth' 118; }
+
+/* Holographic panels */
+.fx.lab .panel, .fx.lab .check, .fx.lab .io-col, .fx.lab .diagram-wrap, .fx.lab .block,
+.fx.lab .bracket, .fx.lab .truth, .fx.lab .brackets, .fx.lab .formula-bar, .fx.lab .tour {
+  background: linear-gradient(170deg, var(--plate-2), var(--plate));
+  border-color: var(--rule);
+}
+.fx.lab .panel, .fx.lab .check, .fx.lab .io-col, .fx.lab .diagram-wrap, .fx.lab .block { position: relative; }
+.fx.lab .panel::before, .fx.lab .check::before, .fx.lab .io-col::before, .fx.lab .diagram-wrap::before {
+  content: ''; position: absolute; left: -1px; top: -1px; width: 18px; height: 18px; pointer-events: none;
+  border-top: 2px solid var(--signal); border-left: 2px solid var(--signal); border-top-left-radius: 6px; opacity: .75;
+}
+.fx.lab .panel.tilt.is-tilting, .fx.lab .check.tilt.is-tilting, .fx.lab .io-col.tilt.is-tilting {
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 0%), var(--signal-soft), transparent 45%), linear-gradient(170deg, var(--plate-2), var(--plate));
+  border-color: var(--signal-line);
+}
+.fx.lab .block { border-top: 2px solid var(--signal-line); }
+.fx.lab .block.is-broken { border-top-color: var(--fault); }
+.fx.lab .formula-bar { border-color: var(--signal-line); box-shadow: 0 0 40px var(--signal-soft); }
+.fx.lab .formula { color: var(--signal); }
+
+/* Controls */
+.fx.lab .segmented { background: var(--graphite-2); }
+.fx.lab .segmented button[aria-checked="true"] { background: var(--signal-soft); color: var(--signal); box-shadow: inset 0 0 0 1px var(--signal-line); }
+.fx.lab .tab[aria-selected="true"] { background: var(--signal); border-color: var(--signal); color: var(--graphite); box-shadow: 0 0 18px var(--signal-glow); }
+.fx.lab .btn:not(.primary):hover { border-color: var(--signal); box-shadow: 0 0 20px var(--signal-soft); }
+.fx.lab .btn.primary { box-shadow: 0 0 0 1px rgba(211, 175, 99, .4), 0 8px 28px rgba(211, 175, 99, .22); }
+.fx.lab .tile, .fx.lab .op-result, .fx.lab textarea, .fx.lab .io-out, .fx.lab .text-in { background: var(--graphite-2); }
+.fx.lab .tile { border-color: var(--rule); }
+
+/* Diagrams glow like signals */
+.fx.lab #diagram .arrow { stroke: var(--signal); stroke-opacity: .30; }
+.fx.lab #diagram .node { stroke: var(--signal-line); }
+.fx.lab #diagram:not(.has-focus) .arrow.past:not(.clash) { stroke-opacity: .18; }
+.fx.lab #diagram:not(.has-focus) .arrow.newest:not(.clash) { stroke: var(--brass); stroke-opacity: .55; }
+.fx.lab #diagram .layer-lbl { stroke: var(--plate); }
+.fx.lab #diagram .arrow.clash { stroke: var(--fault); stroke-opacity: .85; }
+.fx.lab #diagram.has-focus .arrow { stroke-opacity: .07; }
+.fx.lab #diagram.has-focus .arrow.focus { stroke: var(--brass); stroke-opacity: 1; }
+.fx.lab #rel-matrix .mgrid { fill: var(--graphite-2); stroke: var(--signal-line); }
+.fx.lab .bar span { background: var(--signal); box-shadow: 0 0 10px var(--signal-soft); }
+.fx.lab .ring-window { border-color: var(--brass); box-shadow: 0 0 34px rgba(211, 175, 99, .2); }
+.fx.lab .ring-face.is-best { color: var(--signal); text-shadow: 0 0 12px var(--signal-glow); }
+.fx.lab .keys th, .fx.lab .map th { background: var(--plate-2); color: var(--signal); font-family: var(--mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 400; }
+.fx.lab .map td:first-child { color: var(--signal); }
+.fx.lab .trace-table th { background: var(--plate); }
+.fx.lab .tour-focus { outline-color: var(--signal); box-shadow: 0 0 0 6px var(--signal-soft); }
+.fx.lab .footer { border-top-color: var(--signal-line); }
+
+/* ---------- Small screens ---------- */
+@media (max-width: 980px) {
+  .halo { left: 50%; transform: scale(.7); }
+  .fx.lab .hero-cta { margin-top: 20px; }
+}
+@media (max-width: 560px) {
+  .halo { transform: scale(.5); left: 64%; }
+  .fx.lab .rotor-rig { left: 64%; }
+  .fx.lab .hero-cta .btn { padding: 9px 14px; font-size: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .halo-ring, .rotor-scan { animation: none !important; }
+  .rotor-scan { display: none; }
+}
+.fx.lab #diagram .hit.on .node { stroke: var(--brass); stroke-width: 2; }
+.fx.lab #diagram .hit.picked .node { fill: var(--brass); stroke: var(--brass); }
+/* Light mode only: arrows strong enough to follow on white */
+.fx.lab[data-theme="light"] #diagram:not(.has-focus) .arrow:not(.past):not(.newest):not(.clash) { stroke-opacity: .55; }

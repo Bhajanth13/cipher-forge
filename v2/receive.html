@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" class="fx rx">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070A0F">
+<title>Receiver · Cipher Forge</title>
+<meta name="description" content="Cipher Forge receiver: listen for an encrypted message sent as sound, then decrypt it with the shared key.">
+<script>try{var t=localStorage.getItem('cf-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<link rel="stylesheet" href="css/fonts.css?v=8">
+<link rel="stylesheet" href="css/style.css?v=8">
+<link rel="stylesheet" href="css/future.css?v=9">
+<link rel="stylesheet" href="css/receive.css?v=8">
+</head>
+<body>
+<div class="glyph-field" id="glyph-field" aria-hidden="true"></div>
+
+<header class="rx-top">
+  <a class="brand" href="future.html" aria-label="Cipher Forge, back to Future enhancements">
+    <span class="brand-mark" aria-hidden="true"></span>Cipher Forge
+  </a>
+  <span class="rx-title mono">Receiver</span>
+  <button type="button" class="nav-btn icon" id="theme-toggle" aria-label="Switch to light mode">
+    <svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M5.3 18.7 7 17M17 7l1.7-1.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+  </button>
+</header>
+
+<main class="rx-main">
+
+  <section class="rx-card rx-key" aria-labelledby="rx-key-label">
+    <div class="rx-key-row">
+      <p class="rx-label mono" id="rx-key-label">Key</p>
+      <code class="mono rx-keycode" id="rx-keycode"></code>
+      <button type="button" class="rx-link" id="rx-edit" aria-expanded="false" aria-controls="rx-keyform">Change</button>
+    </div>
+    <form class="rx-keyform" id="rx-keyform" hidden>
+      <label for="rx-keyin" class="sr">Key</label>
+      <input type="text" id="rx-keyin" class="text-in" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="letters/shift-3">
+      <button type="submit" class="btn fx-btn">Use key</button>
+    </form>
+    <p class="rx-keymsg" id="rx-keymsg" aria-live="polite"></p>
+  </section>
+
+  <div class="radar-wrap">
+    <button type="button" class="radar" id="rx-btn" aria-pressed="false">
+      <span class="radar-ring r1" aria-hidden="true"></span>
+      <span class="radar-ring r2" aria-hidden="true"></span>
+      <span class="radar-ring r3" aria-hidden="true"></span>
+      <span class="radar-sweep" aria-hidden="true"></span>
+      <span class="radar-core">
+        <span class="radar-state" id="rx-state">Tap to listen</span>
+        <span class="radar-sub mono" id="rx-sub">microphone off</span>
+      </span>
+    </button>
+  </div>
+
+  <div class="rx-bands" aria-label="Bands being watched">
+    <span class="band-chip" id="chip-audible">Audible 1.4–4.65 kHz</span>
+    <span class="band-chip" id="chip-silent">Silent 16.9–18.9 kHz</span>
+  </div>
+  <div class="meters" aria-label="How strongly each band is heard">
+    <div class="meter"><span class="meter-name">Audible</span><span class="meter-bar"><i id="m-audible"></i></span><span class="meter-db mono" id="m-audible-db">—</span></div>
+    <div class="meter"><span class="meter-name">Silent</span><span class="meter-bar"><i id="m-silent"></i></span><span class="meter-db mono" id="m-silent-db">—</span></div>
+  </div>
+  <canvas class="rx-spectrum" id="rx-spectrum" height="90" aria-hidden="true"></canvas>
+  <p class="rx-status" id="rx-status" aria-live="polite">Tap the circle, allow the microphone, then send from the other device.</p>
+
+  <section class="rx-card rx-msg" id="rx-msg" hidden aria-labelledby="rx-msg-label">
+    <p class="rx-label mono" id="rx-msg-label">Decrypted message</p>
+    <p class="rx-plain" id="rx-plain"></p>
+    <p class="rx-check" id="rx-check"></p>
+    <p class="rx-cipher">Ciphertext heard <span class="mono" id="rx-cipher"></span></p>
+  </section>
+
+  <section class="rx-history" id="rx-history" hidden aria-labelledby="rx-hist-label">
+    <p class="rx-label mono" id="rx-hist-label">Earlier messages</p>
+    <ol id="rx-list"></ol>
+  </section>
+
+  <p class="rx-hint">Keep this phone near the sender with its screen on. Silent messages use 16.9–18.9 kHz, which most people cannot hear. To check that ultrasound reaches this phone, ask the sender to play the silent test tone and watch the Silent meter.</p>
+</main>
+
+<script src="js/sets.js?v=8"></script>
+<script src="js/functions.js?v=8"></script>
+<script src="js/blocks.js?v=8"></script>
+<script src="js/sound.js?v=8"></script>
+<script src="js/future.js?v=8"></script>
+<script src="js/fx.js?v=8"></script>
+<script src="js/receive.js?v=8"></script>
+</body>
+</html>

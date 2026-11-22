@@ -1,0 +1,156 @@
+/* =========================================================
+   Cipher Forge v2 — deck.css
+   1. Clearer arrow diagram, its table, and the formula block
+   2. Presenter deck: bar, card, scene shutter, spotlight
+   ========================================================= */
+
+/* ---------- 1. Arrow diagram: clearer by default ---------- */
+.fx.lab #diagram .arrow { stroke-width: 1.7; stroke-opacity: .42; }
+.fx.lab #diagram .arrow.clash { stroke-width: 2.4; stroke-opacity: .95; }
+.fx.lab #diagram.has-focus .arrow { stroke-opacity: .05; }
+.fx.lab #diagram.has-focus .arrow.focus { stroke: var(--brass); stroke-opacity: 1; stroke-width: 3.4; }
+.fx.lab #diagram.has-focus .hit:not(.on) { opacity: .28; }
+#diagram .lbl { font-size: 16px; }
+.diagram-path { font-size: 16px; min-height: 1.5em; }
+
+.walk-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin: 14px 0 10px; }
+.walk-row .muted { font-size: 14px; }
+
+.map-strip { margin-top: 6px; overflow-x: auto; padding-bottom: 4px; }
+.ms-row { display: grid; grid-template-columns: 74px repeat(var(--n, 26), minmax(28px, 1fr)); gap: 3px; min-width: 820px; }
+.ms-row + .ms-row { margin-top: 3px; }
+.ms-h { display: grid; align-items: center; font-size: 13px; color: var(--muted); white-space: nowrap; }
+.ms-c { all: unset; box-sizing: border-box; display: grid; justify-items: center; align-content: center; gap: 0; height: 44px; border-radius: 5px;
+  font-size: 17px; color: var(--steel); background: var(--plate); border: 1px solid var(--rule-soft); }
+.ms-c small { font-size: 10.5px; color: var(--muted); line-height: 1; }
+button.ms-c { cursor: pointer; }
+button.ms-c:hover, button.ms-c:focus-visible { border-color: var(--brass); }
+.ms-c.out { color: var(--signal); }
+.ms-c.out.clash { color: var(--fault); border-color: var(--fault); background: var(--fault-soft); }
+.ms-c.now { border-color: var(--brass); box-shadow: 0 0 0 2px var(--brass); }
+.ms-note { margin: 10px 0 0; font-size: 14.5px; color: var(--steel-2); }
+.ms-note .bad { color: var(--fault); }
+
+/* Your own f(x) block */
+.block .expr-label { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.block input.expr { width: 12em; font-family: var(--mono); }
+.block .expr-mod { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.block.is-error { border-color: var(--fault); }
+
+/* ---------- 2. The deck ---------- */
+.deck-bar, .deck-card, .deck-shutter, .deck-spot { display: none; }
+html.deck .deck-bar { display: flex; }
+html.deck .deck-card { display: block; }
+html.deck .deck-shutter, html.deck .deck-spot { display: block; }
+html.deck .nav, html.deck .skip { display: none; }
+
+/* the lab reads larger in the deck */
+html.deck .chapter > .plate { zoom: var(--dz, 1); transform: none !important; opacity: 1 !important; --e: 0 !important; }
+html.deck .chapter { padding-top: 84px; padding-bottom: 84px; min-height: 100vh; }
+html.deck .hero-hint { visibility: hidden; }
+
+.deck-bar { position: fixed; inset: 0 0 auto 0; z-index: 60; height: 64px; align-items: center; gap: 18px;
+  padding: 0 clamp(14px, 2.4vw, 30px); background: var(--nav-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--rule-soft); }
+.deck-brand { display: inline-flex; align-items: center; gap: 10px; color: var(--steel); text-decoration: none; font-weight: 600; font-size: 17px; white-space: nowrap; }
+.deck-v { font-family: var(--mono); font-size: 12px; font-weight: 400; color: var(--brass); border: 1px solid var(--brass); border-radius: 999px; padding: 1px 7px; }
+.deck-where { min-width: 0; display: flex; align-items: baseline; gap: 12px; flex: 1 1 auto; }
+.deck-count { margin: 0; font-size: 14px; color: var(--signal); letter-spacing: .08em; white-space: nowrap; }
+.deck-title { margin: 0; font-size: 18px; font-weight: 600; color: var(--steel); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.deck-beats { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; }
+.db { all: unset; cursor: pointer; font-size: 13.5px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--rule); color: var(--muted); transition: background .25s, color .25s, border-color .25s; }
+.db.done { color: var(--steel-2); }
+.db.now { color: var(--graphite); font-weight: 600; }
+.db.now.k-explain { background: var(--signal); border-color: var(--signal); }
+.db.now.k-show { background: var(--brass); border-color: var(--brass); }
+.db.now.k-test { background: var(--fault); border-color: var(--fault); color: #fff; }
+.db.now.k-build { background: #7BD88F; border-color: #7BD88F; }
+.db:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+.deck-tools { display: flex; gap: 6px; }
+.deck-tool { all: unset; box-sizing: border-box; cursor: pointer; height: 36px; min-width: 36px; padding: 0 10px; display: inline-grid; place-items: center;
+  border-radius: 999px; border: 1px solid var(--rule); color: var(--steel); font-size: 20px; line-height: 1; }
+.deck-tool.wide { font-size: 13.5px; padding: 0 14px; }
+.deck-tool:hover { border-color: var(--brass); }
+.deck-tool:disabled { opacity: .35; cursor: default; }
+.deck-tool:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* wide screens: the card sits in its own column, the lab beside it */
+html.deck.deck-side:not(.deck-nonotes) main, html.deck.deck-side:not(.deck-nonotes) .footer { margin-right: 450px; }
+html.deck.deck-side .deck-card { top: 82px; bottom: auto; right: 20px; width: 420px; max-height: calc(100vh - 100px); }
+
+/* presenter card */
+.deck-card { position: fixed; right: 18px; bottom: 18px; z-index: 55; width: min(410px, calc(100vw - 36px)); max-height: calc(100vh - 100px); overflow: auto;
+  padding: 18px 20px 14px; border-radius: 14px; background: color-mix(in srgb, var(--plate) 94%, transparent); border: 1px solid var(--rule);
+  box-shadow: 0 24px 60px -18px rgba(0, 0, 0, .6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  transition: transform .45s var(--ease), opacity .3s; }
+html.deck-nonotes .deck-card { transform: translateY(calc(100% + 40px)); opacity: 0; pointer-events: none; }
+.dc-top { display: flex; align-items: center; gap: 10px; }
+.dc-kind { font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 999px; color: var(--graphite); }
+.dc-kind.k-explain { background: var(--signal); }
+.dc-kind.k-show { background: var(--brass); }
+.dc-kind.k-test { background: var(--fault); color: #fff; }
+.dc-kind.k-build { background: #7BD88F; }
+.dc-step { font-size: 12.5px; color: var(--muted); }
+.dc-min { all: unset; cursor: pointer; margin-left: auto; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--rule); color: var(--muted); }
+.dc-title { margin: 12px 0 8px; font-size: 21px; line-height: 1.2; }
+.dc-say { margin: 0; font-size: 16px; line-height: 1.5; color: var(--steel-2); }
+.dc-label { margin: 0 0 6px; font-size: 13px; color: var(--muted); }
+.dc-ask { margin-top: 12px; padding: 12px 14px; border-radius: 10px; border: 1px solid var(--fault); background: var(--fault-soft); }
+.dc-q { margin: 0 0 10px; font-size: 17px; line-height: 1.45; color: var(--steel); font-weight: 500; }
+.dc-a { margin: 10px 0 0; font-size: 15.5px; line-height: 1.5; color: var(--steel); }
+.dc-a:empty { display: none; }
+.dc-a .ok { color: #7BD88F; } .dc-a .bad { color: var(--fault); }
+.dc-formula { margin-top: 14px; }
+.dc-expr-row { display: flex; align-items: center; gap: 8px; }
+.dc-expr-row input { flex: 1 1 auto; min-width: 0; font-size: 20px; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--brass); background: var(--graphite); color: var(--steel); }
+.dc-expr-row input:focus { outline: 2px solid var(--signal); outline-offset: 1px; }
+.dc-mod { font-size: 15px; color: var(--muted); }
+.dc-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+.dc-chip { all: unset; cursor: pointer; font-size: 14px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--rule); color: var(--steel-2); }
+.dc-chip:hover, .dc-chip:focus-visible { border-color: var(--brass); color: var(--steel); }
+.dc-go, .dc-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.dc-note { margin: 10px 0 0; font-size: 15px; line-height: 1.5; color: var(--steel); }
+.dc-note:empty { display: none; }
+.dc-keys { margin: 12px 0 0; font-size: 12px; color: var(--muted); }
+
+/* the spotlight: everything outside the part being discussed dims */
+.deck-spot { position: fixed; left: 0; top: 0; z-index: 50; pointer-events: none; border-radius: 14px; opacity: 0;
+  box-shadow: 0 0 0 2px var(--brass), 0 0 0 200vmax rgba(6, 9, 14, .5); transition: opacity .35s; will-change: transform; }
+.deck-spot.on { opacity: 1; }
+.fx[data-theme="light"] .deck-spot { box-shadow: 0 0 0 2px var(--brass), 0 0 0 200vmax rgba(238, 240, 242, .62); }
+
+/* scene change: a rotor plate tips away and the next scene turns in */
+.deck-shutter { position: fixed; inset: 0; z-index: 58; pointer-events: none; opacity: 0; display: grid; place-content: center; text-align: center; gap: 6px;
+  background: radial-gradient(ellipse 70% 60% at 50% 45%, var(--signal-soft), transparent 70%), var(--graphite);
+  border-bottom: 3px solid var(--brass); transform-origin: 50% 0; }
+html:not(.deck) .deck-shutter { display: none; }
+.deck-shutter.play { animation: shutter 1.05s var(--ease) forwards; }
+@keyframes shutter {
+  0% { opacity: 1; transform: perspective(1400px) rotateX(0); }
+  45% { opacity: 1; transform: perspective(1400px) rotateX(0); }
+  100% { opacity: 1; transform: perspective(1400px) rotateX(-96deg); visibility: hidden; }
+}
+.ds-num { margin: 0; font-size: clamp(64px, 11vw, 150px); line-height: 1; color: var(--brass); letter-spacing: -.02em; }
+.ds-title { margin: 0; font-size: clamp(28px, 3.4vw, 50px); font-weight: 700; letter-spacing: -.02em; color: var(--steel); }
+.ds-mod { margin: 4px 0 0; font-size: 15px; color: var(--signal); }
+html.deck .deck-in { animation: scene-in 1.1s var(--ease) both; }
+@keyframes scene-in {
+  0%, 35% { transform: perspective(1400px) rotateX(16deg) translateY(70px) scale(.95); opacity: .2; }
+  100% { transform: none; opacity: 1; }
+}
+
+@media (max-width: 1100px) {
+  .deck-title { display: none; }
+  .deck-tool.wide#deck-full { display: none; }
+}
+@media (max-width: 760px) {
+  .deck-beats, .deck-tool.wide { display: none; }
+  .deck-tool.wide#deck-web { display: inline-grid; }
+  .deck-card { left: 10px; right: 10px; width: auto; bottom: 10px; max-height: 46vh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .deck-shutter.play, html.deck .deck-in { animation: none; }
+  .deck-card { transition: none; }
+}
+.fx[data-theme="light"] .dc-a .ok { color: #1E7A3A; }
+.fx[data-theme="light"] .db.now.k-build, .fx[data-theme="light"] .dc-kind.k-build { background: #2F8A4A; border-color: #2F8A4A; color: #fff; }

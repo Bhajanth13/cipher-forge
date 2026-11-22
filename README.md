@@ -90,3 +90,12 @@ Bhajanth V, B.Tech CSE (Section A), RV University, Mysuru.
 Fonts: Archivo and IBM Plex Mono, under the SIL Open Font License (see `fonts/`).
 
 slides.html, css/slides.css, js/slides.js  the talk in 7 slides: a scroll-driven 3D rotor deck covering sets, functions, bijections, relations and inverses, breaking ciphers and counting keys (arrow keys, 1–7, F for full screen)
+
+## v2: the lab, presented live
+
+`v2/` is a full copy of the site that opens as a presenter deck. Each section of the lab is one scene, and each scene has beats: Explain, Show, Test (ask the class, then reveal) and Build (the class chooses, you type it in). A presenter card says what to say and holds the buttons; the part being discussed is spotlit. New in v2:
+
+- **Your own f(x)**: a block that takes any formula in x (numbers, x, n, + − ×, ^ with a whole-number power, brackets), worked out mod n with BigInt. It is read by a small parser, never by `eval`.
+- **Clearer arrow diagram**: thicker arrows, a table of every input above its output, and “Walk the arrows” to follow one letter at a time.
+
+Keys: → or Space next beat, ← back, 1–9 scenes, R reveal, N hide the card, F full screen, W website view. Files: `v2/css/deck.css`, `v2/js/deck.js`, with the custom block in `v2/js/blocks.js`.
