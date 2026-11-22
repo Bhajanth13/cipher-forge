@@ -6,7 +6,7 @@
 <title>Cipher Forge · the talk in 7 slides</title>
 <meta name="description" content="Cipher Forge in seven slides: sets, functions, bijections, relations, inverses, breaking ciphers and counting keys. CS1812 Discrete Mathematics and Set Theory, CIE-3.">
 <link rel="stylesheet" href="css/fonts.css">
-<link rel="stylesheet" href="css/slides.css?v=1">
+<link rel="stylesheet" href="css/slides.css?v=2">
 <script>try { if (localStorage.getItem('cf-theme') === 'light') document.documentElement.setAttribute('data-theme', 'light'); } catch (e) {}</script>
 </head>
 <body>
@@ -144,7 +144,7 @@
           <p class="kicker mono b" data-at="0">05 · Modules 1 and 3 · Relations and inverses</p>
           <h2 class="s-h b" data-at="0">A relation, its inverse, and the round trip</h2>
           <p class="s-p b" data-at="0.06">A function is a relation R = { (x, F(x)) } ⊆ S × S. Drawn as a grid, a bijection has exactly one dot in every row and every column: a permutation matrix.</p>
-          <p class="s-p b" data-at="0.45">Decryption runs the inverses in reverse order, because (g ∘ f)⁻¹ = f⁻¹ ∘ g⁻¹.</p>
+          <p class="s-p b" data-at="0.45">Decryption runs the inverses in reverse order, because <span class="nw">(g ∘ f)⁻¹ = f⁻¹ ∘ g⁻¹</span>.</p>
           <p class="big-eq mono b" data-at="0.5">F⁻¹ = f₁⁻¹ ∘ f₂⁻¹ ∘ f₃⁻¹ = shift(−3) ∘ multiply(21) ∘ mirror</p>
           <p class="s-note b" data-at="0.55">21 undoes 5 because 5 × 21 = 105 = 4 × 26 + 1.</p>
         </div>
@@ -222,6 +222,6 @@
 </div>
 
 <div class="scroller" id="scroller" aria-hidden="true"></div>
-<script src="js/slides.js?v=1"></script>
+<script src="js/slides.js?v=2"></script>
 </body>
 </html>

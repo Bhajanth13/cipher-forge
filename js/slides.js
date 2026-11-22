@@ -35,8 +35,13 @@
     return '<li><button type="button" data-i="' + i + '" aria-label="Slide ' + (i + 1) + ': ' + t + '"><span class="rl">' + t + '</span><span class="rn">' + (i + 1) + '</span></button></li>';
   }).join('');
   const railItems = Array.prototype.slice.call(document.querySelectorAll('#rail li'));
+  const CANVAS = window.matchMedia('(min-width: 900px) and (min-aspect-ratio: 6/5)');
+  let K = 1;                                                // canvas scale: 1280 x 720 design px to screen px
   function measure() {
     H = window.innerHeight;
+    K = CANVAS.matches ? Math.min(window.innerWidth / 1280, H / 720) : 1;
+    document.documentElement.style.setProperty('--k', K.toFixed(4));
+    document.documentElement.style.setProperty('--kz', Math.max(1, K).toFixed(4));   // header and rail grow on big screens, never shrink
     SEG = Math.round(H * 1.5);
     R = H / (2 * Math.tan(Math.PI / NS));
     faces.forEach(function (f, i) { f.style.transform = 'rotateX(' + (-i * STEP) + 'deg) translateZ(' + R.toFixed(1) + 'px)'; });
@@ -50,7 +55,8 @@
   function build(i, p) { builds[i].forEach(function (b) { b.el.classList.toggle('on', p >= b.at - 1e-6); }); }
 
   /* ---------- 1 · rotors: HELLO turns three places into KHOOR ---------- */
-  const WORD = 'HELLO', PA = 360 / N, PR = 46 / (2 * Math.tan(Math.PI / N));
+  function plateH() { return CANVAS.matches ? 50 : 46; }
+  const WORD = 'HELLO', PA = 360 / N, PR = plateH() / (2 * Math.tan(Math.PI / N));
   const rotors = WORD.split('').map(function (ch) {
     const r = document.createElement('div'); r.className = 'rotor';
     const d = document.createElement('div'); d.className = 'drumR';
@@ -114,12 +120,12 @@
   const SEQ = ['H', 'K', 'Y', 'B'];
   function s3(p) {
     const box = $('pipe').getBoundingClientRect();
-    const cx = cubes.map(function (c) { const r = c.getBoundingClientRect(); return [r.left + r.width / 2 - box.left, r.top + r.height / 2 - box.top]; });
+    const cx = cubes.map(function (c) { const r = c.getBoundingClientRect(); return [(r.left + r.width / 2 - box.left) / K, (r.top + r.height / 2 - box.top) / K]; });
     const pts = [[cx[0][0] - 110, cx[0][1]]].concat(cx).concat([[cx[2][0] + 110, cx[2][1]]]);
     const t = span(p, 0.28, 0.8) * (pts.length - 1), i = Math.min(pts.length - 2, Math.floor(t)), f = smooth(t - i);
     const x = pts[i][0] + (pts[i + 1][0] - pts[i][0]) * f, y = pts[i][1] + (pts[i + 1][1] - pts[i][1]) * f;
     const tok = $('token');
-    tok.style.transform = 'translate(' + x.toFixed(1) + 'px,' + (y - box.height / 2).toFixed(1) + 'px) scale(' + (p < 0.26 ? 0.6 : 1) + ')';
+    tok.style.transform = 'translate(' + x.toFixed(1) + 'px,' + (y - box.height / 2 / K).toFixed(1) + 'px) scale(' + (p < 0.26 ? 0.6 : 1) + ')';
     tok.style.opacity = p < 0.26 ? 0 : 1;
     const passed = Math.min(3, Math.max(0, Math.floor(t - 0.5)));
     tok.textContent = SEQ[t < 1.5 ? 0 : passed];
@@ -177,7 +183,7 @@
   /* ---------- 6 · brute force reel and letter frequencies ---------- */
   const MSG = 'MEET ME AT THE LIBRARY AT NOON', KEY = 7, CT = onText(MSG, shift(KEY));
   $('bf-c').textContent = CT;
-  const RA = 360 / N, RR = 28 / (2 * Math.tan(Math.PI / N));
+  const RA = 360 / N, RR = (CANVAS.matches ? 36 : 28) / (2 * Math.tan(Math.PI / N));
   (function () {
     let h = '<div class="reel-drum" id="reel-drum">';
     for (let k = 0; k < N; k++) h += '<div class="rrow" data-k="' + k + '" style="transform:rotateX(' + (-k * RA) + 'deg) translateZ(' + RR.toFixed(1) + 'px)"><i>k = ' + k + '</i>' + onText(CT, shift(-k)) + '</div>';
@@ -214,7 +220,7 @@
   const YEAR = 365.25 * 86400;
   $('odo-years').textContent = 'about ' + (Number(fact) / 1e9 / YEAR / 1e9).toFixed(1) + ' billion years to try them all (the universe is about 13.8 billion years old)';
   $('pw-time').textContent = 'about ' + (Number(PW) / 1e9 / 86400).toFixed(1) + ' days at the same speed';
-  const DA = 36, DR = 28 / (2 * Math.tan(Math.PI / 10));
+  const DA = 36, DR = (CANVAS.matches ? 36 : 28) / (2 * Math.tan(Math.PI / 10));
   const digits = FACT.split('').map(function (d, i) {
     const box = document.createElement('div');
     box.className = 'dg' + ((FACT.length - i) % 3 === 0 && i > 0 ? ' sep' : '');

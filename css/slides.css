@@ -88,6 +88,7 @@ body { overflow-x: hidden; }
 .facts dd { margin: 0; font-size: clamp(13px, 1.05vw, 15px); color: var(--steel); }
 .big-eq { overflow-wrap: anywhere; margin: 14px 0 0; font-size: clamp(14px, 1.25vw, 18px); color: var(--brass); }
 .sig { color: var(--signal); }
+.nw { white-space: nowrap; }
 
 /* builds: each step tips up out of the slide like a rotor plate */
 .b { opacity: 0; transform: translateY(16px) rotateX(-38deg); transform-origin: 50% 0; transition: opacity .55s var(--ease), transform .7s var(--ease); }
@@ -200,6 +201,7 @@ body { overflow-x: hidden; }
 .odo { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 2px; perspective: 700px; margin: 6px 0 10px; }
 .dg { position: relative; min-width: 0; height: 34px; overflow: hidden; border-radius: 3px; background: var(--plate); border: 1px solid var(--rule-soft); }
 .dg.sep { margin-left: 4px; }
+.dg { -webkit-mask: linear-gradient(transparent, #000 30%, #000 70%, transparent); mask: linear-gradient(transparent, #000 30%, #000 70%, transparent); }
 .dg-drum { position: absolute; left: 0; right: 0; top: 50%; height: 0; transform-style: preserve-3d; }
 .dg-f { position: absolute; left: 0; right: 0; top: -14px; height: 28px; display: grid; place-items: center; font-family: var(--mono); font-size: clamp(12px, 1.1vw, 17px); color: var(--signal); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .odo-time { margin: 6px 0 0; font-size: 13px; color: var(--steel-2); }
@@ -211,8 +213,89 @@ body { overflow-x: hidden; }
 .end-h { margin: 0; font-size: clamp(30px, 3.4vw, 46px); font-weight: 700; letter-spacing: -.03em; color: var(--brass); }
 .end-btn { display: inline-flex; align-items: center; height: 44px; padding: 0 20px; border-radius: 999px; background: var(--signal); color: var(--graphite); text-decoration: none; font-weight: 600; }
 
+/* ---------- presentation canvas ----------
+   On a landscape screen each slide is laid out on a fixed 1280 x 720 canvas and
+   scaled as one piece to fill the screen, so it reads like a projected slide at
+   any size. --k is set by js/slides.js. Narrow or portrait screens keep the
+   fluid layout below. */
+@media (min-width: 900px) and (min-aspect-ratio: 6/5) {
+  .deck-top, .rail, .deck-hint { zoom: var(--kz, 1); }
+  .face-in { position: absolute; left: 50%; top: 50%; width: 1280px; height: 720px; max-width: none; margin: 0;
+    transform: translate(-50%, -50%) scale(var(--k, 1)); transform-origin: 50% 50%; perspective: 1000px;
+    padding: 70px 96px 40px 64px; gap: 48px; }
+  .kicker { font-size: 15px; margin-bottom: 14px; }
+  .s-h { font-size: 52px; margin-bottom: 18px; }
+  .s-p { font-size: 20px; line-height: 1.45; margin-bottom: 14px; }
+  .s-note { font-size: 16px; margin-top: 14px; }
+  .facts { gap: 4px; }
+  .facts div { grid-template-columns: 150px minmax(0, 1fr); padding: 7px 0; }
+  .facts dt { font-size: 14px; letter-spacing: .05em; white-space: nowrap; }
+  .facts dd { font-size: 18px; }
+  .big-eq { font-size: 20px; }
+
+  .t-h { font-size: 132px; }
+  .t-lead { font-size: 22px; }
+  .t-by { font-size: 16px; }
+  .t-formula { font-size: 20px; }
+  .t-cap { font-size: 15px; }
+  .rotors { height: 420px; gap: 12px; }
+  .rotor, .drumR, .plate { width: 70px; }
+  .plate { height: 50px; top: -25px; font-size: 29px; border-radius: 5px; }
+  .rotors::after { top: calc(50% - 31px); height: 62px; }
+  .kicker { letter-spacing: .1em; }
+  .s-title .kicker { letter-spacing: .05em; white-space: nowrap; }
+
+  .letters { gap: 7px; }
+  .lt { font-size: 19px; }
+  .v-l { font-size: 15px; }
+  .venn-op { font-size: 19px; }
+
+  .blocks-key { font-size: 18px; gap: 7px; }
+  .blocks-key b { min-width: 150px; }
+  .pipe3d { height: 250px; }
+  .pipe-row { left: 20px; right: 90px; }
+  .pcube { width: 140px; height: 140px; }
+  .pcube::before { height: 46px; }
+  .pcube::after { width: 46px; }
+  .pc-f { font-size: 27px; }
+  .pc-n { font-size: 15px; }
+  .token { width: 62px; height: 62px; margin: -31px 0 0 -31px; font-size: 28px; }
+  .trace { font-size: 18px; gap: 7px; }
+
+  .arrows-card, .reel-card, .odo-card, .freq-card { padding: 18px 22px; }
+  .ac-title { font-size: 17px; }
+  .ac-foot { font-size: 15px; }
+  #arrows .al { font-size: 11.5px; }
+
+  .matrix-wrap { height: 330px; }
+  .matrix { grid-template-columns: repeat(26, 12px); grid-auto-rows: 12px; }
+  .mc { width: 12px; height: 12px; }
+  .trip { font-size: 17px; gap: 9px; }
+  .trip p { grid-template-columns: 92px minmax(0, 1fr); }
+
+  .reel { height: 180px; perspective: 1300px; }
+  .reel-drum { left: 40px; right: 40px; }
+  .rrow { top: -18px; height: 36px; font-size: 16px; grid-template-columns: 76px minmax(0, 1fr); }
+  .reel-win { top: calc(50% - 19px); height: 38px; }
+  .freq { height: 160px; }
+  .fq { grid-template-rows: 1fr 17px 17px 1fr; }
+  .fq span { font-size: 12.5px; line-height: 17px; }
+
+  .s-count { grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr); gap: 40px; }
+  .keys { font-size: 17px; }
+  .keys td { padding: 7px 6px; }
+  .keys td:last-child { font-size: 14.5px; padding-left: 14px; white-space: nowrap; }
+  .dg { height: 38px; }
+  .dg-f { top: -18px; height: 36px; font-size: 17px; }
+  .dg.sep { margin-left: 3px; }
+  .odo-time { font-size: 16px; }
+  .mods li { font-size: 15px; padding: 6px 12px; }
+  .end-h { font-size: 50px; }
+  .end-btn { height: 50px; padding: 0 24px; font-size: 18px; }
+}
+
 /* ---------- smaller screens ---------- */
-@media (max-width: 980px) {
+@media (max-width: 899px), (max-aspect-ratio: 6/5) {
   .face-in { grid-template-columns: 1fr; align-content: center; gap: 14px; padding-top: 74px; padding-bottom: 46px; overflow: hidden; }
   .s-title { grid-template-columns: 1fr; }
   .rotors { height: 190px; transform: scale(.72); }
