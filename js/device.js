@@ -503,7 +503,6 @@
     requestAnimationFrame(function () { ticking = false; exFrame(); progress(); });
   }
   addEventListener('scroll', onScroll, { passive: true });
-  addEventListener('orbitchange', onScroll);
   addEventListener('resize', onScroll);
   exFrame(); progress();
 
