@@ -359,3 +359,30 @@
 }
 .fx[data-theme="light"] .layer { box-shadow: 0 1px 2px rgba(10, 18, 32, 0.08), 0 22px 44px -22px rgba(10, 18, 32, 0.35); }
 .fx[data-theme="light"] ::selection { background: rgba(7, 94, 122, 0.22); }
+
+/* =========================================================
+   Hand controls for every 3D model (js/orbit.js)
+   ========================================================= */
+.orbit-wrap { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
+.orbit-wrap.orbit-anim { transition: transform .5s cubic-bezier(.2, .7, .2, 1); }
+[data-orbit] { cursor: grab; }
+[data-orbit].orbit-dragging { cursor: grabbing; user-select: none; -webkit-user-select: none; }
+[data-orbit].orbit-hand { touch-action: none; }
+.orbit-bar { position: absolute; right: 12px; bottom: 12px; z-index: 30; display: flex; align-items: center; gap: 6px; cursor: default; }
+.orbit-bar.mini { right: 8px; bottom: 8px; }
+.orbit-bar .ob { all: unset; box-sizing: border-box; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+  color: var(--steel); background: color-mix(in srgb, var(--plate) 82%, transparent); border: 1px solid var(--rule);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: border-color .2s, color .2s, background .2s; }
+.orbit-bar.mini .ob { width: 26px; height: 26px; }
+.orbit-bar .ob svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.orbit-bar .ob:hover { border-color: var(--signal); color: var(--signal); }
+.orbit-bar .ob:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+.orbit-bar .ob[aria-pressed="true"] { background: var(--signal); border-color: var(--signal); color: var(--graphite); }
+[data-orbit]:not(.orbit-moved) .ob-reset { opacity: .55; }
+.orbit-hint { font-size: 11px; letter-spacing: .04em; line-height: 1.4; color: var(--steel-2); padding: 6px 12px; border-radius: 14px; max-width: 360px; text-align: right;
+  background: color-mix(in srgb, var(--plate) 86%, transparent); border: 1px solid var(--rule-soft);
+  opacity: 0; transform: translateY(4px); transition: opacity .25s, transform .25s; pointer-events: none; }
+[data-orbit]:hover .orbit-hint, .orbit-bar:focus-within .orbit-hint, [data-orbit].orbit-hand .orbit-hint { opacity: 1; transform: none; }
+.orbit-bar.mini .orbit-hint { display: none; }
+@media (max-width: 700px) { .orbit-hint { max-width: 52vw; } }
+#ex-stage .orbit-bar { bottom: 34px; right: 16px; }

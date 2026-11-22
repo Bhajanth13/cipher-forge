@@ -38,6 +38,7 @@ css/device.css      the Cipher Echo page: 3D slabs, exploded view, cross-section
 js/device.js        builds the device, scroll-driven disassembly, cross-section, battery calculator
 js/device-range.js  long-range acoustics from physics (ISO 9613-1 air absorption, spreading, gains): range map, noise-cancelling panels, live range calculator
 js/device-bloom.js  far mode in 3D: the petal reflector blooms out of the top edge, with the feed pod at the focus and the sound paths
+js/orbit.js  hand controls for every 3D model: drag to rotate, Shift-drag to move, Ctrl + scroll to zoom, double-click to reset (hand button on touch screens)
 js/device-steps.js  two 7-step 3D walkthroughs: the message from sender to receiver, and the lab's 7 steps inside the unit
 js/lab-fx.js        the lab's star field, decoding title, HUD and slow glide links
 js/sets.js          Module 1: sets and set operations

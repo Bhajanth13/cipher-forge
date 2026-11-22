@@ -161,6 +161,7 @@
       (function loop() { place(); if (performance.now() < end) follow = requestAnimationFrame(loop); })();
     }
     addEventListener('resize', function () { track(50); });
+    addEventListener('orbitchange', place);
 
     let token = 0, binTimer = 0;
     function setScreen(d, plain, cip, state, bar) {
@@ -241,6 +242,7 @@
     tagLayer.className = 'lb-tags';
     $('lb-stage').appendChild(tagLayer);
     let glowing = [];
+    addEventListener('orbitchange', function () { placeTags(); });
     function placeTags() {
       const sr = $('lb-stage').getBoundingClientRect();
       tagLayer.querySelectorAll('.lb-t').forEach(function (t, k) {
