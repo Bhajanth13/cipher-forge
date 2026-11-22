@@ -88,3 +88,5 @@ Open `index.html` in any modern browser. It works offline.
 Bhajanth V, B.Tech CSE (Section A), RV University, Mysuru.
 
 Fonts: Archivo and IBM Plex Mono, under the SIL Open Font License (see `fonts/`).
+
+slides.html, css/slides.css, js/slides.js  the talk in 7 slides: a scroll-driven 3D rotor deck covering sets, functions, bijections, relations and inverses, breaking ciphers and counting keys (arrow keys, 1–7, F for full screen)
