@@ -524,8 +524,8 @@ table.keys, table.map { width: 100%; border-collapse: collapse; font-size: 15px;
 
 /* ---------- Relations ---------- */
 .matrix-stage { perspective: 1000px; padding: 6px 0; }
-#rel-matrix { display: block; width: 100%; max-width: 520px; margin: 0 auto; height: auto; transform-origin: 50% 60%; will-change: transform; }
-#rel-matrix .mlbl { font-family: var(--mono); font-size: 9px; fill: var(--muted); dominant-baseline: central; }
+#rel-matrix { display: block; width: 100%; max-width: 600px; margin: 0 auto; height: auto; transform-origin: 50% 60%; will-change: transform; }
+#rel-matrix .mlbl { font-family: var(--mono); font-size: 12.5px; fill: var(--muted); dominant-baseline: central; }
 #rel-matrix .mgrid { fill: var(--graphite-2); stroke: var(--rule); }
 #rel-matrix .mline { stroke: var(--rule-soft); stroke-width: .6; }
 #rel-matrix .mdot { fill: var(--brass); }

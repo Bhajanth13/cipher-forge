@@ -69,7 +69,7 @@
   function renderRelation() {
     const s = CF.app.set(), n = s.length, F = CF.app.chainMap();
     const svg = $('rel-matrix');
-    const cell = 16, pad = 22, size = pad + n * cell + 2;
+    const cell = 16, pad = 28, size = pad + n * cell + 2;
     svg.setAttribute('viewBox', '0 0 ' + size + ' ' + size);
     const rel = R.asRelation(F);
     const colCount = new Array(n).fill(0);
@@ -77,7 +77,7 @@
 
     let html = '';
     for (let i = 0; i < n; i++) {
-      html += '<text class="mlbl" x="' + (pad - 6) + '" y="' + (pad + i * cell + cell / 2) + '" text-anchor="end">' + esc(s[i]) + '</text>';
+      html += '<text class="mlbl" x="' + (pad - 7) + '" y="' + (pad + i * cell + cell / 2) + '" text-anchor="end">' + esc(s[i]) + '</text>';
       html += '<text class="mlbl" x="' + (pad + i * cell + cell / 2) + '" y="' + (pad - 7) + '" text-anchor="middle">' + esc(s[i]) + '</text>';
     }
     html += '<rect class="mgrid" x="' + pad + '" y="' + pad + '" width="' + (n * cell) + '" height="' + (n * cell) + '"/>';
