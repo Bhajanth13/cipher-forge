@@ -289,7 +289,7 @@
     $('deck-count').textContent = String(sc + 1).padStart(2, '0') + ' / ' + String(SCENES.length).padStart(2, '0');
     $('deck-title').textContent = S.title;
     $('deck-beats').innerHTML = S.beats.map(function (b, j) {
-      return '<li><button type="button" class="db k-' + b.kind.toLowerCase() + (j === bt ? ' now' : '') + (j < bt ? ' done' : '') + '" data-j="' + j + '">' + b.kind + '</button></li>';
+      return '<li><button type="button" class="db k-' + b.kind.toLowerCase() + (j === bt ? ' now' : '') + (j < bt ? ' done' : '') + '" data-j="' + j + '" title="Step ' + (j + 1) + ': ' + esc(b.title) + '" aria-label="Step ' + (j + 1) + ', ' + b.kind + ': ' + esc(b.title) + '"><span class="db-n">' + (j + 1) + '</span>' + b.kind + '</button></li>';
     }).join('');
     $('deck-beats').querySelectorAll('button').forEach(function (b) { b.addEventListener('click', function () { go(sc, +b.dataset.j); }); });
     $('deck-prev').disabled = sc === 0 && bt === 0;
