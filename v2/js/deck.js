@@ -179,7 +179,6 @@
   bar.innerHTML =
     '<a class="deck-brand" href="#top"><span class="brand-mark" aria-hidden="true"></span>Cipher Forge <span class="deck-v">v2</span></a>' +
     '<div class="deck-where"><p class="deck-count mono" id="deck-count"></p><p class="deck-title" id="deck-title"></p></div>' +
-    '<ol class="deck-beats" id="deck-beats" aria-label="Beats in this scene"></ol>' +
     '<div class="deck-tools">' +
       '<button type="button" class="deck-tool" id="deck-prev" aria-label="Back (←)">‹</button>' +
       '<button type="button" class="deck-tool" id="deck-next" aria-label="Next (→)">›</button>' +
@@ -288,10 +287,6 @@
     const S = scene(sc);
     $('deck-count').textContent = String(sc + 1).padStart(2, '0') + ' / ' + String(SCENES.length).padStart(2, '0');
     $('deck-title').textContent = S.title;
-    $('deck-beats').innerHTML = S.beats.map(function (b, j) {
-      return '<li><button type="button" class="db k-' + b.kind.toLowerCase() + (j === bt ? ' now' : '') + (j < bt ? ' done' : '') + '" data-j="' + j + '" title="Step ' + (j + 1) + ': ' + esc(b.title) + '" aria-label="Step ' + (j + 1) + ', ' + b.kind + ': ' + esc(b.title) + '"><span class="db-n">' + (j + 1) + '</span>' + b.kind + '</button></li>';
-    }).join('');
-    $('deck-beats').querySelectorAll('button').forEach(function (b) { b.addEventListener('click', function () { go(sc, +b.dataset.j); }); });
     $('deck-prev').disabled = sc === 0 && bt === 0;
     $('deck-next').disabled = sc === SCENES.length - 1 && bt === scene(sc).beats.length - 1;
   }
