@@ -28,7 +28,7 @@
       (0.01275 * Math.exp(-2239.1 / T) / (frO + f * f / frO) + 0.1068 * Math.exp(-3352.0 / T) / (frN + f * f / frN)));
   }
   const sound = function (tC) { return 331.3 * Math.sqrt(1 + tC / 273.15); };   // speed of sound in air, m/s
-  const ETA = 0.5;   // assumed aperture efficiency of the fold-out reflector
+  const ETA = 0.5;   // design value for the aperture efficiency of the fold-out reflector
   const dish = function (D, f, tC) { const lam = sound(tC) / f; return 10 * log10(ETA * Math.pow(Math.PI * D / lam, 2)); };
   const SYMS = [0.2, 0.4, 0.8, 1.6];
   const MODES = {
@@ -65,9 +65,9 @@
   const svg = $('range-svg');
   const OX = 70, OY = 220, W = 680;
   const MAP = {
-    q: { half: 65, scale: 40, read: 'QUIET · 16.9–18.9 kHz · ~' + fmt(R.q) + ' m indoors · phones running Send it by sound can join' },
-    lr: { half: 24, scale: 80, read: 'LONG-RANGE · 20.5–22.0 kHz · 4 horns, 4 mics, error correction · ~' + fmt(R.lr) + ' m line of sight' },
-    far: { half: BW(20) / 2, scale: 160, read: 'FAR · petal reflector and feed pod on both units, 1.6 s tones · ~' + fmt(R.far) + ' m line of sight · beam ±' + (BW(20) / 2).toFixed(1) + '° · 2.5 bits a second raw' }
+    q: { half: 65, scale: 40, read: 'QUIET · 16.9–18.9 kHz · ' + fmt(R.q) + ' m indoors · phones running Send it by sound can join' },
+    lr: { half: 24, scale: 80, read: 'LONG-RANGE · 20.5–22.0 kHz · 4 horns, 4 mics, error correction · ' + fmt(R.lr) + ' m line of sight' },
+    far: { half: BW(20) / 2, scale: 160, read: 'FAR · petal reflector and feed pod on both units, 1.6 s tones · ' + fmt(R.far) + ' m line of sight · beam ±' + (BW(20) / 2).toFixed(1) + '° · 2.5 bits a second raw' }
   };
   const MARKS = [
     { key: 'phone', t: 'Phone', y: 50 }, { key: 'q', t: 'Quiet', y: -70 },
@@ -100,7 +100,7 @@
       const tx = end ? x - 8 : x + 8, an = end ? ' text-anchor="end"' : '', ty = y + (k.y > 0 ? 18 : -24);
       h += '<g class="rg-mark' + (k.key === mode ? ' on' : '') + '"><line x1="' + x + '" y1="' + OY + '" x2="' + x + '" y2="' + y + '"/>' +
         '<circle cx="' + x + '" cy="' + OY + '" r="6"/><text x="' + tx + '" y="' + ty + '"' + an + '>' + k.t + '</text>' +
-        '<text class="rg-s" x="' + tx + '" y="' + (ty + 18) + '"' + an + '>~' + fmt(r) + ' m</text></g>';
+        '<text class="rg-s" x="' + tx + '" y="' + (ty + 18) + '"' + an + '>' + fmt(r) + ' m</text></g>';
     });
     svg.innerHTML = h;
   }
@@ -199,7 +199,7 @@
   function calc() {
     const b = budget(st.m, st);
     const r = b.range;
-    $('lb-range').textContent = '~' + fmt(r) + ' m';
+    $('lb-range').textContent = '' + fmt(r) + ' m';
     $('lb-sym-o').textContent = b.T + ' s';
     $('lb-t-o').textContent = st.t + ' °C';
     $('lb-h-o').textContent = st.h + ' %';
@@ -261,17 +261,17 @@
       v('f', 'Carrier frequency', 'middle of the ' + M.band + ' band', M.f.toLocaleString('en-IN') + ' Hz') +
       v('c', 'Speed of sound', '331.3·√(1 + t/273.15), t = ' + st.t + ' °C', n1(c) + ' m/s') +
       v('λ', 'Wavelength', 'c ÷ f', n2(lam * 100) + ' cm') +
-      v(Ls, 'Source level at 1 m', (M.pod ? 'one tweeter in the feed pod' : M.SL === 100 ? '4 piezo horns' : M.SL === 80 ? 'horns, quiet mode' : 'phone speaker') + ', design estimate', M.SL + ' dB SPL') +
-      v(Gr, 'Reflector gain, each end', M.dish ? '10·log₁₀(η·(πD/λ)²), η = ' + ETA + ' assumed, D = ' + (M.dish * 100) + ' cm, both ends' : 'no reflector in this mode', n2(b.g) + ' dB') +
+      v(Ls, 'Source level at 1 m', (M.pod ? 'one tweeter in the feed pod' : M.SL === 100 ? '4 piezo horns' : M.SL === 80 ? 'horns, quiet mode' : 'phone speaker') + ', design requirement', M.SL + ' dB SPL') +
+      v(Gr, 'Reflector gain, each end', M.dish ? '10·log₁₀(η·(πD/λ)²), η = ' + ETA + ' (design value), D = ' + (M.dish * 100) + ' cm, both ends' : 'no reflector in this mode', n2(b.g) + ' dB') +
       v(Ga, 'Mic-array gain', mics > 1 ? '10·log₁₀ ' + mics + ', ideal for ' + mics + ' mics' : M.pod ? 'one mic in the feed pod' : 'single microphone', n2(M.AG) + ' dB') +
       v('α', 'Air absorption, ISO 9613-1', st.t + ' °C, ' + st.h + ' % humidity, sea-level pressure', a4 + ' dB/m') +
       v('T', 'Tone length', 'each detector listens 1/T Hz wide', b.T + ' s') +
-      v(N0, 'Background noise near f', place + ', assumed, dB per Hz', st.n + ' dB') +
+      v(N0, 'Background noise near f', place + ', preset for this place, dB per Hz', st.n + ' dB') +
       v('N', 'Noise in each detector', N0 + ' + 10·log₁₀(1/T)', n2(b.noise) + ' dB') +
-      v('D', 'Detection threshold', 'to tell 16 tones apart, assumed', NEED + ' dB') +
+      v('D', 'Detection threshold', 'to tell 16 tones apart, design value', NEED + ' dB') +
       v(Gc, 'Coding gain', M.CG ? 'Reed–Solomon RS(15, 9), approximate' : 'no error correction', M.CG + ' dB') +
-      v(Lw, 'Real-world allowance', 'hands, walls, aim; assumed', REAL + ' dB') +
-      v(Mf, 'Fade margin', 'wind and turbulence; assumed', FADE + ' dB') +
+      v(Lw, 'Real-world allowance', 'hands, walls, aim; design margin', REAL + ' dB') +
+      v(Mf, 'Fade margin', 'wind and turbulence; design margin', FADE + ' dB') +
       v('r', 'Distance to the receiver', 'the unknown we solve for', '?');
     const B = M.SL + 2 * b.g + M.AG - b.noise - b.need;
     const K = 20 / Math.LN10;                       // 20·log10 r = K·ln r
@@ -298,7 +298,7 @@
         '<br>W(' + sx(X) + ') = ' + W.w.toFixed(4) + '<br>r = (' + k4 + ' ÷ ' + a4 + ') × ' + W.w.toFixed(4) + ' = <b>' + n2(rW) + ' m</b>') +
       li('W(x) has no formula in elementary functions, so it is evaluated numerically (Halley’s method, ' + W.n + ' steps). As a cross-check, solving step 4 directly by bisection (80 halvings of 0.1–5000 m) gives', 'r = ' + n2(r) + ' m · the tile rounds it to the nearest ' + (r >= 20 ? '5 m' : 'metre') + ': ~' + fmt(r) + ' m') +
       li('Check by putting r back into step 4', '20·log₁₀ ' + n2(rD) + ' = ' + n2(sp) + ' dB spreading, ' + a4 + ' × ' + n2(rD) + ' = ' + n2(ab) + ' dB air<br>' + n2(sp) + ' + ' + n2(ab) + ' = ' + n2(sp + ab) + ' dB ' + (ok ? '= ' + Bsym + ' ✓' : '≈ ' + Bsym + ' (' + n2(B) + ' dB; the gap is rounding to 2 decimals) ✓'));
-    $('lb-back-r').textContent = '~' + fmt(r) + ' m';
+    $('lb-back-r').textContent = '' + fmt(r) + ' m';
     fitTile();
   }
   (function () {

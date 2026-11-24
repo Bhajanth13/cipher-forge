@@ -366,7 +366,8 @@
 .parts-table tbody tr { transition: background .2s; }
 .parts-table tbody tr:hover { background: var(--signal-soft); }
 .power { padding-bottom: 110px; }
-.power-grid { margin-top: 36px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch; }
+.power-grid { margin-top: 36px; display: grid; grid-template-columns: 1fr; gap: 20px; align-items: stretch; }
+.power-table td.mono { white-space: nowrap; }
 .power-table { border-radius: 12px; border: 1px solid var(--rule); overflow: hidden; }
 .power-calc { padding: 26px 28px; border-radius: 12px; border: 1px solid var(--signal-line); background: linear-gradient(170deg, var(--plate-2), var(--plate)); display: grid; gap: 14px; align-content: center; }
 .pc-label { font-size: 16px; color: var(--steel-2); }

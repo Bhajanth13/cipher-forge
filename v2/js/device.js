@@ -157,7 +157,7 @@
       spec: [['Board', '8-layer HDI, 1.0 mm, U-shaped'], ['Brain', 'STM32U585, TrustZone, hardware AES'], ['Key store', 'NXP SE050, certified secure element'], ['Also', 'BQ25180 charger, MAX17048 gauge, DRV2605L haptics']] },
     { name: 'Power and sound', mm: '5.0 mm', cls: 'L-bay', z: 0, ex: -1.9,
       html: function () {
-        const cellTop = function (n) { return '<span>LiPo · 502538 · ' + n + '</span><span><b>3.7 V · 500 mAh</b><br>1.85 Wh</span>'; };
+        const cellTop = function (n) { return '<span>LiPo · LP502535 · ' + n + '</span><span><b>3.7 V · 400 mAh</b><br>1.48 Wh</span>'; };
         return slab('cell', 12, 80, 125, 190, 25, 7, cellTop('A')) + slab('cell', 251, 80, 125, 190, 25, 7, cellTop('B')) +
           slab('pcm', 30, 84, 60, 10, 3, 32) + slab('pcm', 268, 84, 60, 10, 3, 32) +
           slab('tab', 54, 246, 40, 24, 0.6, 32) + slab('tab', 293, 246, 40, 24, 0.6, 32) +
@@ -171,13 +171,13 @@
           cylinder('mot', 177, 204, 36, 36, 12, 3, 8) +
           slab('boot', 194, 266, 22, 8, 4, 40, '', true);
       },
-      pts: [[74, 175, 32, 'Two LiPo cells', '502538 × 2, 500 mAh each, in parallel'], [60, 89, 35, 'Protection circuit', 'one per cell'],
+      pts: [[74, 175, 32, 'Two LiPo cells', 'LP502535 × 2, 400 mAh each, in parallel'], [60, 89, 35, 'Protection circuit', 'one per cell'],
         [195, 120, 48, 'Petal pocket', 'Ø 9.2 mm tube, 38 mm deep, folded bud inside'], [156, 140, 36, 'Gear motor', '6 mm, drives the lead screw'],
         [229, 60, 30, 'Lead screw', 'M2, 2 mm lead, 36 mm of travel'],
-        [87, 16, 23, 'Piezo horn array', '4 horn-loaded tweeters along the top edge'], [347, 56, 26, 'Piezo disc', '≈100 dB at 1 m with all four (estimate)'], [195, 222, 20, 'Vibration motor', '8 mm LRA'],
+        [87, 16, 23, 'Piezo horn array', '4 horn-loaded tweeters along the top edge'], [347, 56, 26, 'Piezo disc', '100 dB at 1 m with all four (design requirement)'], [195, 222, 20, 'Vibration motor', '8 mm LRA'],
         [74, 258, 33, 'Pull tabs', 'remove each cell without tools']],
-      text: 'Two cells either side of the petal pocket (1000 mAh together), four horn-loaded piezo tweeters, the bloom motor and lead screw, and a motor for silent alerts.',
-      spec: [['Cells', '2 × LiPo 502538, 500 mAh each (estimate), 1000 mAh together'], ['Bloom', 'Ø 9.2 × 38 mm pocket, 6 mm gear motor, M2 lead screw'], ['Transmit', '4 horn-loaded piezo tweeters, 18–24 kHz'], ['Haptics', '8 mm LRA']] },
+      text: 'Two cells either side of the petal pocket (800 mAh together), four horn-loaded piezo tweeters, the bloom motor and lead screw, and a motor for silent alerts.',
+      spec: [['Cells', '2 × LiPo LP502535, 400 mAh each (datasheet), 800 mAh together'], ['Bloom', 'Ø 9.2 × 38 mm pocket, 6 mm gear motor, M2 lead screw'], ['Transmit', '4 horn-loaded piezo tweeters, 18–24 kHz'], ['Haptics', '8 mm LRA']] },
     { name: 'Ceramic back', mm: '1.0 mm', cls: 'L-back', z: 0, ex: -3.2,
       html: function () {
         const sinks = CORNERS.map(function (c) { return '<span class="sink" style="left:' + (c[0] - 7) + 'px;top:' + (c[1] - 7) + 'px"></span>'; }).join('');
@@ -610,7 +610,7 @@
 
   /* ---------- Battery life ---------- */
   (function () {
-    const CAP = 1000, LISTEN = 11.5, SLEEP = 0.3;
+    const CAP = 800, LISTEN = 6.544, SLEEP = 0.03295;   // mAh and mA, from the datasheets listed on the page
     const input = $('duty');
     function calc() {
       const on = +input.value, off = 24 - on;
@@ -619,9 +619,9 @@
       const hours = CAP / avg;
       $('duty-out').textContent = hs(on) + ' h / 24 h';
       input.setAttribute('aria-valuetext', hs(on) + ' hours a day');
-      $('duty-formula').textContent = 'average = (' + hs(on) + ' h × ' + LISTEN + ' mA + ' + hs(off) + ' h × ' + SLEEP + ' mA) ÷ 24 h = ' + avg.toFixed(2) + ' mA · ' +
-        CAP + ' mAh ÷ ' + avg.toFixed(2) + ' mA ≈ ' + Math.round(hours) + ' h';
-      $('life-out').textContent = hours < 72 ? Math.round(hours) + ' hours' : Math.round(hours / 24) + ' days';
+      $('duty-formula').textContent = 'average = (' + hs(on) + ' h × ' + LISTEN + ' mA + ' + hs(off) + ' h × ' + SLEEP + ' mA) ÷ 24 h = ' + avg.toFixed(4) + ' mA · ' +
+        CAP + ' mAh ÷ ' + avg.toFixed(4) + ' mA = ' + hours.toFixed(1) + ' h';
+      $('life-out').textContent = hours < 72 ? hours.toFixed(1) + ' hours' : (hours / 24).toFixed(1) + ' days';
     }
     input.addEventListener('input', calc);
     calc();

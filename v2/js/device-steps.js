@@ -266,7 +266,7 @@
       { t: 'Break', lab: 'Brute force and letter counts crack a shift cipher.', dev: 'So a field unit wraps F inside AES-256, and the secure element wipes the key after repeated wrong unlocks.',
         m: '26 keys  vs  2²⁵⁶ ≈ 1.2 × 10⁷⁷ keys', parts: ['NXP SE050', 'Fingerprint key'], layers: [4], glow: ['p-se', 'p-fp'] },
       { t: 'Count', lab: 'Count with the product rule.', dev: 'Each byte needs 2 digits; for long range, every 9 digits become 15 with error correction. Counting tells you how long a message takes.',
-        m: 'tones = 15·⌈2n / 9⌉;   12 chars → 45 tones ≈ 18 s at 0.4 s', parts: ['STM32U585', 'Piezo horns'], layers: [4, 5], glow: ['p-mcu', 'p-spk'] }
+        m: 'tones = 15·⌈2n / 9⌉;   12 chars → 45 tones = 18 s at 0.4 s', parts: ['STM32U585', 'Piezo horns'], layers: [4, 5], glow: ['p-mcu', 'p-spk'] }
     ];
     const cam = { z: 30, s: 0.5 }, tgt = { z: 30, s: 0.5 };
     let running = false;

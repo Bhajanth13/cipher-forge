@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="css/fonts.css?v=8">
 <link rel="stylesheet" href="css/style.css?v=10">
 <link rel="stylesheet" href="css/future.css?v=12">
-<link rel="stylesheet" href="css/device.css?v=27">
+<link rel="stylesheet" href="css/device.css?v=28">
 </head>
 <body>
 
@@ -56,7 +56,7 @@
     <p class="hud-line hud-a mono">FUTURE ENHANCEMENT 02 · CIPHER ECHO</p>
     <p class="hud-line hud-b mono">RF EMISSIONS <span>0</span></p>
     <p class="hud-line hud-c mono">78 × 56 × 13 MM · CONCEPT</p>
-    <p class="hud-line hud-d mono">RANGE ≈<span data-r="far">110</span> M · FAR MODE</p>
+    <p class="hud-line hud-d mono">RANGE <span data-r="far">110</span> M · FAR MODE</p>
   </div>
 
   <div class="dv-hero-copy">
@@ -86,7 +86,7 @@
 <section class="fx-specs dv-specs" aria-label="Cipher Echo in numbers">
   <div class="spec"><p class="spec-num mono">0</p><p class="spec-label">radios: no Wi-Fi, Bluetooth or cellular</p></div>
   <div class="spec"><p class="spec-num mono">13<small> mm</small></p><p class="spec-label">thin, 78 × 56 mm face</p></div>
-  <div class="spec"><p class="spec-num mono">≈29<small> days</small></p><p class="spec-label">on one charge, listening 2.4 h / 24 h (estimate)</p></div>
+  <div class="spec"><p class="spec-num mono">48.7<small> days</small></p><p class="spec-label">on one charge, listening 2.4 h / 24 h (calculated from datasheet currents)</p></div>
   <div class="spec"><p class="spec-num mono">3.3<small>″</small></p><p class="spec-label">full-face touch e-paper with an on-screen keyboard</p></div>
 </section>
 
@@ -152,8 +152,8 @@
       <article class="hw-card">
         <p class="sc-num mono">Transmit</p>
         <h3>Four-horn piezo array</h3>
-        <p>Four horn-loaded piezo tweeters along the top edge, driven by a DRV2700 that boosts the battery to about 100 V. Driven together, they add up on-axis like a torch beam.</p>
-        <p class="hw-spec mono">4 × tweeters · 18–24 kHz · ≈100 dB at 1 m (estimate)</p>
+        <p>Four horn-loaded piezo tweeters along the top edge, driven by a DRV2700 whose boost converter raises the battery to 100 V (rated up to 105 V). Driven together, they add up on-axis like a torch beam.</p>
+        <p class="hw-spec mono">4 × tweeters · 18–24 kHz · 100 dB at 1 m (design requirement)</p>
       </article>
       <article class="hw-card">
         <p class="sc-num mono">Receive</p>
@@ -167,7 +167,7 @@
           <p class="sc-num mono">Far mode</p>
           <h3>Petal reflector</h3>
           <p>Eight nickel–titanium petals bloom into a 10 cm dish, with a feed pod at its focus. <a href="#bloom" class="glide">See it open</a>.</p>
-          <p class="hw-spec mono">gain = 10·log₁₀(η(πD/λ)²) ≈ +22.8 dB each end</p>
+          <p class="hw-spec mono">gain = 10·log₁₀(η(πD/λ)²) = +22.8 dB each end</p>
         </div>
       </article>
     </div>
@@ -335,7 +335,7 @@
   </div>
   <div class="why-grid">
     <article class="why-card"><h3>No radio at all</h3><p>There is no Wi-Fi, Bluetooth or cellular chip, so a radio scanner finds nothing. Cipher Echo talks only through sound and its USB port.</p></article>
-    <article class="why-card"><h3>Above human hearing</h3><p>Long-range and far modes talk at 20.5–22.0 kHz, beyond what any person can hear, out to about <span data-r="far">110</span> m in far mode. Quiet mode, at 16.9–18.9 kHz, also works with phones running Send it by sound.</p></article>
+    <article class="why-card"><h3>Above human hearing</h3><p>Long-range and far modes talk at 20.5–22.0 kHz, beyond what any person can hear, out to <span data-r="far">110</span> m in far mode. Quiet mode, at 16.9–18.9 kHz, also works with phones running Send it by sound.</p></article>
     <article class="why-card"><h3>Shoulder-proof typing</h3><p>The keyboard is drawn on the screen: no clicks, and its layout can be scrambled each time so nobody can read your taps.</p></article>
     <article class="why-card"><h3>No glow</h3><p>E-paper reflects light instead of giving it off, and there are no LEDs. In a dark room the unit is invisible.</p></article>
     <article class="why-card"><h3>Fingerprint unlock</h3><p>The power key reads your fingerprint. Until it matches, the secure chip will not release the key.</p></article>
@@ -361,9 +361,9 @@
         <tr><td class="mono">3.3″ touch e-paper</td><td>Screen</td><td>Full face, 360 × 240 px with capacitive touch and an on-screen keyboard. Holds the image with no power and no light.</td></tr>
         <tr><td class="mono">Sapphire, 0.7 mm</td><td>Cover glass</td><td>Scratch-proof; bonded to the touch layer with no air gap.</td></tr>
                 <tr><td class="mono">4 × SPH0641LU4H-1</td><td>Ultrasonic mics</td><td>Knowles MEMS mics with response to 80 kHz, one per corner, beamformed; a hardware switch cuts all four.</td></tr>
-        <tr><td class="mono">DRV2700</td><td>Piezo driver</td><td>TI high-voltage piezo driver with built-in boost; drives the horns at about 100 V.</td></tr>
+        <tr><td class="mono">DRV2700</td><td>Piezo driver</td><td>TI high-voltage piezo driver with built-in boost, rated up to 105 V; set to drive the horns at 100 V.</td></tr>
         <tr><td class="mono">4 × piezo horn tweeter</td><td>Transmitters</td><td>Horn-loaded, 18–24 kHz, along the top edge.</td></tr>
-        <tr><td class="mono">Petal reflector</td><td>Far mode</td><td>Eight 0.1 mm nickel–titanium (nitinol) petals that bloom into a 10 cm dish, focal length 40 mm. About +22.8 dB at 21 kHz, assuming 50 % efficiency.</td></tr>
+        <tr><td class="mono">Petal reflector</td><td>Far mode</td><td>Eight 0.1 mm nickel–titanium (nitinol) petals that bloom into a 10 cm dish, focal length 40 mm. +22.8 dB at 21.25 kHz, calculated with an aperture efficiency η = 0.5 (design value).</td></tr>
         <tr><td class="mono">Feed pod</td><td>Far-mode transmitter and mic</td><td>One piezo tweeter and one SPH0641 mic on a two-stage telescoping mast, held at the dish focus.</td></tr>
         <tr><td class="mono">6 mm gear motor</td><td>Bloom and fold</td><td>Turns an M2 lead screw (2 mm lead) that pushes the bud 36 mm out of its pocket and draws it back through a collar that closes the petals.</td></tr>
         <tr><td class="mono">Fingerprint key</td><td>Power and unlock</td><td>Capacitive sensor in the side power key.</td></tr>
@@ -371,7 +371,7 @@
         <tr><td class="mono">DRV2605L</td><td>Haptic driver</td><td>Quiet, sharp buzz patterns on an 8 mm LRA.</td></tr>
         <tr><td class="mono">BQ25180 + MAX17048</td><td>Charger and gauge</td><td>Charges from USB-C and reports the battery level accurately.</td></tr>
         <tr><td class="mono">W25Q128</td><td>16 MB flash</td><td>Firmware only. Messages are never written to it.</td></tr>
-        <tr><td class="mono">2 × LiPo 502538</td><td>Battery</td><td>Two 5 × 25 × 38 mm cells, one either side of the petal pocket, in parallel: 3.7 V, about 500 mAh each (estimate from the energy density of a standard 503450), 1000 mAh together. Pull-tab removable.</td></tr>
+        <tr><td class="mono">2 × LiPo LP502535</td><td>Battery</td><td>Two 5 × 25 × 35 mm cells, one either side of the petal pocket, in parallel: 3.7 V, 400 mAh typical (388 mAh minimum) each according to the cell datasheet, 800 mAh together. Pull-tab removable.</td></tr>
         <tr><td class="mono">Ti Grade 5 + ZrO₂</td><td>Body</td><td>Titanium bezel and mid-frame, zirconia ceramic back.</td></tr>
       </tbody>
     </table>
@@ -383,17 +383,19 @@
   <div class="sec-head">
     <p class="fx-kicker mono">Power budget</p>
     <h2 class="fx-h2" id="power-title">How long it lasts</h2>
-    <p class="fx-sub">Cipher Echo sleeps most of the time and wakes to listen. Battery life is the capacity divided by the average current. The currents are estimates from typical datasheet values.</p>
+    <p class="fx-sub">Cipher Echo sleeps most of the time and wakes to listen. Battery life is the capacity divided by the average current. Every current below is the typical value from the part’s datasheet; the chips are supplied through linear regulators, so the battery current is their sum. The fingerprint sensor, haptic driver and flash are switched off by a load switch while idle and are not counted, and the extra charge used while sending is not included.</p>
   </div>
   <div class="power-grid">
     <table class="parts-table power-table">
-      <thead><tr><th scope="col">Mode</th><th scope="col">Current (estimate)</th></tr></thead>
+      <thead><tr><th scope="col">Part (datasheet value)</th><th scope="col">Listening</th><th scope="col">Asleep</th></tr></thead>
       <tbody>
-        <tr><td>Asleep</td><td class="mono">≈ 0.3 mA</td></tr>
-        <tr><td>Listening (4 mics, 96 kHz)</td><td class="mono">≈ 11.5 mA</td></tr>
-        <tr><td>Refreshing the screen</td><td class="mono">≈ 4 mA for 2 s</td></tr>
-        <tr><td>Sending, long-range</td><td class="mono">≈ 450 mA in short bursts</td></tr>
-        <tr><td>Blooming or folding (gear motor)</td><td class="mono">≈ 100 mA for about 1 s</td></tr>
+        <tr><td>STM32U585: 19.5 µA/MHz at 160 MHz; Stop 2, full SRAM</td><td class="mono">3.120 mA</td><td class="mono">0.00895 mA</td></tr>
+        <tr><td>4 × SPH0641LU4H-1: 0.845 mA each in ultrasonic mode; powered down</td><td class="mono">3.380 mA</td><td class="mono">0 mA</td></tr>
+        <tr><td>SE050: deep power-down (datasheet maximum)</td><td class="mono">0.005 mA</td><td class="mono">0.005 mA</td></tr>
+        <tr><td>MAX17048: active; hibernate</td><td class="mono">0.023 mA</td><td class="mono">0.003 mA</td></tr>
+        <tr><td>BQ25180: battery quiescent current</td><td class="mono">0.003 mA</td><td class="mono">0.003 mA</td></tr>
+        <tr><td>DRV2700: shutdown current</td><td class="mono">0.013 mA</td><td class="mono">0.013 mA</td></tr>
+        <tr><td><b>Total</b></td><td class="mono"><b>6.544 mA</b></td><td class="mono"><b>0.03295 mA</b></td></tr>
       </tbody>
     </table>
     <div class="power-calc panel">
@@ -414,9 +416,9 @@
 </footer>
 
 <script src="js/fx.js?v=8"></script>
-<script src="js/device.js?v=24"></script>
-<script src="js/device-steps.js?v=22"></script>
-<script src="js/device-range.js?v=25"></script>
-<script src="js/device-bloom.js?v=5"></script>
+<script src="js/device.js?v=25"></script>
+<script src="js/device-steps.js?v=23"></script>
+<script src="js/device-range.js?v=26"></script>
+<script src="js/device-bloom.js?v=6"></script>
 </body>
 </html>

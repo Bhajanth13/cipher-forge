@@ -146,8 +146,8 @@
     row('Focal length F', F + ' mm (f/D = ' + (F / D).toFixed(2) + ')') +
     row('Depth at the rim, D² ÷ 16F', (D * D / (16 * F)).toFixed(1) + ' mm') +
     row('Wavelength λ at 20 °C', (lam * 100).toFixed(2) + ' cm') +
-    row('Gain each end, η = ' + RANGE.ETA + ' assumed', '+' + gain.toFixed(1) + ' dB') +
-    row('Beam width, ≈ 1.2·λ/D', bw.toFixed(1) + '° (aim within ±' + (bw / 2).toFixed(1) + '°)') +
+    row('Gain each end, η = ' + RANGE.ETA + ' (design value)', '+' + gain.toFixed(1) + ' dB') +
+    row('Beam width, 1.2·λ/D', bw.toFixed(1) + '° (aim within ±' + (bw / 2).toFixed(1) + '°)') +
     row('Range, long-range → far', '~' + RANGE.fmt(RANGE.R.lr) + ' m → ~' + RANGE.fmt(RANGE.R.far) + ' m');
   const farLine = 'FAR · 21.2 kHz · ~' + RANGE.fmt(RANGE.R.far) + ' m';
   cam.querySelector('.bl-aim').textContent = 'AIM ±' + (bw / 2).toFixed(1) + '°';
@@ -197,7 +197,7 @@
     g += r('fp-dash', 29.4, 1.2, 19.2, 37.4) + r('fp-dash mcu', 7.2, 8, 19.2, 14.4);
     g += r('fp-horn', 8, 1.2, 18.8, 14, 0.6, 3) + r('fp-horn', 55.6, 1.2, 18.8, 14, 0.6, 3);
     [10.2, 19, 57.8, 66.6].forEach(function (x) { g += r('fp-port', x, 0, 6, 1.2); });
-    g += r('fp-cell', 2.4, 16, 25, 38, 0.8, 4) + r('fp-cell', 50.2, 16, 25, 38, 0.8, 4);
+    g += r('fp-cell', 2.4, 16, 25, 35, 0.8, 4) + r('fp-cell', 50.2, 16, 25, 35, 0.8, 4);
     g += r('fp-tube', 34.4, 0.4, TUBE, 37.2, 1.2) + r('fp-bud', 34.7, 1.4, BUD, budLen, 1.2, 1);
     g += r('fp-door', 34.4, 0, TUBE / 2, 1.2) + r('fp-door', 34.4 + TUBE / 2, 0, TUBE / 2, 1.2);
     g += r('fp-screw', 44.4, 1.2, 2.8, 36.4, 0.4, 2) + r('fp-motor', 28.4, 19.6, 5.6, 18, 1, 5) + r('fp-gear', 28.4, 37.6, 19.2, 1.6);
@@ -216,7 +216,7 @@
       ['Folded bud', 'Ø ' + BUD + ' × ' + f1(budLen) + ' mm in a Ø ' + TUBE + ' mm tube; doors at the top edge'],
       ['Lead screw', 'M2, 2 mm lead, 36 mm of travel'],
       ['Horn blocks', '4 piezo tweeters along the top edge'],
-      ['Two cells', '25 × 38 × 5 mm each, 1000 mAh together (estimate)'],
+      ['Two cells', '25 × 35 × 5 mm each, 800 mAh together (LP502535 datasheet)'],
       ['Gear motor', '6 mm, turns the screw through the gear plate'],
       ['Vibration motor', '8 mm LRA, moved below the pocket'],
       ['USB-C', 'unchanged']
