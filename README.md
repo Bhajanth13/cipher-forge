@@ -91,9 +91,14 @@ Fonts: Archivo and IBM Plex Mono, under the SIL Open Font License (see `fonts/`)
 
 ## v2: the lab, presented live
 
-`v2/` is a full copy of the site that opens as a presenter deck. Each section of the lab is one scene, and each scene has beats: Explain, Show, Test (ask the class, then reveal) and Build (the class chooses, you type it in). A presenter card says what to say and holds the buttons; the part being discussed is spotlit. New in v2:
+`v2/` is the main live site. `v2/index.html` is the rotor-tunnel opening (a hidden button in the bottom-right corner, or →, plays it at medium speed and opens the presentation); `v2/lab.html` is the lab, which opens as a presenter deck; `v2/thanks.html` is the closing page with the team. The deck: Each section of the lab is one scene, and each scene has beats: Explain, Show, Test (ask the class, then reveal) and Build (the class chooses, you type it in). A presenter card says what to say and holds the buttons; the part being discussed is spotlit. New in v2:
 
 - **Your own f(x)**: a block that takes any formula in x (numbers, x, n, + − ×, ^ with a whole-number power, brackets), worked out mod n with BigInt. It is read by a small parser, never by `eval`.
 - **Clearer arrow diagram**: thicker arrows, a table of every input above its output, and “Walk the arrows” to follow one letter at a time.
 
 Keys: → or Space next beat, ← back, 1–9 scenes, R reveal, N hide the card, F full screen, W website view. Files: `v2/css/deck.css`, `v2/js/deck.js`, with the custom block in `v2/js/blocks.js`.
+
+
+## Team
+
+Group G1: Bhajanth V (2RUA26CSE0022), K G Deepika (2RUA26CSE0053), Amulya G M (2RUA26CSE0012), Dibyanishant Sharma Sarker (2RUA26CSE0034), Madhushree M S (2RUA26CSE0063), Hruthvick B S (2RUA26CSE0045). Guide: Dr. Subhasish Saha.

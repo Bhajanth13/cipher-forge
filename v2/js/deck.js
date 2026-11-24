@@ -169,7 +169,7 @@
       { kind: 'Explain', title: 'All five modules', target: '#syllabus .map-scroll',
         say: 'Every module of the syllabus has a job in the lab: sets, logic, relations and functions, counting, and combinations.' },
       { kind: 'Explain', title: 'Thank you',
-        say: 'Thank you. Questions? Anyone can try their own function now: switch to Website view or press W.' }
+        say: 'Press → to open the thank-you page with the team. Anyone can try their own function afterwards: switch to Website view or press W.' }
     ] }
   ];
 
@@ -288,7 +288,7 @@
     $('deck-count').textContent = String(sc + 1).padStart(2, '0') + ' / ' + String(SCENES.length).padStart(2, '0');
     $('deck-title').textContent = S.title;
     $('deck-prev').disabled = sc === 0 && bt === 0;
-    $('deck-next').disabled = sc === SCENES.length - 1 && bt === scene(sc).beats.length - 1;
+    $('deck-next').disabled = false;
   }
 
   function renderCard(b) {
@@ -360,6 +360,7 @@
   function next() {
     if (bt < scene(sc).beats.length - 1) go(sc, bt + 1);
     else if (sc < SCENES.length - 1) go(sc + 1, 0);
+    else location.href = 'thanks.html';
   }
   function prev() {
     if (bt > 0) go(sc, bt - 1);

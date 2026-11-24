@@ -303,7 +303,7 @@
         '<div><dt class="mono">In Cipher Echo</dt><dd>' + s.dev + '</dd></div>' +
         '<div><dt class="mono">The maths</dt><dd class="mono sc-m">' + s.m + '</dd></div>' +
         '<div><dt class="mono">Parts</dt><dd>' + chips(s.parts) + '</dd></div></dl>' +
-        '<a class="sc-link" href="index.html#' + ['alphabet', 'forge', 'inspect', 'relations', 'encrypt', 'break', 'attack'][i] + '">Open step ' + (i + 1) + ' in the lab</a>';
+        '<a class="sc-link" href="lab.html#' + ['alphabet', 'forge', 'inspect', 'relations', 'encrypt', 'break', 'attack'][i] + '">Open step ' + (i + 1) + ' in the lab</a>';
     }
     apply();
     stepper('lb-rail', 7, run, 6000);
