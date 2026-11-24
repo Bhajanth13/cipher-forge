@@ -23,103 +23,6 @@ CF.blocks = (function () {
     return Math.max(lo, Math.min(hi, v));
   }
 
-
-  /* ---------- Your own function: f(x) written as a formula ----------
-     A small, safe reader for formulas such as 3x + 7, x^5, 25 - x or
-     (x + 4)(x + 1). It understands numbers, x, n (the size of S), + - *,
-     ^ with a whole-number power, brackets, and writing 3x for 3 · x.
-     Nothing is passed to eval. The answer is always taken mod n, and
-     every step is reduced mod n with BigInt, so powers never overflow. */
-  function normalise(src) {
-    let t = String(src || '').trim();
-    t = t.replace(/^\s*[a-z]\s*\(\s*x\s*\)\s*=\s*/i, '');             // drop a leading "f(x) ="
-    t = t.replace(/\s*\(?\s*mod\s*(n|\d+)\s*\)?\s*$/i, '');           // drop a trailing "mod 26" / "mod n"
-    t = t.replace(/[−–—]/g, '-').replace(/[·×]/g, '*').replace(/²/g, '^2').replace(/³/g, '^3').replace(/X/g, 'x').replace(/N/g, 'n');
-    return t.replace(/\s+/g, '');
-  }
-
-  function parseFormula(src) {
-    const t = normalise(src);
-    if (!t) return { error: 'Type a formula in x, such as 3x + 7.' };
-    if (t.length > 40) return { error: 'Keep the formula under 40 characters.' };
-    let i = 0;
-    function peek() { return t[i]; }
-    function fail(msg) { throw new Error(msg); }
-    function number() { const m = /^\d+/.exec(t.slice(i)); i += m[0].length; return m[0]; }
-    function atom() {
-      const c = peek();
-      if (c === undefined) fail('The formula ends too early.');
-      if (/\d/.test(c)) { const v = number(); return { k: 'num', v: BigInt(v) }; }
-      if (c === 'x') { i++; return { k: 'x' }; }
-      if (c === 'n') { i++; return { k: 'n' }; }
-      if (c === '(') { i++; const e = expr(); if (peek() !== ')') fail('A bracket is not closed.'); i++; return e; }
-      if (c === '/') fail('Division is not allowed: it is not defined for every x mod n.');
-      fail('I can’t read “' + c + '”. Use numbers, x, n, + − × ^ and brackets.');
-    }
-    function power() {
-      const a = atom();
-      if (peek() === '^') {
-        i++;
-        if (!/\d/.test(peek() || '')) fail('After ^ write a whole number, such as x^5.');
-        const e = parseInt(number(), 10);
-        if (e > 99) fail('Keep powers at 99 or below.');
-        return { k: 'pow', a: a, e: e };
-      }
-      return a;
-    }
-    function unary() {
-      if (peek() === '-') { i++; return { k: 'neg', a: unary() }; }
-      if (peek() === '+') { i++; return unary(); }
-      return power();
-    }
-    function term() {
-      let a = unary();
-      for (;;) {
-        const c = peek();
-        if (c === '*') { i++; a = { k: 'mul', a: a, b: unary() }; }
-        else if (c !== undefined && /[\dxn(]/.test(c)) a = { k: 'mul', a: a, b: unary() };   // 3x, x(x+1)
-        else return a;
-      }
-    }
-    function expr() {
-      let a = term();
-      for (;;) {
-        const c = peek();
-        if (c === '+') { i++; a = { k: 'add', a: a, b: term() }; }
-        else if (c === '-') { i++; a = { k: 'sub', a: a, b: term() }; }
-        else return a;
-      }
-    }
-    try {
-      const tree = expr();
-      if (i < t.length) fail(t[i] === ')' ? 'There is an extra closing bracket.' : t[i] === '/' ? 'Division is not allowed: it is not defined for every x mod n.' : 'I can’t read “' + t[i] + '”. Use numbers, x, n, + − × ^ and brackets.');
-      return { tree: tree, text: t };
-    } catch (err) { return { error: err.message }; }
-  }
-
-  function evalTree(node, x, n) {
-    const N = BigInt(n);
-    const m = function (v) { return ((v % N) + N) % N; };
-    switch (node.k) {
-      case 'num': return m(node.v);
-      case 'x': return m(BigInt(x));
-      case 'n': return 0n;                                   // n ≡ 0 (mod n)
-      case 'neg': return m(-evalTree(node.a, x, n));
-      case 'add': return m(evalTree(node.a, x, n) + evalTree(node.b, x, n));
-      case 'sub': return m(evalTree(node.a, x, n) - evalTree(node.b, x, n));
-      case 'mul': return m(evalTree(node.a, x, n) * evalTree(node.b, x, n));
-      case 'pow': { const b = evalTree(node.a, x, n); let r = m(1n); for (let k = 0; k < node.e; k++) r = m(r * b); return r; }
-    }
-    return 0n;
-  }
-
-  // Pretty form for display: 3x+7 → 3x + 7, x^5 → x⁵
-  function pretty(t) {
-    const SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹';
-    return t.replace(/\^(\d+)/g, function (_, d) { return d.split('').map(function (c) { return SUP[+c]; }).join(''); })
-      .replace(/\*/g, '·').replace(/([+\-])/g, ' $1 ').replace(/^ - /, '−').replace(/ - /g, ' − ').replace(/\( − /g, '(−').trim();
-  }
-
   const TYPES = {
     shift: {
       name: 'Shift',
@@ -205,26 +108,6 @@ CF.blocks = (function () {
       },
       formula: function (p) { return 'f(x) = x mod ' + p.m; },
       short: function (p) { return 'compress(' + p.m + ')'; }
-    },
-
-    custom: {
-      name: 'Your own f(x)',
-      blurb: 'Write any formula in x. It is worked out mod n for every symbol.',
-      params: [{ key: 'expr', label: 'f(x) =', kind: 'expr', value: '5x + 8' }],
-      make: function (set, p) {
-        const n = set.length, r = parseFormula(p.expr);
-        if (r.error) return build(n, function (x) { return x; });
-        return build(n, function (x) { return Number(evalTree(r.tree, x, n)); });
-      },
-      error: function (p) { return parseFormula(p.expr).error || null; },
-      formula: function (p) {
-        const r = parseFormula(p.expr);
-        return r.error ? 'f(x) = ?' : 'f(x) = (' + pretty(r.text) + ') mod n';
-      },
-      short: function (p) {
-        const r = parseFormula(p.expr);
-        return r.error ? 'f(?)' : '(' + pretty(r.text) + ')';
-      }
     }
   };
 
@@ -288,16 +171,10 @@ CF.blocks = (function () {
      e.g. "letters/shift-3/mirror/keyword-FORGE". Sender and receiver
      must share this key; it is never sent with the message. */
   function clean(v) { return String(v).replace(/[^A-Za-z0-9]/g, ''); }
-  const ENC = { '+': 'P', '-': 'M', '*': 'T', '^': 'E', '(': 'L', ')': 'R' };
-  function encodeExpr(v) { return normalise(v).split('').map(function (c) { return ENC[c] || (/[0-9xn]/.test(c) ? c : ''); }).join(''); }
-  function decodeExpr(v) {
-    const DEC = {}; Object.keys(ENC).forEach(function (k) { DEC[ENC[k]] = k; });
-    return String(v).split('').map(function (c) { return DEC[c] || c; }).join('');
-  }
 
   function keyCode(setKey, chain) {
     return [setKey].concat(chain.map(function (b) {
-      return [b.type].concat(TYPES[b.type].params.map(function (p) { return p.kind === 'expr' ? encodeExpr(b.params[p.key]) : clean(b.params[p.key]); })).join('-');
+      return [b.type].concat(TYPES[b.type].params.map(function (p) { return clean(b.params[p.key]); })).join('-');
     })).join('/');
   }
 
@@ -311,15 +188,13 @@ CF.blocks = (function () {
       const def = TYPES[bits[0]];
       if (!def || bits.length - 1 !== def.params.length) return null;
       const params = {};
-      def.params.forEach(function (p, j) { params[p.key] = p.kind === 'number' ? parseInt(bits[j + 1], 10) || 0 : p.kind === 'expr' ? decodeExpr(bits[j + 1]) : bits[j + 1]; });
+      def.params.forEach(function (p, j) { params[p.key] = p.kind === 'number' ? parseInt(bits[j + 1], 10) || 0 : bits[j + 1]; });
       chain.push(create(bits[0], params));
     }
     return { setKey: parts[0], chain: chain };
   }
 
   return {
-    parseFormula: parseFormula,
-    pretty: pretty,
     keyCode: keyCode,
     parseKey: parseKey,
     TYPES: TYPES,

@@ -24,7 +24,7 @@
   /* ---------- Build the rotors ---------- */
   const rig = document.getElementById('rig');
   const rotors = [];
-  if (rig) WORD.split('').forEach(function (ch, w) {
+  WORD.split('').forEach(function (ch, w) {
     const rotor = document.createElement('div');
     rotor.className = 'rotor';
     rotor.style.left = ((w - (WORD.length - 1) / 2) * GAP - 40) + 'px';
@@ -45,11 +45,9 @@
   // same 3D space, so it stays on the front row whatever the angle.
   const span = (WORD.length - 1) * GAP + 80;
   const win = document.getElementById('rotor-window');
-  if (win) {
   win.style.left = (-span / 2 - 10) + 'px';
   win.style.width = (span + 20) + 'px';
   win.style.transform = 'translateZ(' + (RADIUS + 4).toFixed(1) + 'px)';
-  }
 
   const hero = document.getElementById('top');
   const outCipher = document.getElementById('hero-cipher');
@@ -59,7 +57,6 @@
   const bar = document.getElementById('progress');
 
   function setRotors(p) {
-    if (!rig) return;
     let text = '';
     let turned = 0;
     rotors.forEach(function (r, w) {
@@ -127,10 +124,10 @@
   }
 
   // Shrink the drum to fit narrow screens
-  const stage = rig ? rig.parentElement : null;
+  const stage = rig.parentElement;
   let fit = 1;
   function measure() {
-    if (stage) fit = Math.min(1, stage.clientWidth / 600, stage.clientHeight / 520);
+    fit = Math.min(1, stage.clientWidth / 600, stage.clientHeight / 520);
   }
 
   let ticking = false;

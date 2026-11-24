@@ -69,7 +69,7 @@
   function renderRelation() {
     const s = CF.app.set(), n = s.length, F = CF.app.chainMap();
     const svg = $('rel-matrix');
-    const cell = 16, pad = 22, size = pad + n * cell + 2;
+    const cell = 16, pad = 28, size = pad + n * cell + 2;
     svg.setAttribute('viewBox', '0 0 ' + size + ' ' + size);
     const rel = R.asRelation(F);
     const colCount = new Array(n).fill(0);
@@ -77,7 +77,7 @@
 
     let html = '';
     for (let i = 0; i < n; i++) {
-      html += '<text class="mlbl" x="' + (pad - 6) + '" y="' + (pad + i * cell + cell / 2) + '" text-anchor="end">' + esc(s[i]) + '</text>';
+      html += '<text class="mlbl" x="' + (pad - 7) + '" y="' + (pad + i * cell + cell / 2) + '" text-anchor="end">' + esc(s[i]) + '</text>';
       html += '<text class="mlbl" x="' + (pad + i * cell + cell / 2) + '" y="' + (pad - 7) + '" text-anchor="middle">' + esc(s[i]) + '</text>';
     }
     html += '<rect class="mgrid" x="' + pad + '" y="' + pad + '" width="' + (n * cell) + '" height="' + (n * cell) + '"/>';
@@ -201,6 +201,7 @@
     }, reduce ? 0 : 2400);
 
     renderFrequency(text);
+    runAttacks(text, res);
   }
 
   function bars(list, max, key, label) {
@@ -234,7 +235,92 @@
       (longer ? '<br><span class="muted">The message has ' + ms.total + ' symbols but S has only ' + s.length + ', so by the pigeonhole principle some symbol must repeat. Those repeats are what frequency analysis feeds on.</span>' : '');
   }
 
+
+  /* ---------- Every attack, from fewest keys up ---------- */
+  let fromChain = true;                 // was the ciphertext made with the current chain?
+  let climb = 0;
+  function factorial(n) { let f = 1n; for (let i = 2n; i <= BigInt(n); i++) f *= i; return f; }
+  function phi(n) { let c = 0; for (let a = 1; a < n; a++) if (BR.gcd(a, n) === 1) c++; return c; }
+  function wordsLine(text) {
+    const w = BR.wordsFound(text);
+    return w.total ? w.hit + ' of ' + w.total + ' words are common English words' : '';
+  }
+  function reads(text) { const w = BR.wordsFound(text); return w.total >= 3 && w.hit / w.total >= 0.8; }
+  function preview(text) { return '<span class="mono">' + esc(text.slice(0, 120)) + (text.length > 120 ? '…' : '') + '</span>'; }
+
+  function runAttacks(text, shiftRes) {
+    const s = CF.app.set(), n = s.length;
+    cancelAnimationFrame(climb);
+    ['atk-shift', 'atk-affine', 'atk-sub'].forEach(function (id) { $(id).classList.remove('is-win'); });
+    const ph = phi(n);
+    $('atk-shift-keys').textContent = n + ' keys';
+    $('atk-affine-keys').textContent = 'φ(' + n + ') × ' + n + ' = ' + ph + ' × ' + n + ' = ' + (ph * n) + ' keys';
+    $('atk-sub-keys').textContent = n + '! = ' + C.withCommas(factorial(n)) + ' keys';
+    $('atk-verdict').textContent = '';
+
+    const wins = [];
+    // 1. Shift
+    const shiftText = shiftRes.best.text, shiftOk = reads(shiftText);
+    $('atk-shift-res').innerHTML = (shiftOk ? '<span class="ok">Broken</span> k = ' + shiftRes.best.k : '<span class="bad">Not broken</span> best was k = ' + shiftRes.best.k) +
+      ' after ' + n + ' tries. ' + wordsLine(shiftText) + '.' + preview(shiftText);
+    if (shiftOk) wins.push(['atk-shift', 'brute force over shifts', s.map(function (c, y) { return ((y - shiftRes.best.k) % n + n) % n; })]);
+
+    // 2. Affine
+    const af = BR.affine(text, s), afOk = reads(af.text);
+    $('atk-affine-res').innerHTML = (afOk ? '<span class="ok">Broken</span> a = ' + af.a + ', b = ' + af.b : '<span class="bad">Not broken</span> best was a = ' + af.a + ', b = ' + af.b) +
+      ' after ' + af.tried + ' tries. ' + wordsLine(af.text) + '.' + preview(af.text);
+    if (afOk) wins.push(['atk-affine', 'brute force over affine keys', af.inv]);
+
+    // 3. Any substitution, climbing live
+    const solver = BR.substitution(text, s, { restarts: 40 });
+    const out = $('atk-sub-res');
+    let last = null;
+    function frame() {
+      last = solver.step(reduce ? Infinity : 1500);
+      if (!last.done) {
+        out.innerHTML = '<span class="muted">Climbing: ' + C.withCommas(BigInt(last.steps)) + ' swaps tried, restart ' + last.restart + ' of ' + last.restarts + '</span>' + preview(last.text);
+        climb = requestAnimationFrame(frame);
+        return;
+      }
+      climb = 0;
+      const ok = reads(last.text);
+      out.innerHTML = (ok ? '<span class="ok">Broken</span>' : '<span class="bad">Not broken</span>') +
+        ' after ' + C.withCommas(BigInt(last.steps)) + ' swaps, not ' + C.withCommas(factorial(n)) + ' keys. ' + wordsLine(last.text) + '.' + preview(last.text);
+      if (ok) wins.push(['atk-sub', 'hill climbing over substitutions', last.inv]);
+      finish(text, s, wins, last);
+    }
+    frame();
+  }
+
+  function finish(text, s, wins, sub) {
+    const v = $('atk-verdict');
+    const letters = (text.toUpperCase().match(/[A-Z]/g) || []).length;
+    if (!wins.length) {
+      v.innerHTML = '<span class="bad">Not broken</span> None of the three attacks found readable English.' +
+        (letters < 100 ? ' The message has only ' + letters + ' letters; these attacks need about 100 or more to be reliable.' : '');
+      return;
+    }
+    $(wins[0][0]).classList.add('is-win');
+    let line = '<span class="ok">Broken</span> The fewest-keys attack that worked: ' + wins[0][1] + '.';
+    // Compare the recovered key with the real one, symbol by symbol
+    if (fromChain) {
+      const F = B.chainMap(CF.app.state.chain, s);
+      const Fi = CF.fn.inverse(F);
+      if (!Fi) line += ' Your cipher is not a bijection, so not even the key holder can decrypt every letter.';
+      else {
+        const seen = {};
+        text.toUpperCase().split('').forEach(function (c) { const i = s.indexOf(c); if (i >= 0) seen[i] = true; });
+        const ids = Object.keys(seen).map(Number);
+        const key = wins[0][2];
+        const right = ids.filter(function (y) { return key[y] === Fi[y]; }).length;
+        line += ' Checked against your real cipher, that attack recovered ' + right + ' of the ' + ids.length + ' symbols that appear in the ciphertext.';
+      }
+    }
+    v.innerHTML = line;
+  }
+
   function sampleCipher() {
+    fromChain = true;
     const st = CF.app.state;
     const r = B.run(SAMPLE, st.chain, CF.app.set(), false);
     $('brk-in').value = r.output;
@@ -243,7 +329,8 @@
   /* ---------- Wire up ---------- */
   $('pair-in').addEventListener('input', renderPairs);
   $('brk-sample').addEventListener('click', function () { sampleCipher(); crack(); });
-  $('brk-mine').addEventListener('click', function () { $('brk-in').value = CF.app.ciphertext(); crack(); });
+  $('brk-in').addEventListener('input', function () { fromChain = false; });
+  $('brk-mine').addEventListener('click', function () { $('brk-in').value = CF.app.ciphertext(); fromChain = true; crack(); });
   $('brk-run').addEventListener('click', crack);
 
   function refresh() {

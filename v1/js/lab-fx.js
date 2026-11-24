@@ -48,7 +48,6 @@
   /* ---------- The title decodes itself on arrival ---------- */
   (function () {
     const el = $('hero-title');
-    if (!el) return;
     const lines = ['Cipher', 'Forge'];
     el.setAttribute('aria-label', 'Cipher Forge');
     if (reduce) return;
@@ -69,13 +68,13 @@
 
   /* ---------- HUD readouts ---------- */
   const hudKey = $('hud-key'), hudK = $('hud-k'), heroK = $('hero-k');
-  function key() { if (CF.app && hudKey) hudKey.textContent = CF.app.keyCode().toUpperCase(); }
+  function key() { if (CF.app) hudKey.textContent = CF.app.keyCode().toUpperCase(); }
   document.addEventListener('cf:change', key);
   key();
-  if (heroK && hudK) new MutationObserver(function () { hudK.textContent = heroK.textContent; }).observe(heroK, { childList: true, characterData: true, subtree: true });
+  new MutationObserver(function () { hudK.textContent = heroK.textContent; }).observe(heroK, { childList: true, characterData: true, subtree: true });
 
   /* ---------- Present from the hero ---------- */
-  if ($('hero-present')) $('hero-present').addEventListener('click', function () { $('tour-start').click(); });
+  $('hero-present').addEventListener('click', function () { $('tour-start').click(); });
 
   /* ---------- Slow glide for links within the page ---------- */
   let glide = 0;

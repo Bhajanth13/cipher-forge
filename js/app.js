@@ -159,6 +159,8 @@
           params += '<label>' + prm.label + ' <input type="number" inputmode="numeric" data-key="' + prm.key + '" min="' + prm.min + '" max="' + prm.max + '" value="' + v + '"></label>';
         } else if (prm.kind === 'symbol') {
           params += '<label>' + prm.label + ' <input class="sym" type="text" maxlength="1" data-key="' + prm.key + '" value="' + v + '"></label>';
+        } else if (prm.kind === 'expr') {
+          params += '<label class="expr-label">' + prm.label + ' <input class="expr" type="text" maxlength="40" spellcheck="false" autocomplete="off" data-key="' + prm.key + '" value="' + v + '" aria-label="Formula for f(x), worked out mod n"> <span class="expr-mod">mod n</span></label>';
         } else {
           params += '<label>' + prm.label + ' <input type="text" maxlength="12" data-key="' + prm.key + '" value="' + v + '"></label>';
         }
@@ -211,7 +213,14 @@
       const card = document.querySelector('.block[data-id="' + blk.id + '"]');
       if (!card) return;
       const r = blockReport(blk);
-      card.querySelector('.block-formula').textContent = B.TYPES[blk.type].formula(blk.params);
+      const def = B.TYPES[blk.type], err = def.error ? def.error(blk.params) : null;
+      card.querySelector('.block-formula').textContent = def.formula(blk.params);
+      card.classList.toggle('is-error', !!err);
+      if (err) {
+        card.querySelector('.block-status').innerHTML = '<span class="bad">' + esc(err) + ' Until then this block leaves every symbol as it is.</span>';
+        card.classList.remove('is-broken');
+        return;
+      }
       card.querySelector('.block-status').innerHTML = r.bijective
         ? '<span class="ok">Bijection, can be undone</span>'
         : '<span class="bad">Not a bijection</span>';
@@ -298,6 +307,7 @@
     const key = tgt.name + state.setKey;
     drawDiagram(s, tgt, r, animate || lastDiagramKey !== key);
     lastDiagramKey = key;
+    renderStrip(s, tgt, r);
 
     const result = r.bijective ? 'every output is hit exactly once.' :
       r.collisions.length + ' output' + (r.collisions.length === 1 ? '' : 's') + ' hit more than once, ' + r.unused.length + ' never hit.';
@@ -343,6 +353,59 @@
       const v = row[0] && row[1];
       return '<tr' + (now ? ' class="is-now"' : '') + '><td>' + T(row[0]) + '</td><td>' + T(row[1]) + '</td><td>' + T(v) + '</td><td>' + (v ? 'yes' : 'no') + '</td></tr>';
     }).join('');
+  }
+
+  /* The same function as a table: every input above its output. Outputs
+     hit more than once are red; symbols never produced are listed. */
+  function renderStrip(s, tgt, r) {
+    const box = $('map-strip');
+    if (!box) return;
+    const n = s.length, cnt = new Array(n).fill(0);
+    tgt.map.forEach(function (y) { cnt[y]++; });
+    const fname = tgt.k === 0 ? 'F(x)' : tgt.k === 1 ? 'f₁(x)' : '(' + compName(tgt.k) + ')(x)';
+    let top = '<span class="ms-h">x</span>', bot = '<span class="ms-h">' + esc(fname) + '</span>';
+    for (let i = 0; i < n; i++) {
+      const y = tgt.map[i], bad = cnt[y] > 1;
+      top += '<button type="button" class="ms-c" data-v="' + i + '" title="' + esc(s[i]) + ' is position ' + i + '">' + esc(s[i]) + '<small>' + i + '</small></button>';
+      bot += '<span class="ms-c out' + (bad ? ' clash' : '') + '" data-v="' + i + '">' + esc(s[y]) + '<small>' + y + '</small></span>';
+    }
+    const unused = [];
+    for (let y = 0; y < n; y++) if (!cnt[y]) unused.push(s[y]);
+    box.style.setProperty('--n', n);
+    box.innerHTML = '<div class="ms-row">' + top + '</div><div class="ms-row">' + bot + '</div>' +
+      '<p class="ms-note">' + (r.bijective ? 'Every symbol appears exactly once in the bottom row, so the bottom row is just S rearranged: a bijection.'
+        : '<b class="bad">Red</b> outputs come from more than one input. Never produced: <b>' + esc(unused.length ? listSymbols(unused, 10) : 'none') + '</b>.') + '</p>';
+    box.querySelectorAll('button.ms-c').forEach(function (b) {
+      b.addEventListener('click', function () { pin(+b.dataset.v); });
+    });
+  }
+
+  // Pin one input's path in the arrow diagram (same as tapping it there)
+  function pin(v) {
+    const g = document.querySelector('#diagram .hit[data-row="0"][data-v="' + v + '"]');
+    if (g) g.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    document.querySelectorAll('#map-strip .ms-c').forEach(function (c) { c.classList.toggle('now', +c.dataset.v === v && !!document.querySelector('#diagram .hit.picked')); });
+  }
+
+  // Walk the arrows: pin A, then B, then C … so the class can follow one arrow at a time
+  let walkTimer = null, walkAt = 0;
+  function walkStop() {
+    clearInterval(walkTimer); walkTimer = null;
+    const b = $('walk-btn'); if (b) b.textContent = 'Walk the arrows one by one';
+    document.querySelectorAll('#map-strip .ms-c.now').forEach(function (c) { c.classList.remove('now'); });
+    if (document.querySelector('#diagram .hit.picked')) document.querySelector('#diagram').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  }
+  function walkStart(ms) {
+    walkStop();
+    const n = set().length;
+    walkAt = 0;
+    const b = $('walk-btn'); if (b) b.textContent = 'Stop walking';
+    const tick = function () {
+      if (walkAt >= n) { walkStop(); return; }
+      pin(walkAt); walkAt++;
+    };
+    tick();
+    walkTimer = setInterval(tick, ms || 900);
   }
 
   function setCheck(id, good, state_, detail) {
@@ -615,6 +678,7 @@
   /* ---------- Wire up controls ---------- */
   ['op-a', 'op-b', 'op-op'].forEach(function (id) { $(id).addEventListener('change', renderOps); });
   $('msg-in').addEventListener('input', function () { renderCrypto(); });
+  if ($('walk-btn')) $('walk-btn').addEventListener('click', function () { if (walkTimer) walkStop(); else walkStart(); });
   $('dec-in').addEventListener('input', function () { state.decEdited = $('dec-in').value.length > 0; renderCrypto(); });
   $('trace-dir').querySelectorAll('button').forEach(function (b) {
     b.addEventListener('click', function () {
@@ -633,6 +697,29 @@
     set: set,
     chainMap: function () { return B.chainMap(state.chain, set()); },
     loadPreset: loadPreset,
+    // Used by the presenter deck (deck.js)
+    setChain: function (blocks) {
+      state.chain = blocks.map(function (b) { const blk = B.create(b[0], b[1]); blk.fresh = true; return blk; });
+      state.target = 'chain';
+      state.decEdited = false;
+      refreshAll(true);
+    },
+    addBlock: function (type, params) {
+      const blk = B.create(type, params); blk.fresh = true;
+      state.chain.push(blk); state.target = 'chain';
+      refreshAll(true);
+      return blk;
+    },
+    setSet: function (key) {
+      if (!S.PRESETS[key]) return;
+      state.setKey = key;
+      renderSetPicker();
+      refreshAll(true);
+    },
+    analyse: function () { return FN.analyse(B.chainMap(state.chain, set()), set().length); },
+    pin: pin,
+    walk: walkStart,
+    walkStop: walkStop,
     ciphertext: function () { return $('msg-out').textContent; },
     encrypt: function (text) { return B.run(text, state.chain, set(), false).output; },
     decrypt: function (text) {

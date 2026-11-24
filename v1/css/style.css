@@ -524,8 +524,8 @@ table.keys, table.map { width: 100%; border-collapse: collapse; font-size: 15px;
 
 /* ---------- Relations ---------- */
 .matrix-stage { perspective: 1000px; padding: 6px 0; }
-#rel-matrix { display: block; width: 100%; max-width: 600px; margin: 0 auto; height: auto; transform-origin: 50% 60%; will-change: transform; }
-#rel-matrix .mlbl { font-family: var(--mono); font-size: 12.5px; fill: var(--muted); dominant-baseline: central; }
+#rel-matrix { display: block; width: 100%; max-width: 520px; margin: 0 auto; height: auto; transform-origin: 50% 60%; will-change: transform; }
+#rel-matrix .mlbl { font-family: var(--mono); font-size: 9px; fill: var(--muted); dominant-baseline: central; }
 #rel-matrix .mgrid { fill: var(--graphite-2); stroke: var(--rule); }
 #rel-matrix .mline { stroke: var(--rule-soft); stroke-width: .6; }
 #rel-matrix .mdot { fill: var(--brass); }
@@ -710,17 +710,3 @@ body.touring .chapter .plate { transform: none !important; opacity: 1 !important
 #diagram .hit:focus { outline: none; }
 #diagram .hit:focus-visible .node { stroke: var(--signal); stroke-width: 3; }
 .diagram-path { margin: 10px 0 0; min-height: 1.4em; font-size: 13px; color: var(--brass); overflow-wrap: anywhere; }
-
-/* ---------- Every attack (Break it) ---------- */
-.attacks { margin-top: 20px; }
-.atk-list { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 10px; }
-.atk { border: 1px solid var(--rule-soft); border-radius: 8px; padding: 14px 16px; background: var(--graphite-2); }
-.atk-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; align-items: baseline; }
-.atk-name { font-weight: 600; color: var(--steel); }
-.atk-keys { font-size: 13.5px; color: var(--muted); word-break: break-all; }
-.atk-how { margin: 6px 0 0; font-size: 14px; color: var(--muted); line-height: 1.5; }
-.atk-res { margin: 10px 0 0; font-size: 14.5px; line-height: 1.55; min-height: 1.55em; }
-.atk-res .mono { display: block; margin-top: 6px; font-size: 13.5px; color: var(--steel); word-break: break-word; }
-.atk.is-win { border-color: var(--brass); }
-.atk-verdict { margin: 14px 0 0; font-size: 15.5px; line-height: 1.55; }
-.map-cap { caption-side: top; text-align: left; padding: 14px 18px; font-size: 14px; color: var(--muted); }

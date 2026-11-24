@@ -89,14 +89,14 @@ Bhajanth V, B.Tech CSE (Section A), RV University, Mysuru.
 
 Fonts: Archivo and IBM Plex Mono, under the SIL Open Font License (see `fonts/`).
 
-## v2: the lab, presented live
+## Site layout
 
-`v2/` is the main live site. `v2/index.html` is the rotor-tunnel opening (a hidden button in the bottom-right corner, or →, plays it at medium speed and opens the presentation); `v2/lab.html` is the lab, which opens as a presenter deck; `v2/thanks.html` is the closing page with the team. The deck: Each section of the lab is one scene, and each scene has beats: Explain, Show, Test (ask the class, then reveal) and Build (the class chooses, you type it in). A presenter card says what to say and holds the buttons; the part being discussed is spotlit. New in v2:
+The main site is at the top of the repository: `index.html` is the rotor-tunnel opening (a hidden button in the bottom-left corner, or →, plays it at medium speed and opens the presentation); `lab.html` is the lab, which opens as a presenter deck and starts with the same tunnel; `thanks.html` is the closing page with the team; `future.html`, `device.html` and `receive.html` are the future enhancements. The first version of the site is kept in `v1/`. The old `v2/` addresses forward to the new ones.
 
 - **Your own f(x)**: a block that takes any formula in x (numbers, x, n, + − ×, ^ with a whole-number power, brackets), worked out mod n with BigInt. It is read by a small parser, never by `eval`.
-- **Clearer arrow diagram**: thicker arrows, a table of every input above its output, and “Walk the arrows” to follow one letter at a time.
+- **Break it**: brute force over every shift and every affine key ax + b, and hill climbing over all n! substitutions, scored with English trigram and word counts from public-domain books (`js/english-trigrams.js`).
 
-Keys: → or Space next beat, ← back, 1–9 scenes, R reveal, N hide the card, F full screen, W website view. Files: `v2/css/deck.css`, `v2/js/deck.js`, with the custom block in `v2/js/blocks.js`.
+Keys in the deck: → or Space next step, ← back, 1–9 screens, R reveal, F full screen, W website view. Files: `css/deck.css`, `js/deck.js`.
 
 
 ## Team
