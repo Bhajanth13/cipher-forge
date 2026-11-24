@@ -8,7 +8,7 @@
 <script>try{if(!/[?&]web\b/.test(location.search)&&localStorage.getItem('cf-view')!=='web')document.documentElement.classList.add('deck');}catch(e){document.documentElement.classList.add('deck');}</script>
 <script>try{var t=localStorage.getItem('cf-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <link rel="stylesheet" href="css/fonts.css?v=8">
-<link rel="stylesheet" href="css/style.css?v=12">
+<link rel="stylesheet" href="css/style.css?v=13">
 <link rel="stylesheet" href="css/future.css?v=10">
 <link rel="stylesheet" href="css/lab-fx.css?v=13">
 <link rel="stylesheet" href="css/opening-embed.css?v=1">
@@ -356,6 +356,29 @@
         <p class="freq-guess" id="freq-guess"></p>
       </div>
     </div>
+
+    <div class="panel attacks">
+      <h3>Every attack, from fewest keys up</h3>
+      <p class="muted">Any block chain that can be undone is a bijection on S, so to an attacker it is one fixed replacement per symbol. Three attacks run on the ciphertext above, and only the ciphertext. The key counts are exact.</p>
+      <ol class="atk-list">
+        <li class="atk" id="atk-shift">
+          <div class="atk-head"><span class="atk-name">Shift, f(x) = x + k</span><span class="mono atk-keys" id="atk-shift-keys"></span></div>
+          <p class="atk-how">Brute force: tries every key.</p>
+          <p class="atk-res" id="atk-shift-res"></p>
+        </li>
+        <li class="atk" id="atk-affine">
+          <div class="atk-head"><span class="atk-name">Affine, f(x) = ax + b</span><span class="mono atk-keys" id="atk-affine-keys"></span></div>
+          <p class="atk-how">Brute force: tries every a with gcd(a, n) = 1 and every b. Any chain of Shift, Multiply and Mirror blocks is one of these.</p>
+          <p class="atk-res" id="atk-affine-res"></p>
+        </li>
+        <li class="atk" id="atk-sub">
+          <div class="atk-head"><span class="atk-name">Any substitution</span><span class="mono atk-keys" id="atk-sub-keys"></span></div>
+          <p class="atk-how">Too many keys to try, so it climbs: start from the letter counts, swap two letters of the guessed key, and keep the swap whenever the text looks more like English (three-letter sequences and common words). This covers every chain in the lab, including Keyword, Swap and Your own f(x).</p>
+          <p class="atk-res" id="atk-sub-res"></p>
+        </li>
+      </ol>
+      <p class="atk-verdict" id="atk-verdict" aria-live="polite"></p>
+    </div>
   </div>
 </section>
 
@@ -411,24 +434,14 @@
     </header>
     <div class="map-scroll">
       <table class="map">
-        <thead><tr><th scope="col">Module</th><th scope="col">Topic</th><th scope="col">Used in Cipher Forge</th></tr></thead>
+        <caption class="map-cap">Where each CS1812 module is used in Cipher Forge</caption>
+        <thead><tr><th scope="col">Module</th><th scope="col">Topics</th><th scope="col">Where it is used</th></tr></thead>
         <tbody>
-          <tr><td>1</td><td>Sets, set-builder notation, cardinality</td><td><a href="#alphabet">Symbol set S and |S|</a></td></tr>
-          <tr><td>1</td><td>Union, intersection, difference, symmetric difference</td><td><a href="#alphabet">Building S, set operations lab</a></td></tr>
-          <tr><td>1</td><td>Cartesian product</td><td><a href="#relations">Two-letter cipher on S × S</a></td></tr>
-          <tr><td>1</td><td>Multisets</td><td><a href="#break">Letter counts in frequency analysis</a></td></tr>
-          <tr><td>2</td><td>Propositions, truth tables, equivalence</td><td><a href="#inspect">Validity rule V ⇔ I ∧ O</a></td></tr>
-          <tr><td>2</td><td>Predicate logic, quantifiers</td><td><a href="#inspect">∀ and ∃ definitions of one-to-one and onto</a></td></tr>
-          <tr><td>3</td><td>Relations, equivalence relations</td><td><a href="#relations">Relation matrix, symbols the cipher can’t tell apart</a></td></tr>
-          <tr><td>3</td><td>Functions: one-to-one, onto, bijective</td><td><a href="#inspect">Checks and arrow diagram</a></td></tr>
-          <tr><td>3</td><td>Composition of functions</td><td><a href="#forge">Chaining blocks</a>, <a href="future.html">the send-by-sound pipeline</a></td></tr>
-          <tr><td>3</td><td>Invertibility and inverse</td><td><a href="#encrypt">Decryption</a>, <a href="future.html">receiving by sound</a></td></tr>
-          <tr><td>3</td><td>Pigeonhole principle</td><td><a href="#inspect">Collision finder</a>, <a href="#break">why long messages leak</a></td></tr>
-          <tr><td>4</td><td>Rules of sum and product</td><td><a href="#attack">Password symbol count and length</a>, <a href="#break">brute force</a>, <a href="future.html">16 × 16 = 256 codes from two tones</a></td></tr>
-          <tr><td>4</td><td>Permutations, with repetition</td><td><a href="#attack">n!, P(n, r), nʳ key counts</a></td></tr>
-          <tr><td>5</td><td>Combinations, with repetition</td><td><a href="#attack">Swap keys C(n, 2), frequency profiles</a></td></tr>
-          <tr><td>5</td><td>Binomial theorem</td><td><a href="#alphabet">Counting subsets of S as 2ⁿ</a></td></tr>
-          <tr><td>5</td><td>Catalan numbers</td><td><a href="#forge">Ways to bracket a chain of blocks</a></td></tr>
+          <tr><td>1</td><td>Sets, Cartesian product, cardinality, multisets</td><td><a href="#alphabet">The symbol set S</a>, <a href="#relations">pairs in S × S</a>, <a href="#break">letter counts used to attack a cipher</a></td></tr>
+          <tr><td>2</td><td>Propositions, truth tables, predicate logic</td><td><a href="#inspect">The decryptability proof: one-to-one and onto with ∀ and ∃; V ⇔ I ∧ O</a></td></tr>
+          <tr><td>3</td><td>Relations, functions, pigeonhole, composition, inverse</td><td><a href="#forge">Cipher blocks and chains</a>, <a href="#relations">relation matrix</a>, <a href="#encrypt">decryption with F⁻¹</a>, <a href="future.html">send = tones ∘ hex ∘ code ∘ F</a></td></tr>
+          <tr><td>4</td><td>Sum and product rules, permutations</td><td><a href="#attack">Key counts and attack times: 36⁸, P(36, 8), 26!</a></td></tr>
+          <tr><td>5</td><td>Combinations, binomial theorem, Catalan numbers</td><td><a href="#attack">Swap keys C(26, 2)</a>, <a href="#alphabet">2²⁶ subsets</a>, <a href="#forge">bracketings of a chain</a></td></tr>
         </tbody>
       </table>
     </div>
@@ -447,11 +460,12 @@
 <script src="js/functions.js?v=8"></script>
 <script src="js/blocks.js?v=8"></script>
 <script src="js/counting.js?v=8"></script>
-<script src="js/breaker.js?v=8"></script>
+<script src="js/english-trigrams.js?v=1"></script>
+<script src="js/breaker.js?v=9"></script>
 <script src="js/relations.js?v=8"></script>
 <script src="js/scroll3d.js?v=10"></script>
 <script src="js/app.js?v=11"></script>
-<script src="js/lab2.js?v=10"></script>
+<script src="js/lab2.js?v=11"></script>
 <script src="js/fx.js?v=9"></script>
 <script src="js/lab-fx.js?v=10"></script>
 <script src="js/opening-embed.js?v=1"></script>

@@ -710,3 +710,17 @@ body.touring .chapter .plate { transform: none !important; opacity: 1 !important
 #diagram .hit:focus { outline: none; }
 #diagram .hit:focus-visible .node { stroke: var(--signal); stroke-width: 3; }
 .diagram-path { margin: 10px 0 0; min-height: 1.4em; font-size: 13px; color: var(--brass); overflow-wrap: anywhere; }
+
+/* ---------- Every attack (Break it) ---------- */
+.attacks { margin-top: 20px; }
+.atk-list { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 10px; }
+.atk { border: 1px solid var(--rule-soft); border-radius: 8px; padding: 14px 16px; background: var(--graphite-2); }
+.atk-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; align-items: baseline; }
+.atk-name { font-weight: 600; color: var(--steel); }
+.atk-keys { font-size: 13.5px; color: var(--muted); word-break: break-all; }
+.atk-how { margin: 6px 0 0; font-size: 14px; color: var(--muted); line-height: 1.5; }
+.atk-res { margin: 10px 0 0; font-size: 14.5px; line-height: 1.55; min-height: 1.55em; }
+.atk-res .mono { display: block; margin-top: 6px; font-size: 13.5px; color: var(--steel); word-break: break-word; }
+.atk.is-win { border-color: var(--brass); }
+.atk-verdict { margin: 14px 0 0; font-size: 15.5px; line-height: 1.55; }
+.map-cap { caption-side: top; text-align: left; padding: 14px 18px; font-size: 14px; color: var(--muted); }
