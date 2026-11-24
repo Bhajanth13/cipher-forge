@@ -380,7 +380,7 @@
   function fit() {
     // In the deck the lab is zoomed so it reads from the back of the room
     // On a wide screen the presenter card gets its own column on the right
-    const side = innerWidth >= 1500 ? 450 : 0;
+    const side = 0;
     html.classList.toggle('deck-side', side > 0);
     const z = Math.max(1, Math.min(1.5, (innerWidth - side - 120) / 1180, (innerHeight - 70) / 620));
     html.style.setProperty('--dz', z.toFixed(3));

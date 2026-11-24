@@ -40,7 +40,7 @@ button.ms-c:hover, button.ms-c:focus-visible { border-color: var(--brass); }
 /* ---------- 2. The deck ---------- */
 .deck-bar, .deck-card, .deck-shutter, .deck-spot { display: none; }
 html.deck .deck-bar { display: flex; }
-html.deck .deck-card { display: block; }
+html.deck .deck-card { display: none; }
 html.deck .deck-shutter, html.deck .deck-spot { display: block; }
 html.deck .nav, html.deck .skip { display: none; }
 
@@ -77,7 +77,6 @@ html.deck .hero-hint { visibility: hidden; }
 .deck-tool:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
 
 /* wide screens: the card sits in its own column, the lab beside it */
-html.deck.deck-side:not(.deck-nonotes) main, html.deck.deck-side:not(.deck-nonotes) .footer { margin-right: 450px; }
 html.deck.deck-side .deck-card { top: 82px; bottom: auto; right: 20px; width: 420px; max-height: calc(100vh - 100px); }
 
 /* presenter card */
