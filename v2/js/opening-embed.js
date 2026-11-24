@@ -264,7 +264,7 @@ window.CFOpening = (function () {
       const e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
       window.scrollTo(0, from + dist * e);
       if (k < 1) raf = requestAnimationFrame(step);
-      else { raf = 0; document.documentElement.style.scrollBehavior = ''; if (done) setTimeout(done, reduce ? 0 : 900); }
+      else { raf = 0; document.documentElement.style.scrollBehavior = ''; if (done) done(); }
     })(t0);
   }
   function busy() { return raf !== 0; }
@@ -273,7 +273,7 @@ window.CFOpening = (function () {
   if (btn) btn.addEventListener('click', function () {
     drive(function () {
       if (document.documentElement.classList.contains('deck') && window.CFDeck) window.CFDeck.go(1, 0);
-      else { const a = document.getElementById('alphabet'); if (a) window.scrollTo({ top: a.offsetTop - 64, behavior: 'smooth' }); }
+      else { const a = document.getElementById('alphabet'); if (a) { document.documentElement.style.scrollBehavior = 'auto'; window.scrollTo(0, a.offsetTop - 64); document.documentElement.style.scrollBehavior = ''; } }
     });
   });
   return { drive: drive, busy: busy, stop: stop };

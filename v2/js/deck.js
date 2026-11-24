@@ -57,7 +57,7 @@
         say: 'Cipher Forge is a lab where every idea from CS1812 is something you can click. A cipher is nothing more than a function on letters, so discrete maths decides whether it works.' },
       { kind: 'Show', title: 'A cipher is a rule', noScroll: true,
         say: 'Fly through the rotors. Ring k is the alphabet shifted k places, so each ring is one rule f(x) = (x + k) mod 26.',
-        enter: function () { if (window.CFOpening) window.CFOpening.drive(); } }
+        enter: function () { if (window.CFOpening) window.CFOpening.drive(function () { if (sc === 0) go(1, 0); }); } }
     ] },
 
     { id: 'alphabet', title: 'Choose the symbols', module: 'Module 1: sets', beats: [
@@ -356,6 +356,7 @@
     trackSpot();
     try { history.replaceState(null, '', '#' + S.id); } catch (e) { /* file:// */ }
   }
+  window.CFDeck = { go: function (i, j) { go(i, j); } };
   function next() {
     if (bt < scene(sc).beats.length - 1) go(sc, bt + 1);
     else if (sc < SCENES.length - 1) go(sc + 1, 0);
