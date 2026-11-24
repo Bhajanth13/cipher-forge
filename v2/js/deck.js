@@ -55,10 +55,9 @@
     { id: 'top', title: 'Cipher Forge', beats: [
       { kind: 'Explain', title: 'What we built',
         say: 'Cipher Forge is a lab where every idea from CS1812 is something you can click. A cipher is nothing more than a function on letters, so discrete maths decides whether it works.' },
-      { kind: 'Show', title: 'A cipher is a rule', target: '#top .rotor-stage',
-        noScroll: true,
-        say: 'Watch the rotors. Every letter moves three places forward: HELLO becomes KHOOR. Written as maths, that rule is f(x) = (x + 3) mod 26.',
-        enter: function () { const h = $('top'); glide(h.offsetTop + h.offsetHeight - innerHeight); } }
+      { kind: 'Show', title: 'A cipher is a rule', noScroll: true,
+        say: 'Fly through the rotors. Ring k is the alphabet shifted k places, so each ring is one rule f(x) = (x + k) mod 26.',
+        enter: function () { if (window.CFOpening) window.CFOpening.drive(); } }
     ] },
 
     { id: 'alphabet', title: 'Choose the symbols', module: 'Module 1: sets', beats: [
@@ -182,7 +181,6 @@
     '<div class="deck-tools">' +
       '<button type="button" class="deck-tool" id="deck-prev" aria-label="Back (←)">‹</button>' +
       '<button type="button" class="deck-tool" id="deck-next" aria-label="Next (→)">›</button>' +
-      '<button type="button" class="deck-tool wide" id="deck-notes" title="Show or hide the presenter card (N)">Notes</button>' +
       '<button type="button" class="deck-tool wide" id="deck-full" title="Full screen (F)">Full screen</button>' +
       '<button type="button" class="deck-tool wide" id="deck-web" title="Leave the deck and use the website normally (W)">Website view</button>' +
     '</div>';
@@ -340,6 +338,7 @@
     j = Math.max(0, Math.min(SCENES[i].beats.length - 1, j));
     const newScene = i !== sc || (opts && opts.first);
     if (A.walkStop) A.walkStop();
+    if (window.CFOpening) window.CFOpening.stop();
     sc = i; bt = j;
     const S = scene(i), b = beat(i, j);
     target = b.target ? document.querySelector(b.target) : null;
@@ -389,7 +388,6 @@
 
   $('deck-next').addEventListener('click', next);
   $('deck-prev').addEventListener('click', prev);
-  $('deck-notes').addEventListener('click', function () { html.classList.toggle('deck-nonotes'); });
   $('dc-min').addEventListener('click', function () { html.classList.add('deck-nonotes'); });
   $('deck-full').addEventListener('click', toggleFull);
   $('deck-web').addEventListener('click', function () { setDeck(false); });

@@ -1,0 +1,44 @@
+/* Cipher Forge v2: the rotor-tunnel opening, embedded at the top of the lab.
+   Every rule is scoped to .op-hero so it cannot touch the rest of the page. */
+.op-hero { --obg: #05080D; --osteel: #DDE4EC; --osteel2: #A9B4C1; --omuted: #6F7C8C; --osignal: #72E2FF; --osignal-line: rgba(114, 226, 255, .3); --obrass: #D9AE5C;
+  position: relative; height: 640vh; background: var(--obg); color: var(--osteel); font-family: 'Archivo', 'Segoe UI', Roboto, Arial, sans-serif; z-index: 1; }
+.op-sticky { position: sticky; top: 0; height: 100vh; overflow: hidden; background: radial-gradient(ellipse 80% 70% at 50% 50%, #0C1724 0%, var(--obg) 70%); }
+#op-cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.op-hud { position: absolute; inset: 22px; pointer-events: none; }
+.op-hud i { position: absolute; width: 26px; height: 26px; border: 0 solid var(--osignal-line); }
+.op-hud .tl { left: 0; top: 0; border-width: 1px 0 0 1px; } .op-hud .tr { right: 0; top: 0; border-width: 1px 1px 0 0; }
+.op-hud .bl { left: 0; bottom: 0; border-width: 0 0 1px 1px; } .op-hud .br { right: 0; bottom: 0; border-width: 0 1px 1px 0; }
+.op-hud p { position: absolute; margin: 0; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; letter-spacing: .16em; color: var(--osignal); opacity: .8; white-space: nowrap; }
+.op-hud p b { font-weight: 500; color: var(--obrass); }
+.op-hud .ha { left: 38px; top: 5px; } .op-hud .hb { right: 38px; top: 5px; } .op-hud .hc { left: 38px; bottom: 5px; } .op-hud .hd { right: 38px; bottom: 5px; }
+.op-hud .meter { position: absolute; right: -2px; top: 60px; bottom: 60px; width: 2px; background: var(--osignal-line); }
+.op-hud .meter span { position: absolute; left: -2px; width: 6px; height: 18px; background: var(--obrass); border-radius: 2px; top: 0; }
+html.deck .op-hud { top: 80px; }
+.op-layer { position: absolute; will-change: opacity, transform; }
+.op-copy { left: clamp(24px, 7vw, 120px); top: 50%; transform: translateY(-50%); max-width: 640px; }
+.op-kicker { margin: 0 0 18px; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 13px; letter-spacing: .14em; color: var(--osignal); }
+.op-title { margin: 0; font-size: clamp(60px, 10.5vw, 170px); line-height: .88; font-weight: 250; letter-spacing: -.03em; font-variation-settings: 'wdth' 125;
+  background: linear-gradient(180deg, var(--osteel) 35%, var(--osignal) 150%); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 34px rgba(114, 226, 255, .18)); }
+.op-lead { margin: 26px 0 0; max-width: 30em; font-size: clamp(16px, 1.35vw, 20px); line-height: 1.55; color: var(--osteel2); }
+.op-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+.op-btn { display: inline-flex; align-items: center; height: 48px; padding: 0 22px; border-radius: 999px; font: 600 15px 'Archivo', sans-serif; text-decoration: none;
+  color: #04121A; background: var(--osignal); box-shadow: 0 0 34px rgba(114, 226, 255, .35); }
+.op-btn:focus-visible { outline: 2px solid var(--obrass); outline-offset: 3px; }
+.op-cap { left: 50%; bottom: 13vh; transform: translateX(-50%); width: min(760px, 88vw); text-align: center; pointer-events: none; }
+.op-cap .cap-k { margin: 0 0 10px; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12.5px; letter-spacing: .16em; color: var(--obrass); }
+.op-cap .cap-t { margin: 0; font-size: clamp(20px, 2.1vw, 30px); line-height: 1.3; font-weight: 500; color: var(--osteel); text-shadow: 0 2px 24px rgba(0, 0, 0, .9); }
+.op-cap .cap-m { margin: 12px 0 0; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: clamp(15px, 1.3vw, 19px); color: var(--osignal); text-shadow: 0 2px 18px rgba(0, 0, 0, .9); }
+.op-end { left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center; width: min(900px, 92vw); }
+.op-end .op-title { font-size: clamp(56px, 9vw, 150px); }
+.op-end .op-lead { margin-left: auto; margin-right: auto; }
+.op-team { margin: 26px 0 0; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12.5px; letter-spacing: .08em; color: var(--omuted); }
+.op-scroll { left: 50%; bottom: 46px; transform: translateX(-50%); margin: 0; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; letter-spacing: .2em; color: var(--omuted);
+  display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.op-scroll::after { content: ''; width: 1px; height: 34px; background: linear-gradient(var(--osignal), transparent); animation: op-drip 1.8s ease-in-out infinite; }
+@keyframes op-drip { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+/* the presenter's invisible control, bottom-left so the presenter card never covers it */
+.op-drive { position: absolute; left: 0; bottom: 0; z-index: 5; width: 56px; height: 56px; padding: 0; border: 0; background: transparent; opacity: 0; cursor: default; }
+.op-drive:focus-visible { opacity: 1; outline: 2px solid var(--obrass); outline-offset: -8px; border-radius: 12px; }
+@media (max-width: 900px) { .op-hud .hb, .op-hud .hd { display: none; } }
+@media (prefers-reduced-motion: reduce) { .op-scroll::after { animation: none; } }
