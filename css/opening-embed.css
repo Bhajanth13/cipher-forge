@@ -42,3 +42,7 @@ html.deck .op-hud { top: 80px; }
 .op-drive:focus-visible { opacity: 1; outline: 2px solid var(--obrass); outline-offset: -8px; border-radius: 12px; }
 @media (max-width: 900px) { .op-hud .hb, .op-hud .hd { display: none; } }
 @media (prefers-reduced-motion: reduce) { .op-scroll::after { animation: none; } }
+
+/* The problem, in one sentence */
+.op-problem { margin: 20px 0 0; max-width: 34em; padding: 12px 16px; background: rgba(5, 8, 13, .78); border-radius: 0 8px 8px 0; border-left: 2px solid var(--obrass); font-size: clamp(14px, 1.05vw, 16px); line-height: 1.55; color: var(--osteel2); }
+.op-problem b { display: block; margin-bottom: 4px; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; font-weight: 500; letter-spacing: .12em; color: var(--obrass); }
