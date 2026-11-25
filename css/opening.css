@@ -92,3 +92,10 @@ body { margin: 0; }
 .team-box .usn { font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12.5px; color: var(--steel-2); white-space: nowrap; }
 .team-box .tm-guide { margin: 8px 0 0; font-size: 13px; color: var(--muted); }
 @media (max-width: 1000px) { .team-box { display: none; } }
+
+/* Full screen, top left beside the corner label */
+.fs-btn { position: fixed; top: 20px; left: 270px; z-index: 6; height: 34px; padding: 0 16px; border-radius: 999px;
+  border: 1px solid rgba(114, 226, 255, .35); background: rgba(5, 8, 13, .7); color: var(--steel); font: 500 13px var(--sans, 'Archivo', sans-serif); cursor: pointer; }
+.fs-btn:hover { border-color: var(--brass); }
+.fs-btn:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; }
+@media (max-width: 600px) { .fs-btn { left: auto; right: 22px; top: 56px; } }

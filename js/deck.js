@@ -377,6 +377,18 @@
     if (document.fullscreenElement) document.exitFullscreen();
     else if (html.requestFullscreen) html.requestFullscreen().catch(function () {});
   }
+  // Website view: the same full-screen toggle from the top bar and the F key
+  const webFull = $('web-full');
+  if (webFull) {
+    webFull.addEventListener('click', toggleFull);
+    document.addEventListener('fullscreenchange', function () { webFull.textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen'; });
+    document.addEventListener('keydown', function (e) {
+      if (html.classList.contains('deck') || e.ctrlKey || e.metaKey || e.altKey) return;
+      const t = e.target;
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+      if (e.key === 'f' || e.key === 'F') { e.preventDefault(); toggleFull(); }
+    });
+  }
   function fit() {
     // In the deck the lab is zoomed so it reads from the back of the room
     // On a wide screen the presenter card gets its own column on the right
