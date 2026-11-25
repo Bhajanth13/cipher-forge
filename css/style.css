@@ -334,6 +334,7 @@ h3 { font-size: 19px; font-weight: 600; font-variation-settings: 'wdth' 110; let
 .block-params input.sym { width: 48px; text-align: center; text-transform: uppercase; }
 .block-formula { font-family: var(--mono); font-size: 13px; color: var(--steel-2); }
 .block-status { font-size: 13px; }
+.block-status .blk-why { display: block; margin-top: 4px; font-size: 12px; color: var(--muted); }
 .block-actions { display: flex; gap: 4px; margin-top: auto; }
 .icon-btn {
   border: 1px solid var(--rule-soft); background: transparent; color: var(--muted);

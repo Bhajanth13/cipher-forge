@@ -341,6 +341,8 @@
     i = Math.max(0, Math.min(SCENES.length - 1, i));
     j = Math.max(0, Math.min(SCENES[i].beats.length - 1, j));
     const newScene = i !== sc || (opts && opts.first);
+    // Step 1 shows S = letters ∪ digits for a moment; every later step works on the 26 letters
+    if (newScene && SCENES[i].id !== 'alphabet' && A.state && A.state.setKey !== 'letters') A.setSet('letters');
     if (A.walkStop) A.walkStop();
     if (window.CFOpening) window.CFOpening.stop();
     sc = i; bt = j;

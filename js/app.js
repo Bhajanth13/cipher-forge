@@ -208,32 +208,52 @@
     return String(n).split('').map(function (d) { return '₀₁₂₃₄₅₆₇₈₉'[+d]; }).join('');
   }
 
+  // gcd, for the Multiply block's reason: a·x mod n can be undone only when gcd(a, n) = 1
+  function gcd(a, b) { a = Math.abs(a); b = Math.abs(b); while (b) { const t = a % b; a = b; b = t; } return a; }
+  function multiplyFactor(blk) {
+    const v = parseInt(blk.params.a, 10);
+    return isNaN(v) ? 1 : Math.max(0, Math.min(99, v));
+  }
+  // The block formulas say "mod n"; show the real n of the chosen symbol set
+  function withN(text) { return String(text).replace(/mod n\b/g, 'mod ' + set().length); }
+
   function updateBlockCards() {
+    const n = set().length;
     state.chain.forEach(function (blk) {
       const card = document.querySelector('.block[data-id="' + blk.id + '"]');
       if (!card) return;
       const r = blockReport(blk);
       const def = B.TYPES[blk.type], err = def.error ? def.error(blk.params) : null;
-      card.querySelector('.block-formula').textContent = def.formula(blk.params);
+      card.querySelector('.block-formula').textContent = withN(def.formula(blk.params));
+      const modLabel = card.querySelector('.expr-mod');
+      if (modLabel) modLabel.textContent = 'mod ' + n;
       card.classList.toggle('is-error', !!err);
       if (err) {
         card.querySelector('.block-status').innerHTML = '<span class="bad">' + esc(err) + ' Until then this block leaves every symbol as it is.</span>';
         card.classList.remove('is-broken');
         return;
       }
-      card.querySelector('.block-status').innerHTML = r.bijective
-        ? '<span class="ok">Bijection, can be undone</span>'
-        : '<span class="bad">Not a bijection</span>';
+      let why = '';
+      if (blk.type === 'multiply') {
+        const a = multiplyFactor(blk), g = gcd(a, n);
+        why = ' <span class="blk-why mono">gcd(' + a + ', ' + n + ') = ' + g + (g === 1 ? '' : ', so only ' + (n / g) + ' of ' + n + ' outputs are used') + '</span>';
+      } else if (!r.bijective && r.unused) {
+        why = ' <span class="blk-why mono">' + (n - r.unused.length) + ' of ' + n + ' outputs are used</span>';
+      }
+      card.querySelector('.block-status').innerHTML = (r.bijective
+        ? '<span class="ok">Bijection mod ' + n + ', can be undone</span>'
+        : '<span class="bad">Not a bijection mod ' + n + '</span>') + why;
       card.classList.toggle('is-broken', !r.bijective);
     });
   }
 
   function renderFormula() {
     const r = FN.analyse(B.chainMap(state.chain, set()), set().length);
-    $('chain-formula').textContent = 'F = ' + B.chainName(state.chain);
+    const p = S.PRESETS[state.setKey], n = set().length;
+    $('chain-formula').textContent = 'F = ' + B.chainName(state.chain) + '   on S = ' + p.title + ', |S| = ' + n + ' (mod ' + n + ')';
     $('chain-verdict').innerHTML = r.bijective
-      ? '<span class="ok">Decryptable</span>'
-      : '<span class="bad">Cannot be decrypted</span>';
+      ? '<span class="ok">Decryptable with these ' + n + ' symbols</span>'
+      : '<span class="bad">Cannot be decrypted with these ' + n + ' symbols</span>';
   }
 
   /* =========================================================
