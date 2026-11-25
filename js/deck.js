@@ -166,9 +166,12 @@
 
     { id: 'syllabus', title: 'Where each topic lives', module: 'CS1812 Discrete Mathematics and Set Theory', beats: [
       { kind: 'Explain', title: 'All five modules', target: '#syllabus .map-scroll',
-        say: 'Every module of the syllabus has a job in the lab: sets, logic, relations and functions, counting, and combinations.' },
+        say: 'Every module of the syllabus has a job in the lab: sets, logic, relations and functions, counting, and combinations.' }
+    ] },
+
+    { id: 'thanks', title: 'Thank you', module: 'Group G1 · RV University, Mysuru', beats: [
       { kind: 'Explain', title: 'Thank you',
-        say: 'Press → to open the thank-you page with the team. Anyone can try their own function afterwards: switch to Website view or press W.' }
+        say: 'Thank the guide and the class, introduce the team, and invite questions. Anyone can try their own function afterwards: switch to Website view or press W.' }
     ] }
   ];
 
@@ -359,8 +362,7 @@
   }
   function next() {
     if (bt < scene(sc).beats.length - 1) go(sc, bt + 1);
-    else if (sc < SCENES.length - 1) go(sc + 1, 0);
-    else location.href = 'thanks.html';
+    else if (sc < SCENES.length - 1) go(sc + 1, 0);   // the thank-you scene is the last one
   }
   function prev() {
     if (bt > 0) go(sc, bt - 1);

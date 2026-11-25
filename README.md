@@ -33,6 +33,7 @@ receive.html        the phone receiver page
 css/style.css       design and 3D effects
 css/fonts.css       self-hosted fonts (works offline)
 css/rvu.css         the RV University logo (img/rvu-logo.svg) on the first page, each step and the thank-you page
+css/lab-thanks.css  the thank-you section at the end of the lab (also the last scene of the presentation)
 js/fps30.js         caps every animation loop (canvases, 3D camera moves, scroll effects) at 30 frames per second
 css/lab-fx.css      the lab's sci-fi look (shares the palette in future.css)
 device.html         Future enhancement 02: Cipher Echo, a flagship acoustic cipher communicator concept (full-face touch e-paper, on-screen keyboard), taken apart in 3D
