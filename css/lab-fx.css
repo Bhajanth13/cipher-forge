@@ -67,9 +67,9 @@
 /* Orbit rings and glow behind the drum */
 .halo { position: absolute; left: 56%; top: 50%; width: 0; height: 0; transform-style: preserve-3d; pointer-events: none; }
 .halo-ring { position: absolute; border-radius: 50%; border: 1px solid var(--signal-line); }
-.halo-ring.h1 { width: 640px; height: 640px; left: -320px; top: -320px; animation: haloA 26s linear infinite; }
-.halo-ring.h2 { width: 520px; height: 520px; left: -260px; top: -260px; border-color: rgba(211, 175, 99, .30); border-style: dashed; animation: haloB 34s linear infinite; }
-.halo-ring.h3 { width: 760px; height: 760px; left: -380px; top: -380px; opacity: .6; animation: haloC 44s linear infinite; }
+.halo-ring.h1 { width: 640px; height: 640px; left: -320px; top: -320px; animation: haloA 26s steps(780) infinite; }
+.halo-ring.h2 { width: 520px; height: 520px; left: -260px; top: -260px; border-color: rgba(211, 175, 99, .30); border-style: dashed; animation: haloB 34s steps(1020) infinite; }
+.halo-ring.h3 { width: 760px; height: 760px; left: -380px; top: -380px; opacity: .6; animation: haloC 44s steps(1320) infinite; }
 .halo-glow { position: absolute; width: 560px; height: 560px; left: -280px; top: -280px; border-radius: 50%; background: radial-gradient(circle, var(--signal-soft) 0%, transparent 62%); }
 @keyframes haloA { from { transform: rotateX(72deg) rotateZ(0); } to { transform: rotateX(72deg) rotateZ(360deg); } }
 @keyframes haloB { from { transform: rotateY(68deg) rotateZ(0); } to { transform: rotateY(68deg) rotateZ(-360deg); } }

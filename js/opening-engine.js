@@ -19,7 +19,7 @@ window.OP = (function () {
 
   let W = 0, H = 0, F = 1, dpr = 1;
   function size() {
-    dpr = Math.min(2, window.devicePixelRatio || 1);
+    dpr = Math.min(1.5, window.devicePixelRatio || 1);
     W = innerWidth; H = innerHeight;
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -115,10 +115,10 @@ window.OP = (function () {
   };
   function frame(t) {
     readScroll();
-    const k = reduce ? 1 : 0.12;
+    const k = reduce ? 1 : (window.CF_K ? window.CF_K(0.12) : 0.12);   // 0.12 per frame at 60 fps
     p += (target - p) * k;
     if (Math.abs(target - p) < 0.0002) p = target;
-    vel = lerp(vel, (p - last) * 60, 0.2); last = p;
+    vel = lerp(vel, (p - last) * (window.CF_FPS || 60), (window.CF_K ? window.CF_K(0.2) : 0.2)); last = p;
     ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
     ctx.clearRect(0, 0, W, H);
     if (api.scene) api.scene.draw(p, t / 1000);

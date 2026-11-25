@@ -177,6 +177,7 @@
   bar.className = 'deck-bar';
   bar.innerHTML =
     '<a class="deck-brand" href="#top"><span class="brand-mark" aria-hidden="true"></span>Cipher Forge <span class="deck-v">v2</span></a>' +
+    '<span class="rvu-logo deck-rvu" role="img" aria-label="RV University logo"></span>' +
     '<div class="deck-where"><p class="deck-count mono" id="deck-count"></p><p class="deck-title" id="deck-title"></p></div>' +
     '<div class="deck-tools">' +
       '<button type="button" class="deck-tool" id="deck-prev" aria-label="Back (←)">‹</button>' +

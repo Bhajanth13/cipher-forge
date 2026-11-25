@@ -68,7 +68,7 @@
     const final = el.textContent;
     el.setAttribute('aria-label', final);
     const chars = final.split('');
-    const total = 26;
+    const total = Math.round(26 * (window.CF_FPS || 60) / 60);   // 26 frames at 60 fps
     let frame = 0;
     function step() {
       frame += 1;

@@ -130,7 +130,7 @@
 .fx-specs::after {
   content: ''; position: absolute; top: 0; bottom: 0; width: 30%; left: -30%;
   background: linear-gradient(90deg, transparent, var(--signal-soft), transparent);
-  animation: sweep 6s linear infinite;
+  animation: sweep 6s steps(180) infinite;
 }
 @keyframes sweep { to { left: 100%; } }
 .spec { padding: 34px 20px; border-left: 1px solid var(--rule-soft); }
@@ -224,9 +224,9 @@
 .core { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
 .core-orb { position: relative; width: 132px; height: 132px; transform-style: preserve-3d; perspective: 600px; }
 .orb-ring { position: absolute; inset: 0; border-radius: 50%; border: 1px solid var(--signal-line); transform-style: preserve-3d; }
-.orb-ring.r1 { animation: spinA 9s linear infinite; }
-.orb-ring.r2 { inset: 12px; border-color: rgba(211, 175, 99, .45); animation: spinB 7s linear infinite; }
-.orb-ring.r3 { inset: 26px; border-style: dashed; animation: spinC 5s linear infinite; }
+.orb-ring.r1 { animation: spinA 9s steps(270) infinite; }
+.orb-ring.r2 { inset: 12px; border-color: rgba(211, 175, 99, .45); animation: spinB 7s steps(210) infinite; }
+.orb-ring.r3 { inset: 26px; border-style: dashed; animation: spinC 5s steps(150) infinite; }
 @keyframes spinA { from { transform: rotateX(70deg) rotateZ(0); } to { transform: rotateX(70deg) rotateZ(360deg); } }
 @keyframes spinB { from { transform: rotateY(65deg) rotateZ(0); } to { transform: rotateY(65deg) rotateZ(-360deg); } }
 @keyframes spinC { from { transform: rotateX(20deg) rotateY(20deg) rotateZ(0); } to { transform: rotateX(20deg) rotateY(20deg) rotateZ(360deg); } }

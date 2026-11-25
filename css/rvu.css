@@ -1,0 +1,39 @@
+/* =========================================================
+   Cipher Forge — RV University logo
+   One vector file (img/rvu-logo.svg) used as a mask, so the logo
+   takes the page's ink colour: light on the dark theme, the
+   university's own navy on the light theme.
+   ========================================================= */
+.rvu-logo {
+  display: block; flex: none;
+  height: var(--rvu-h, 56px); aspect-ratio: 168 / 84.5;
+  color: #EEF2F6; background: currentColor;
+  -webkit-mask: url(../img/rvu-logo.svg) center / contain no-repeat;
+          mask: url(../img/rvu-logo.svg) center / contain no-repeat;
+}
+[data-theme="light"] .rvu-logo { color: #1B2E38; }
+
+/* First page (index.html and the deck's title scene) */
+.op-rvu { --rvu-h: clamp(48px, 7vh, 66px); margin: 0 0 22px; }
+.op-end .op-rvu { --rvu-h: clamp(56px, 9vh, 84px); margin: 0 auto 22px; }
+
+/* index.html: in the team panel on wide screens; above the title when that panel is hidden */
+.tm-rvu { --rvu-h: 64px; margin: 2px 0 14px; }
+.op-rvu-narrow { display: none; }
+@media (max-width: 1000px) { .op-rvu-narrow { display: block; } }
+
+/* Each step: right end of the "Step n of 7" line (website view) */
+.step .step-rvu { --rvu-h: 46px; margin-left: auto; align-self: center; }
+html.deck .step .step-rvu { display: none; }   /* the deck shows it in the top bar instead */
+
+/* Deck top bar, on every scene */
+.deck-rvu { --rvu-h: 40px; }
+
+/* Thank-you page */
+.thanks-rvu { --rvu-h: clamp(64px, 10vh, 100px); margin: 0 auto 20px; }
+
+@media (max-height: 700px) { .op-rvu { --rvu-h: 42px; margin-bottom: 14px; } }
+@media (max-width: 760px) {
+  .deck-rvu { --rvu-h: 30px; }
+  .step .step-rvu { --rvu-h: 30px; }
+}

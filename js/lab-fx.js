@@ -25,7 +25,7 @@
   new MutationObserver(function () { setTimeout(readColors, 60); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   readColors();
   function size() {
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const dpr = Math.min(1.5, window.devicePixelRatio || 1);
     stars.width = innerWidth * dpr; stars.height = innerHeight * dpr;
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
@@ -52,7 +52,7 @@
     const lines = ['Cipher', 'Forge'];
     el.setAttribute('aria-label', 'Cipher Forge');
     if (reduce) return;
-    let f = 0; const total = 36;
+    let f = 0; const total = Math.round(36 * (window.CF_FPS || 60) / 60);
     (function step() {
       f++;
       el.innerHTML = lines.map(function (line) {

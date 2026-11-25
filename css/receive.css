@@ -59,7 +59,7 @@
 .radar-sub { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
 
 .radar.is-on { transform: rotateX(0deg); box-shadow: 0 0 0 1px var(--signal-line), 0 0 70px var(--signal-soft), inset 0 0 60px var(--signal-soft); }
-.radar.is-on .radar-sweep { opacity: 1; animation: sweep-rot 2.4s linear infinite; }
+.radar.is-on .radar-sweep { opacity: 1; animation: sweep-rot 2.4s steps(72) infinite; }
 .radar.is-on .radar-sub { color: var(--signal); }
 .radar.is-rx { box-shadow: 0 0 0 2px var(--signal), 0 0 90px var(--signal-glow), inset 0 0 60px var(--signal-soft); }
 .radar.is-rx .radar-sweep { animation-duration: .9s; }

@@ -276,7 +276,7 @@
       camEl.style.transform = 'rotateX(56deg) rotateZ(-30deg) translateZ(' + (-cam.z * cam.s).toFixed(1) + 'px)';
     }
     function tick() {
-      const k = reduce ? 1 : 0.1;
+      const k = reduce ? 1 : (window.CF_K ? window.CF_K(0.1) : 0.1);
       cam.z += (tgt.z - cam.z) * k; cam.s += (tgt.s - cam.s) * k;
       apply(); placeTags();
       if (Math.abs(tgt.z - cam.z) > 0.3 || Math.abs(tgt.s - cam.s) > 0.002) requestAnimationFrame(tick); else running = false;

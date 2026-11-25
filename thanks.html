@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="js/fps30.js?v=1"></script>
 <title>Thank you · Cipher Forge</title>
 <meta name="description" content="Thank you from Group G1, the team behind Cipher Forge, a CS1812 Discrete Mathematics and Set Theory project at RV University, Mysuru.">
 <link rel="canonical" href="https://bhajanth13.github.io/cipher-forge/thanks.html">
@@ -18,6 +19,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#05080D">
 <link rel="stylesheet" href="css/fonts.css?v=8">
+<link rel="stylesheet" href="css/rvu.css?v=1">
 <script>try{if(localStorage.getItem('cf-theme')==='light')document.documentElement.dataset.theme='light';}catch(e){}</script>
 <style>
   :root { --bg: #05080D; --plate: #0B121B; --steel: #DDE4EC; --steel-2: #A9B4C1; --muted: #7A8796; --rule: rgba(169, 180, 193, .22);
@@ -31,7 +33,7 @@
 
   /* the alphabet ring: the rotor of Cipher Forge, turning slowly behind the page */
   .ring { position: fixed; left: 50%; top: 42%; width: min(118vmin, 1100px); aspect-ratio: 1; transform: translate(-50%, -50%); pointer-events: none; opacity: .55; }
-  .ring svg { width: 100%; height: 100%; animation: turn 120s linear infinite; }
+  .ring svg { width: 100%; height: 100%; animation: turn 120s steps(3600) infinite; }
   .ring text { font-family: var(--mono); font-size: 15px; fill: var(--steel-2); letter-spacing: 0; }
   .ring .top { fill: var(--brass); }
   .ring circle { fill: none; stroke: var(--rule); }
@@ -74,6 +76,7 @@
 <div class="ring" aria-hidden="true"><svg viewBox="-300 -300 600 600" id="ring"></svg></div>
 
 <main>
+  <span class="rvu-logo thanks-rvu in" role="img" aria-label="RV University logo"></span>
   <p class="kicker in">CIPHER FORGE · CS1812 DISCRETE MATHEMATICS AND SET THEORY</p>
   <h1 class="in d2">Thank you</h1>
   <p class="sub in d2">Cipher Forge: build your own cipher, prove it can always be decrypted, and measure how hard it is to break.</p>

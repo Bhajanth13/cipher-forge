@@ -255,7 +255,7 @@
     new MutationObserver(function () { setTimeout(readColors, 60); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     readColors();
     function size() {
-      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const dpr = Math.min(1.5, window.devicePixelRatio || 1);
       stars.width = innerWidth * dpr; stars.height = innerHeight * dpr;
       g.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
@@ -455,7 +455,7 @@
     drawCallouts(lastActive);
   }
   function camTick() {
-    const k = reduce ? 1 : 0.12;
+    const k = reduce ? 1 : (window.CF_K ? window.CF_K(0.12) : 0.12);
     cam.z += (tgt.z - cam.z) * k; cam.s += (tgt.s - cam.s) * k;
     applyCam();
     if (Math.abs(tgt.z - cam.z) > 0.3 || Math.abs(tgt.s - cam.s) > 0.002) requestAnimationFrame(camTick);

@@ -33,7 +33,7 @@
   const STAR = [];
   for (let i = 0; i < 170; i++) STAR.push({ x: rand(), y: rand(), r: 0.4 + rand() * 1.3, d: 0.05 + rand() * 0.35, ph: rand() * 6.28, sp: 0.5 + rand() * 1.5 });
   function sizeStars() {
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const dpr = Math.min(1.5, window.devicePixelRatio || 1);
     stars.width = innerWidth * dpr; stars.height = innerHeight * dpr;
     sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
@@ -109,7 +109,7 @@
   const wave = $('fx-wave');
   const wctx = wave.getContext('2d');
   function sizeWave() {
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const dpr = Math.min(1.5, window.devicePixelRatio || 1);
     wave.width = wave.clientWidth * dpr; wave.height = wave.clientHeight * dpr;
     wctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
@@ -147,7 +147,7 @@
     const lines = ['Send it', 'by sound'];
     el.setAttribute('aria-label', 'Send it by sound');
     if (reduce) return;
-    let f = 0; const total = 34;
+    let f = 0; const total = Math.round(34 * (window.CF_FPS || 60) / 60);
     (function step() {
       f++;
       el.innerHTML = lines.map(function (line) {
@@ -213,7 +213,7 @@
   let tx = null;                 // { freq, since }
   let particles = [];
   function sizeBeam() {
-    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const dpr = Math.min(1.5, window.devicePixelRatio || 1);
     beam.width = grid.clientWidth * dpr; beam.height = grid.clientHeight * dpr;
     bctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
