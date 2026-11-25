@@ -46,3 +46,13 @@ html.deck .op-hud { top: 80px; }
 /* The problem, in one sentence */
 .op-problem { margin: 20px 0 0; max-width: 34em; padding: 12px 16px; background: rgba(5, 8, 13, .78); border-radius: 0 8px 8px 0; border-left: 2px solid var(--obrass); font-size: clamp(14px, 1.05vw, 16px); line-height: 1.55; color: var(--osteel2); }
 .op-problem b { display: block; margin-bottom: 4px; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; font-weight: 500; letter-spacing: .12em; color: var(--obrass); }
+
+/* The team, on the first screen */
+.team-box { right: clamp(24px, 4vw, 64px); bottom: 12vh; width: min(360px, 30vw); padding: 14px 18px; background: rgba(5, 8, 13, .82); border: 1px solid rgba(114, 226, 255, .3); border-radius: 8px; }
+.team-box .tm-head { margin: 0 0 8px; font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12px; letter-spacing: .1em; color: var(--obrass); }
+.team-box ul { list-style: none; margin: 0; padding: 0; }
+.team-box li { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; font-size: 14px; line-height: 1.35; color: var(--osteel); border-top: 1px solid rgba(114, 226, 255, .12); }
+.team-box li:first-child { border-top: 0; }
+.team-box .usn { font-family: 'IBM Plex Mono', Consolas, monospace; font-size: 12.5px; color: var(--osteel2); white-space: nowrap; }
+.team-box .tm-guide { margin: 8px 0 0; font-size: 13px; color: var(--omuted); }
+@media (max-width: 1000px) { .team-box { display: none; } }
